@@ -1,0 +1,7 @@
+# Copy this file to Custom.cmake and change the paths for your machine.
+set(HLOLLI_CSOUND_BUILD_DIR "/path/to/csound/build" CACHE PATH "" FORCE)
+set(CSOUND_EXECUTABLE "/path/to/csound/build/csound" CACHE FILEPATH "" FORCE)
+
+# Set this only when you run `cmake --install` outside the Csound source tree.
+# set(HLOLLI_CSOUND_PLUGIN_DIR
+#     "/path/to/your/csound/plugin/directory" CACHE STRING "" FORCE)

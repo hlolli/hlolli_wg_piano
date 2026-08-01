@@ -1,0 +1,5 @@
+/build/
+/Custom.cmake
+*.wav
+*.aiff
+.DS_Store
