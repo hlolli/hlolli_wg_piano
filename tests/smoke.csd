@@ -8,6 +8,9 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
+gaPianoLeft init 0
+gaPianoRight init 0
+
 instr Piano
   xtratim 0.60
   kRelease release
@@ -18,9 +21,19 @@ instr Piano
       kTrigger, kFrequency, 0.43, 0.12, 0.70, \
       0.42, 0.60, 0.72, 0, 0
   outs aLeft * kTail, aRight * kTail
+  gaPianoLeft += aLeft * kTail
+  gaPianoRight += aRight * kTail
+endin
+
+instr SharedResonance
+  aWetLeft, aWetRight hlolli_wg_piano_resonance \
+      gaPianoLeft, gaPianoRight, 0.72, 0.82
+  outs 0.35 * aWetLeft, 0.35 * aWetRight
+  clear gaPianoLeft, gaPianoRight
 endin
 </CsInstruments>
 <CsScore>
+i "SharedResonance" 0 1.40
 i "Piano" 0 0.45 60 0.65
 i "Piano" 0.25 0.45 67 0.55
 e 1.40

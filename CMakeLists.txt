@@ -192,7 +192,7 @@ if(HLOLLI_WG_PIANO_INSTALL)
     COMPONENT Runtime)
 endif()
 
-option(HLOLLI_WG_PIANO_BUILD_TESTS "Add the native Csound smoke test"
+option(HLOLLI_WG_PIANO_BUILD_TESTS "Add the native Csound tests"
        ${_hlolli_wg_piano_top_level})
 if(HLOLLI_WG_PIANO_BUILD_TESTS)
   enable_testing()
@@ -206,8 +206,59 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
               "--opcode-lib=$<TARGET_FILE:hlolli_wg_piano>"
               -n -d -m128
               "${CMAKE_CURRENT_LIST_DIR}/tests/smoke.csd")
+
+    add_test(NAME hlolli_wg_piano.stress
+      COMMAND "${CSOUND_EXECUTABLE}"
+              "--opcode-lib=$<TARGET_FILE:hlolli_wg_piano>"
+              -n -d -m128
+              "${CMAKE_CURRENT_LIST_DIR}/tests/stress.csd")
+    set_tests_properties(hlolli_wg_piano.stress PROPERTIES
+      LABELS "stress"
+      TIMEOUT 120)
+
+    find_package(Python3 COMPONENTS Interpreter QUIET)
+    if(Python3_Interpreter_FOUND)
+      add_test(NAME hlolli_wg_piano.shared_resonance
+        COMMAND "${Python3_EXECUTABLE}"
+                -B
+                "${CMAKE_CURRENT_LIST_DIR}/tests/run_shared_resonance_test.py"
+                --csound "${CSOUND_EXECUTABLE}"
+                --module "$<TARGET_FILE:hlolli_wg_piano>"
+                --csd "${CMAKE_CURRENT_LIST_DIR}/tests/shared_resonance.csd")
+      add_test(NAME hlolli_wg_piano.piano_handles
+        COMMAND "${Python3_EXECUTABLE}"
+                -B
+                "${CMAKE_CURRENT_LIST_DIR}/tests/run_handle_state_test.py"
+                --csound "${CSOUND_EXECUTABLE}"
+                --module "$<TARGET_FILE:hlolli_wg_piano>"
+                --isolation-csd
+                "${CMAKE_CURRENT_LIST_DIR}/tests/handle_resonance.csd"
+                --handoff-csd
+                "${CMAKE_CURRENT_LIST_DIR}/tests/handle_handoff.csd")
+    else()
+      message(WARNING
+        "Python 3 was not found; audio checks get render-only tests.")
+      add_test(NAME hlolli_wg_piano.shared_resonance
+        COMMAND "${CSOUND_EXECUTABLE}"
+                "--opcode-lib=$<TARGET_FILE:hlolli_wg_piano>"
+                -n -d -m128
+                "${CMAKE_CURRENT_LIST_DIR}/tests/shared_resonance.csd")
+      add_test(NAME hlolli_wg_piano.piano_handles
+        COMMAND "${CSOUND_EXECUTABLE}"
+                "--opcode-lib=$<TARGET_FILE:hlolli_wg_piano>"
+                -n -d -m128
+                "${CMAKE_CURRENT_LIST_DIR}/tests/handle_resonance.csd")
+    endif()
+    set_tests_properties(hlolli_wg_piano.shared_resonance PROPERTIES
+      LABELS "audio"
+      TIMEOUT 60)
+    if(TEST hlolli_wg_piano.piano_handles)
+      set_tests_properties(hlolli_wg_piano.piano_handles PROPERTIES
+        LABELS "audio"
+        TIMEOUT 60)
+    endif()
   else()
     message(WARNING
-      "Csound was not found; the plugin will build but its smoke test is off.")
+      "Csound was not found; the plugin will build but its tests are off.")
   endif()
 endif()

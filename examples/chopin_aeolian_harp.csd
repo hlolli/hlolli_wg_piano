@@ -8,12 +8,12 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
-gaDryLeft init 0
-gaDryRight init 0
-gaSendLeft init 0
-gaSendRight init 0
-gaBoardLeft init 0
-gaBoardRight init 0
+gaPianoLeft init 0
+gaPianoRight init 0
+giPiano hlolli_wg_piano_create
+gkSharedBody init 0.72
+gkSharedPedal init 0.82
+gkPedalTarget init 0.82
 
 instr Piano
   iNote = p4
@@ -25,21 +25,20 @@ instr Piano
   iDetune = p10
   iBody = p11
   iStrange = p12
-  iPedal = p13
   iPan = p14
 
   xtratim 2.60
   kRelease release
   kTrigger = (kRelease == 0 ? iVelocity : 0)
   kFrequency init cpsmidinn(iNote)
-  ; Keep the damper raised while this voice fades. The former release branch
-  ; set the pedal to zero and stopped each note before it could join the next.
-  kPedal = iPedal
+  ; One piano has one damper pedal. Every note and the shared resonator read
+  ; the same control, so a pedal change also acts on notes already ringing.
+  kPedal = gkSharedPedal
   kTail linsegr 1, 0.01, 1, 2.60, 0
 
   aModelLeft, aModelRight hlolli_wg_piano \
       kTrigger, kFrequency, iHardness, iHammerPosition, iDecay, \
-      iStiffness, iDetune, iBody, iStrange, kPedal
+      iStiffness, iDetune, iBody, iStrange, kPedal, giPiano
 
   ; Keep some of the model's own width, then place each hand on the keyboard.
   aMono = 0.5 * (aModelLeft + aModelRight)
@@ -47,12 +46,14 @@ instr Piano
   aLeft = (0.56 * aModelLeft + 0.62 * aPanLeft) * kTail
   aRight = (0.56 * aModelRight + 0.62 * aPanRight) * kTail
 
-  gaDryLeft += 0.55 * aLeft
-  gaDryRight += 0.55 * aRight
-  gaSendLeft += 0.24 * aLeft
-  gaSendRight += 0.24 * aRight
-  gaBoardLeft += 0.20 * aLeft
-  gaBoardRight += 0.20 * aRight
+  gaPianoLeft += aLeft
+  gaPianoRight += aRight
+endin
+
+; Short score events set one piano-wide pedal target. Master smooths the
+; motion, which keeps the damper change quiet without tying it to any note.
+instr Pedal
+  gkPedalTarget = p4
 endin
 
 instr HarpBeat
@@ -97,42 +98,24 @@ instr HarpBeat
       0.32, 0.14, 0.77, 0.35, 0.54, 0.68, 0, 0.82, 0.37
 endin
 
-; A short shared board response sits before the room. Broad, uneven modes add
-; wood colour without imposing a new pitch, and the first reverbsc keeps that
-; response alive across note boundaries.
+; The handle owns the shared board and pedal state. The audio bus below remains
+; only for the dry mix and the room input.
 instr Master
-  aBoardLowLeft reson gaBoardLeft, 118, 82, 1
-  aBoardLowRight reson gaBoardRight, 127, 88, 1
-  aBoardLowMidLeft reson gaBoardLeft, 285, 155, 1
-  aBoardLowMidRight reson gaBoardRight, 303, 165, 1
-  aBoardMidLeft reson gaBoardLeft, 690, 360, 1
-  aBoardMidRight reson gaBoardRight, 728, 390, 1
-  aBoardHighLeft reson gaBoardLeft, 1560, 820, 1
-  aBoardHighRight reson gaBoardRight, 1640, 870, 1
-
-  aBoardColourLeft = 0.16 * aBoardLowLeft + 0.13 * aBoardLowMidLeft + \
-      0.09 * aBoardMidLeft + 0.055 * aBoardHighLeft
-  aBoardColourRight = 0.15 * aBoardLowRight + 0.12 * aBoardLowMidRight + \
-      0.10 * aBoardMidRight + 0.060 * aBoardHighRight
-  aBoardWetLeft, aBoardWetRight reverbsc \
-      gaBoardLeft + aBoardColourLeft, gaBoardRight + aBoardColourRight, \
-      0.84, 6100
-  aBoardOutLeft = 0.22 * aBoardColourLeft + 0.54 * aBoardWetLeft
-  aBoardOutRight = 0.22 * aBoardColourRight + 0.54 * aBoardWetRight
-
-  aWetLeft, aWetRight reverbsc \
-      gaSendLeft + 0.34 * aBoardOutLeft, \
-      gaSendRight + 0.34 * aBoardOutRight, 0.91, 9000
+  gkSharedPedal portk gkPedalTarget, 0.025
+  aPianoWetLeft, aPianoWetRight hlolli_wg_piano_resonance \
+      giPiano, gkSharedBody, gkSharedPedal
+  aRoomLeft, aRoomRight reverbsc \
+      gaPianoLeft + 0.34 * aPianoWetLeft, \
+      gaPianoRight + 0.34 * aPianoWetRight, 0.91, 9000
   kEndFade linseg 1, p3 - 1.75, 1, 1.75, 0
-  aMixLeft = 2.55 * (gaDryLeft + 0.34 * aBoardOutLeft + \
-      0.34 * aWetLeft) * kEndFade
-  aMixRight = 2.55 * (gaDryRight + 0.34 * aBoardOutRight + \
-      0.34 * aWetRight) * kEndFade
+  aMixLeft = 2.15 * (0.68 * gaPianoLeft + 0.32 * aPianoWetLeft + \
+      0.12 * aRoomLeft) * kEndFade
+  aMixRight = 2.15 * (0.68 * gaPianoRight + 0.32 * aPianoWetRight + \
+      0.12 * aRoomRight) * kEndFade
   aOutLeft limit aMixLeft, -0.98, 0.98
   aOutRight limit aMixRight, -0.98, 0.98
   outs aOutLeft, aOutRight
-  clear gaDryLeft, gaDryRight, gaSendLeft, gaSendRight, \
-      gaBoardLeft, gaBoardRight
+  clear gaPianoLeft, gaPianoRight
 endin
 
 </CsInstruments>
@@ -141,6 +124,32 @@ endin
 ; Public-domain Mutopia score, opening eight bars and their tonic return.
 ; Allegro sostenuto, quarter = 104.
 i "Master" 0 29.50
+
+; Clear the dampers at each new harmony, then put the pedal down again.
+; These events drive both the note dampers and the shared sympathetic strings.
+i "Pedal" 4.56 0.03 0.08
+i "Pedal" 4.66 0.03 0.82
+i "Pedal" 7.40 0.03 0.08
+i "Pedal" 7.50 0.03 0.82
+i "Pedal" 9.71 0.03 0.08
+i "Pedal" 9.81 0.03 0.82
+i "Pedal" 12.02 0.03 0.08
+i "Pedal" 12.12 0.03 0.82
+i "Pedal" 13.17 0.03 0.08
+i "Pedal" 13.27 0.03 0.82
+i "Pedal" 13.75 0.03 0.08
+i "Pedal" 13.85 0.03 0.82
+i "Pedal" 14.33 0.03 0.08
+i "Pedal" 14.43 0.03 0.82
+i "Pedal" 15.48 0.03 0.08
+i "Pedal" 15.58 0.03 0.82
+i "Pedal" 16.63 0.03 0.08
+i "Pedal" 16.73 0.03 0.82
+i "Pedal" 17.78 0.03 0.08
+i "Pedal" 17.88 0.03 0.82
+i "Pedal" 18.94 0.03 0.08
+i "Pedal" 19.04 0.03 0.82
+i "Pedal" 27.00 0.03 0.00
 
 ; E-flat pickup.
 i "Piano" 0 0.66 75 0.52 0.41 0.12 0.78 0.38 0.60 0.70 0 0.82 0.64
