@@ -1,0 +1,237 @@
+{
+  "$schema": "schema/piano-profile-v1.schema.json",
+  "schema_version": 1,
+  "id": "generic_2018",
+  "display_name": "Generic 2018 model",
+  "midi_min": 21,
+  "key_count": 88,
+  "sympathetic_mode_count": 88,
+  "variation_seed": 0,
+  "default_key": {
+    "tuning_cents": 0.0,
+    "inharmonicity_scale": 1.0,
+    "string_length_scale": 1.0,
+    "string_loss_scale": 1.0,
+    "unison_detune_scale": 1.0,
+    "hammer_scale": 1.0,
+    "damper_scale": 1.0,
+    "radiation_scale": 1.0,
+    "sympathetic_scale": 1.0
+  },
+  "keys": {},
+  "strings": [
+    {
+      "strike_seconds": 0.0,
+      "strike_error_depth": 0.025,
+      "detune_spread": 0.0,
+      "drift_sign": 0.42,
+      "loss_scale": 1.0,
+      "pan": -0.12
+    },
+    {
+      "strike_seconds": 0.000007,
+      "strike_error_depth": 0.095,
+      "detune_spread": 1.0,
+      "drift_sign": 1.0,
+      "loss_scale": 1.035,
+      "pan": 0.12
+    },
+    {
+      "strike_seconds": 0.000015,
+      "strike_error_depth": 0.095,
+      "detune_spread": -0.82,
+      "drift_sign": -0.88,
+      "loss_scale": 0.965,
+      "pan": 0.0
+    }
+  ],
+  "felt_modes": [
+    {
+      "frequency_hz": 430.0,
+      "t60_seconds": 0.058,
+      "weight": 1.0
+    },
+    {
+      "frequency_hz": 1040.0,
+      "t60_seconds": 0.041,
+      "weight": -0.58
+    },
+    {
+      "frequency_hz": 2380.0,
+      "t60_seconds": 0.026,
+      "weight": 0.31
+    }
+  ],
+  "note_body_lines": [
+    {
+      "delay_seconds": 0.01127,
+      "injection": 0.33
+    },
+    {
+      "delay_seconds": 0.01361,
+      "injection": -0.29
+    },
+    {
+      "delay_seconds": 0.01693,
+      "injection": 0.24
+    },
+    {
+      "delay_seconds": 0.01979,
+      "injection": -0.20
+    }
+  ],
+  "body_modes": [
+    {
+      "frequency_hz": 58.0,
+      "t60_seconds": 1.50,
+      "gain": 0.34,
+      "input_side": -0.08,
+      "stereo_position": -0.55
+    },
+    {
+      "frequency_hz": 79.0,
+      "t60_seconds": 1.28,
+      "gain": 0.32,
+      "input_side": 0.06,
+      "stereo_position": -0.45
+    },
+    {
+      "frequency_hz": 108.0,
+      "t60_seconds": 1.10,
+      "gain": 0.30,
+      "input_side": -0.13,
+      "stereo_position": -0.35
+    },
+    {
+      "frequency_hz": 149.0,
+      "t60_seconds": 0.91,
+      "gain": 0.275,
+      "input_side": 0.16,
+      "stereo_position": -0.25
+    },
+    {
+      "frequency_hz": 207.0,
+      "t60_seconds": 0.74,
+      "gain": 0.25,
+      "input_side": -0.19,
+      "stereo_position": -0.15
+    },
+    {
+      "frequency_hz": 291.0,
+      "t60_seconds": 0.58,
+      "gain": 0.225,
+      "input_side": 0.22,
+      "stereo_position": -0.05
+    },
+    {
+      "frequency_hz": 413.0,
+      "t60_seconds": 0.45,
+      "gain": 0.20,
+      "input_side": -0.26,
+      "stereo_position": 0.05
+    },
+    {
+      "frequency_hz": 593.0,
+      "t60_seconds": 0.35,
+      "gain": 0.175,
+      "input_side": 0.30,
+      "stereo_position": 0.15
+    },
+    {
+      "frequency_hz": 864.0,
+      "t60_seconds": 0.28,
+      "gain": 0.15,
+      "input_side": -0.34,
+      "stereo_position": 0.25
+    },
+    {
+      "frequency_hz": 1280.0,
+      "t60_seconds": 0.22,
+      "gain": 0.125,
+      "input_side": 0.38,
+      "stereo_position": 0.35
+    },
+    {
+      "frequency_hz": 1960.0,
+      "t60_seconds": 0.18,
+      "gain": 0.10,
+      "input_side": -0.42,
+      "stereo_position": 0.45
+    },
+    {
+      "frequency_hz": 3220.0,
+      "t60_seconds": 0.145,
+      "gain": 0.075,
+      "input_side": 0.46,
+      "stereo_position": 0.55
+    }
+  ],
+  "fdn_lines": [
+    {
+      "delay_seconds": 0.011604166666666667,
+      "input_side": -0.42,
+      "injection": 0.23,
+      "tone_scale": 0.72
+    },
+    {
+      "delay_seconds": 0.014229166666666666,
+      "input_side": 0.31,
+      "injection": -0.21,
+      "tone_scale": 0.83
+    },
+    {
+      "delay_seconds": 0.016854166666666667,
+      "input_side": -0.20,
+      "injection": 0.19,
+      "tone_scale": 0.92
+    },
+    {
+      "delay_seconds": 0.019729166666666666,
+      "input_side": 0.48,
+      "injection": -0.17,
+      "tone_scale": 1.00
+    },
+    {
+      "delay_seconds": 0.023979166666666666,
+      "input_side": -0.36,
+      "injection": 0.16,
+      "tone_scale": 1.09
+    },
+    {
+      "delay_seconds": 0.028354166666666666,
+      "input_side": 0.16,
+      "injection": -0.145,
+      "tone_scale": 1.18
+    },
+    {
+      "delay_seconds": 0.033354166666666664,
+      "input_side": 0.39,
+      "injection": 0.13,
+      "tone_scale": 1.28
+    },
+    {
+      "delay_seconds": 0.04164583333333333,
+      "input_side": -0.27,
+      "injection": -0.115,
+      "tone_scale": 1.38
+    }
+  ],
+  "provenance": {
+    "method": "modeled",
+    "sources": [
+      {
+        "id": "bank_chabassier_2018",
+        "kind": "paper",
+        "title": "Model-based digital pianos: from physics to sound synthesis",
+        "license": "Citation only; see the publication for its terms."
+      },
+      {
+        "id": "bensa_bilbao_kronland_martinet_smith_2003",
+        "kind": "paper",
+        "title": "The simulation of piano string vibration: From physical models to finite difference schemes and digital waveguides",
+        "license": "Citation only; see the publication for its terms."
+      }
+    ],
+    "notes": "Hand-tuned defaults based on the reduced real-time models in the cited papers."
+  }
+}

@@ -141,19 +141,22 @@ typedef struct {
 } WG_PIANO_PROFILE;
 
 /* BEGIN GENERATED PIANO PROFILE DATA */
+/* Generated piano profile data. Do not edit by hand. */
+
 static const WG_BODY_MODE_PROFILE wg_generic_2018_body_modes[] = {
-    {58.0, 1.50, 0.34, -0.08, -0.55},
+    {58.0, 1.5, 0.34, -0.08, -0.55},
     {79.0, 1.28, 0.32, 0.06, -0.45},
-    {108.0, 1.10, 0.30, -0.13, -0.35},
+    {108.0, 1.1, 0.3, -0.13, -0.35},
     {149.0, 0.91, 0.275, 0.16, -0.25},
     {207.0, 0.74, 0.25, -0.19, -0.15},
     {291.0, 0.58, 0.225, 0.22, -0.05},
-    {413.0, 0.45, 0.20, -0.26, 0.05},
-    {593.0, 0.35, 0.175, 0.30, 0.15},
+    {413.0, 0.45, 0.2, -0.26, 0.05},
+    {593.0, 0.35, 0.175, 0.3, 0.15},
     {864.0, 0.28, 0.15, -0.34, 0.25},
     {1280.0, 0.22, 0.125, 0.38, 0.35},
-    {1960.0, 0.18, 0.10, -0.42, 0.45},
-    {3220.0, 0.145, 0.075, 0.46, 0.55}};
+    {1960.0, 0.18, 0.1, -0.42, 0.45},
+    {3220.0, 0.145, 0.075, 0.46, 0.55},
+};
 
 static const WG_PIANO_PROFILE wg_profile_generic_2018 = {
     .id = "generic_2018",
@@ -164,36 +167,44 @@ static const WG_PIANO_PROFILE wg_profile_generic_2018 = {
     .body_mode_count = 12U,
     .fdn_line_count = RESONANCE_BODY_LINES,
     .variation_seed = 0U,
-    .default_key = {0.0, 1.0, 1.0, 1.0, 1.0,
-                    1.0, 1.0, 1.0, 1.0},
+    .default_key = {0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},
     .keys = NULL,
     .strings = {
-        {0.0, 0.025, 0.0, 0.42, 1.000, -0.12},
-        {0.000007, 0.095, 1.0, 1.0, 1.035, 0.12},
-        {0.000015, 0.095, -0.82, -0.88, 0.965, 0.0}},
+        {0.0, 0.025, 0.0, 0.42, 1.0, -0.12},
+        {7e-06, 0.095, 1.0, 1.0, 1.035, 0.12},
+        {1.5e-05, 0.095, -0.82, -0.88, 0.965, 0.0},
+    },
     .felt_modes = {
         {430.0, 0.058, 1.0},
         {1040.0, 0.041, -0.58},
-        {2380.0, 0.026, 0.31}},
+        {2380.0, 0.026, 0.31},
+    },
     .note_body_lines = {
         {0.01127, 0.33},
         {0.01361, -0.29},
         {0.01693, 0.24},
-        {0.01979, -0.20}},
+        {0.01979, -0.2},
+    },
     .body_modes = wg_generic_2018_body_modes,
     .fdn_lines = {
-        {557.0 / 48000.0, -0.42, 0.23, 0.72},
-        {683.0 / 48000.0, 0.31, -0.21, 0.83},
-        {809.0 / 48000.0, -0.20, 0.19, 0.92},
-        {947.0 / 48000.0, 0.48, -0.17, 1.00},
-        {1151.0 / 48000.0, -0.36, 0.16, 1.09},
-        {1361.0 / 48000.0, 0.16, -0.145, 1.18},
-        {1601.0 / 48000.0, 0.39, 0.13, 1.28},
-        {1999.0 / 48000.0, -0.27, -0.115, 1.38}}};
-/* END GENERATED PIANO PROFILE DATA */
+        {0.011604166666666667, -0.42, 0.23, 0.72},
+        {0.014229166666666666, 0.31, -0.21, 0.83},
+        {0.016854166666666667, -0.2, 0.19, 0.92},
+        {0.019729166666666666, 0.48, -0.17, 1.0},
+        {0.023979166666666666, -0.36, 0.16, 1.09},
+        {0.028354166666666666, 0.16, -0.145, 1.18},
+        {0.033354166666666664, 0.39, 0.13, 1.28},
+        {0.04164583333333333, -0.27, -0.115, 1.38},
+    },
+};
 
 static const WG_PIANO_PROFILE *const wg_piano_profiles[] = {
-    &wg_profile_generic_2018};
+    &wg_profile_generic_2018,
+};
+
+static const WG_PIANO_PROFILE *const wg_default_piano_profile =
+    &wg_profile_generic_2018;
+/* END GENERATED PIANO PROFILE DATA */
 
 typedef struct WG_PIANO_STATE_ WG_PIANO_STATE;
 
@@ -430,7 +441,7 @@ static double wg_input(const MYFLT *value, double fallback)
 
 static const WG_PIANO_PROFILE *wg_default_profile(void)
 {
-  return &wg_profile_generic_2018;
+  return wg_default_piano_profile;
 }
 
 static const WG_PIANO_PROFILE *wg_find_profile(const char *name)

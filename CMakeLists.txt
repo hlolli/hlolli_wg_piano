@@ -156,6 +156,23 @@ endif()
 
 add_library(hlolli::wg_piano ALIAS hlolli_wg_piano)
 
+find_package(Python3 3.8 COMPONENTS Interpreter QUIET)
+if(Python3_Interpreter_FOUND)
+  add_custom_target(hlolli_wg_piano_generate_profiles
+    COMMAND "${Python3_EXECUTABLE}" -B
+            "${CMAKE_CURRENT_LIST_DIR}/tools/generate_profiles.py"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+    COMMENT "Generating embedded piano profile tables"
+    VERBATIM)
+  add_custom_target(hlolli_wg_piano_check_profiles
+    COMMAND "${Python3_EXECUTABLE}" -B
+            "${CMAKE_CURRENT_LIST_DIR}/tools/generate_profiles.py"
+            --check
+    WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+    COMMENT "Checking piano profile data and generated tables"
+    VERBATIM)
+endif()
+
 include(GNUInstallDirs)
 set(_hlolli_plugin_folder "plugins64")
 if(HLOLLI_CSOUND_INCLUDE_DIR
@@ -196,6 +213,15 @@ option(HLOLLI_WG_PIANO_BUILD_TESTS "Add the native Csound tests"
        ${_hlolli_wg_piano_top_level})
 if(HLOLLI_WG_PIANO_BUILD_TESTS)
   enable_testing()
+  if(Python3_Interpreter_FOUND)
+    add_test(NAME hlolli_wg_piano.profile_data
+      COMMAND "${Python3_EXECUTABLE}" -B
+              "${CMAKE_CURRENT_LIST_DIR}/tools/generate_profiles.py"
+              --check)
+    set_tests_properties(hlolli_wg_piano.profile_data PROPERTIES
+      LABELS "tooling"
+      TIMEOUT 30)
+  endif()
   set(CSOUND_EXECUTABLE "" CACHE FILEPATH "Path to the Csound executable")
   if(NOT CSOUND_EXECUTABLE)
     find_program(CSOUND_EXECUTABLE NAMES csound csound64)
@@ -216,7 +242,6 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
       LABELS "stress"
       TIMEOUT 120)
 
-    find_package(Python3 COMPONENTS Interpreter QUIET)
     if(Python3_Interpreter_FOUND)
       add_test(NAME hlolli_wg_piano.shared_resonance
         COMMAND "${Python3_EXECUTABLE}"

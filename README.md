@@ -51,6 +51,10 @@ hlolli_wg_piano.c              Complete opcode source
 README.md                      Build and control reference
 LICENSE                        MIT license
 Custom.cmake.example           Optional local path settings
+profiles/manifest.json         Profile order and default choice
+profiles/generic_2018.json     Source data for the current piano
+profiles/schema/               Versioned profile format
+tools/generate_profiles.py     Profile checker and C-table generator
 examples/basic.csd             Short chord example
 examples/chopin_aeolian_harp.csd  Longer musical example
 tests/smoke.csd                Native load and render test
@@ -64,6 +68,37 @@ tests/run_shared_resonance_test.py  Shared-tail test driver
 tests/run_handle_state_test.py Piano-handle state test driver
 benchmarks/generic_2018_baseline.md  Pre-profile render and timing baseline
 ```
+
+## Piano profile data
+
+The JSON files under `profiles` are the source for fixed piano data. The
+manifest lists each profile and selects the default. The versioned schema sets
+the field names, units, sizes, and limits. The generator applies matching
+built-in checks without an added JSON Schema package. A profile can set a
+default key and then override any measured key fields by MIDI number.
+
+The generator checks the JSON and replaces only the marked profile-data block
+inside `hlolli_wg_piano.c`:
+
+```sh
+python3 -B tools/generate_profiles.py --check
+python3 -B tools/generate_profiles.py
+```
+
+In a stand-alone build, when CMake finds Python, the same actions are available
+as targets:
+
+```sh
+cmake --build build --target hlolli_wg_piano_check_profiles
+cmake --build build --target hlolli_wg_piano_generate_profiles
+```
+
+Edit the JSON, not the generated C block. The generator needs Python 3.8 or
+newer, has no third-party packages, and writes no date or machine path. The
+same input therefore gives the same C text. It also rejects output above the
+browser compiler's 256 KiB source limit. Builds never run it on their own. The
+checked-in C file still holds all runtime data and remains a single source file
+for native and WASI builds.
 
 ## Stand-alone build
 
