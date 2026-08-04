@@ -1,5 +1,9 @@
 /build/
 /Custom.cmake
+/recordings/raw/
+/recordings/private/
 *.wav
 *.aiff
+*.bwf
+*.flac
 .DS_Store

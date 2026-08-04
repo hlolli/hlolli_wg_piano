@@ -303,18 +303,12 @@ PROFILE_FIELDS = (
 )
 
 
-def validate_sha256(value, path):
-    value = require_string(value, path)
-    if re.fullmatch(r"[0-9a-f]{64}", value) is None:
-        raise ProfileError("{} must be a lower-case SHA-256".format(path))
-
-
 def validate_provenance(value, path):
     value = require_object(
         value, path, ("method", "sources"),
         ("instrument", "derived_with", "notes")
     )
-    require_enum(
+    method = require_enum(
         value["method"], "{}.method".format(path),
         ("modeled", "measured", "hybrid")
     )
@@ -324,8 +318,7 @@ def validate_provenance(value, path):
     for index, source in enumerate(sources):
         source_path = "{}.sources[{}]".format(path, index)
         source = require_object(
-            source, source_path, ("id", "kind", "title", "license"),
-            ("uri", "sha256")
+            source, source_path, ("id", "kind", "title"), ("uri",)
         )
         source_id = require_string(source["id"], "{}.id".format(source_path))
         if PROFILE_ID_RE.fullmatch(source_id) is None:
@@ -340,7 +333,6 @@ def validate_provenance(value, path):
             ("paper", "audio_manifest", "dataset", "other")
         )
         require_string(source["title"], "{}.title".format(source_path), 512)
-        require_string(source["license"], "{}.license".format(source_path), 512)
         if "uri" in source:
             uri = require_string(
                 source["uri"], "{}.uri".format(source_path), 2048
@@ -349,40 +341,40 @@ def validate_provenance(value, path):
                 raise ProfileError(
                     "{}.uri must not use a local file URI".format(source_path)
                 )
-        if "sha256" in source:
-            validate_sha256(source["sha256"], "{}.sha256".format(source_path))
-
     if "instrument" in value:
         instrument_path = "{}.instrument".format(path)
         instrument = require_object(
-            value["instrument"], instrument_path, ("maker", "model"),
-            ("serial_number", "year")
+            value["instrument"], instrument_path, ("id", "class"),
+            ("notes",)
         )
-        require_string(instrument["maker"], "{}.maker".format(instrument_path), 127)
-        require_string(instrument["model"], "{}.model".format(instrument_path), 127)
-        if "serial_number" in instrument:
-            require_string(
-                instrument["serial_number"],
-                "{}.serial_number".format(instrument_path), 127
+        instrument_id = require_string(
+            instrument["id"], "{}.id".format(instrument_path)
+        )
+        if PROFILE_ID_RE.fullmatch(instrument_id) is None:
+            raise ProfileError(
+                "{}.id must match {}".format(
+                    instrument_path, PROFILE_ID_RE.pattern
+                )
             )
-        if "year" in instrument:
-            require_integer(instrument["year"], "{}.year".format(instrument_path), 0, 9999)
+        require_enum(
+            instrument["class"], "{}.class".format(instrument_path),
+            ("grand", "upright", "other")
+        )
+        if "notes" in instrument:
+            require_string(
+                instrument["notes"], "{}.notes".format(instrument_path), 512
+            )
 
     if "derived_with" in value:
         derived_path = "{}.derived_with".format(path)
         derived = require_object(
             value["derived_with"], derived_path, ("tool",),
-            ("tool_version", "tool_revision", "parameters_sha256", "created_utc")
+            ("tool_version", "tool_revision", "created_utc")
         )
         require_string(derived["tool"], "{}.tool".format(derived_path), 255)
         for field in ("tool_version", "tool_revision"):
             if field in derived:
                 require_string(derived[field], "{}.{}".format(derived_path, field), 127)
-        if "parameters_sha256" in derived:
-            validate_sha256(
-                derived["parameters_sha256"],
-                "{}.parameters_sha256".format(derived_path)
-            )
         if "created_utc" in derived:
             created = require_string(
                 derived["created_utc"], "{}.created_utc".format(derived_path)
@@ -411,6 +403,9 @@ def validate_provenance(value, path):
 
     if "notes" in value:
         require_string(value["notes"], "{}.notes".format(path), 4096)
+
+    if method in ("measured", "hybrid") and "instrument" not in value:
+        raise ProfileError("{} lacks instrument".format(path))
 
 
 def validate_profile(value, path):

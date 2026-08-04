@@ -55,6 +55,8 @@ profiles/manifest.json         Profile order and default choice
 profiles/generic_2018.json     Source data for the current piano
 profiles/schema/               Versioned profile format
 tools/generate_profiles.py     Profile checker and C-table generator
+recordings/README.md           Piano recording and data rules
+recordings/example-capture.json  Small capture input example
 examples/basic.csd             Short chord example
 examples/chopin_aeolian_harp.csd  Longer musical example
 tests/smoke.csd                Native load and render test
@@ -99,6 +101,18 @@ same input therefore gives the same C text. It also rejects output above the
 browser compiler's 256 KiB source limit. Builds never run it on their own. The
 checked-in C file still holds all runtime data and remains a single source file
 for native and WASI builds.
+
+## Piano capture data
+
+The [capture guide](recordings/README.md) sets out a practical recording method
+for notes, pedals, sympathetic strings, body taps, and room sweeps. The small
+[capture example](recordings/example-capture.json) shows the data needed by a
+fitting tool.
+
+Use a generic public piano ID and class. Keep the maker, model, serial number,
+names, and exact place in local notes when needed. Raw audio stays out of Git.
+Only fitted numbers enter the profile JSON and the fixed arrays in
+`hlolli_wg_piano.c`; the runtime still uses no samples or data files.
 
 ## Stand-alone build
 

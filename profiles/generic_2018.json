@@ -222,14 +222,12 @@
       {
         "id": "bank_chabassier_2018",
         "kind": "paper",
-        "title": "Model-based digital pianos: from physics to sound synthesis",
-        "license": "Citation only; see the publication for its terms."
+        "title": "Model-based digital pianos: from physics to sound synthesis"
       },
       {
         "id": "bensa_bilbao_kronland_martinet_smith_2003",
         "kind": "paper",
-        "title": "The simulation of piano string vibration: From physical models to finite difference schemes and digital waveguides",
-        "license": "Citation only; see the publication for its terms."
+        "title": "The simulation of piano string vibration: From physical models to finite difference schemes and digital waveguides"
       }
     ],
     "notes": "Hand-tuned defaults based on the reduced real-time models in the cited papers."

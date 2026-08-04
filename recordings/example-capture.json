@@ -1,0 +1,59 @@
+{
+  "instrument": {
+    "id": "concert_grand_a",
+    "class": "grand"
+  },
+  "sample_rate_hz": 96000,
+  "bit_depth": 24,
+  "channels": [
+    {
+      "index": 1,
+      "name": "close_mid",
+      "role": "audio"
+    },
+    {
+      "index": 2,
+      "name": "hammer_speed",
+      "role": "sensor"
+    },
+    {
+      "index": 3,
+      "name": "force",
+      "role": "sensor"
+    },
+    {
+      "index": 4,
+      "name": "speaker_loopback",
+      "role": "reference"
+    }
+  ],
+  "takes": [
+    {
+      "file": "audio/note_n060_v04_r01.wav",
+      "kind": "note",
+      "repeat": 1,
+      "midi_note": 60,
+      "hammer_speed_channel": "hammer_speed",
+      "hammer_speed_mps": 2.4,
+      "pedal": {
+        "sustain": 0.0,
+        "una_corda": 0.0,
+        "sostenuto": 0.0
+      }
+    },
+    {
+      "file": "audio/body_bass_bridge_r01.wav",
+      "kind": "body",
+      "repeat": 1,
+      "point": "bass_bridge",
+      "force_channel": "force",
+      "force_n": 8.2
+    },
+    {
+      "file": "audio/room_sweep_r01.wav",
+      "kind": "room",
+      "repeat": 1,
+      "loopback_channel": "speaker_loopback"
+    }
+  ]
+}

@@ -93,19 +93,20 @@ cause interpolation; a fitting tool must write any fitted values it needs.
 
 `provenance.method` is `modeled`, `measured`, or `hybrid`. `sources` records the
 papers, data sets, audio manifests, or analysis files used for the values. A
-source has an `id`, a `kind`, a title, and a license. Its `kind` is `paper`,
-`audio_manifest`, `dataset`, or `other`. A source can also hold a stable URI and
-SHA-256.
+source has an `id`, a `kind`, and a title. Its `kind` is `paper`,
+`audio_manifest`, `dataset`, or `other`. A source can also hold a stable URI.
 
-Use `instrument` when the profile describes one piano. It holds the maker and
-model, with an optional serial number and year. `derived_with` can record
-the fitting tool, its version or revision, the parameter-file hash, and the
+Measured and hybrid profiles need an `instrument` with an `id` and the class
+`grand`, `upright`, or `other`. Keep the maker, model, serial number, and other
+details outside the profile. Use `display_name` for a plain name such as
+`Concert Grand A`.
+
+`derived_with` can record the fitting tool, its version or revision, and the
 date. These fields track where values came from without fixing how later audio
 capture and fitting tools must work.
 
 Use repository paths or stable web links for sources. Do not commit local
-`file:` links. Record the rights for any audio or data that the project keeps
-or shares.
+`file:` links. Keep raw sound and session notes outside the generated C data.
 
 ## Version 1 limits
 
