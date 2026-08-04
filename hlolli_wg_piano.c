@@ -14,8 +14,9 @@
        summed notes -> body and sympathetic modes -> shared stereo tail
 
   This is a new implementation from the equations and design ideas in those
-  papers. This module has no samples, tables, files, or platform-specific calls,
-  so the same source builds as a native plugin and as a WASI plugin.
+  papers. This module has no samples, external runtime files, or
+  platform-specific calls. Its immutable profile tables stay in this source,
+  so the same code builds as a native plugin and as a WASI plugin.
 
   Source: https://github.com/hlolli/hlolli_wg_piano
 
@@ -35,11 +36,12 @@
 #define NONLINEAR_MODES 2
 #define FELT_MODES 3
 #define RESONANCE_BODY_LINES 8
-#define RESONANCE_BODY_MODES 12
-#define SYMPATHETIC_STRINGS 88
-#define PIANO_KEYS 88
+#define WG_MAX_BODY_MODES 64
+#define WG_MAX_KEYS 97
+#define WG_MAX_SYMPATHETIC_MODES WG_MAX_KEYS
+#define WG_PROFILE_SCHEMA_VERSION 1U
 
-#define WG_PIANO_MANAGER_NAME "::hlolli_wg_piano::manager_v1::"
+#define WG_PIANO_MANAGER_NAME "::hlolli_wg_piano::manager_v2::"
 
 #define WG_PI 3.14159265358979323846264338327950288
 #define WG_TWO_PI 6.28318530717958647692528676655900576
@@ -72,6 +74,126 @@ typedef struct {
   uint32_t write_index;
   double lowpass;
 } BODY_LINE;
+
+typedef struct {
+  double tuning_cents;
+  double inharmonicity_scale;
+  double string_length_scale;
+  double string_loss_scale;
+  double unison_detune_scale;
+  double hammer_scale;
+  double damper_scale;
+  double radiation_scale;
+  double sympathetic_scale;
+} WG_KEY_PROFILE;
+
+typedef struct {
+  double strike_seconds;
+  double strike_error_depth;
+  double detune_spread;
+  double drift_sign;
+  double loss_scale;
+  double pan;
+} WG_STRING_PROFILE;
+
+typedef struct {
+  double frequency_hz;
+  double t60_seconds;
+  double weight;
+} WG_FELT_MODE_PROFILE;
+
+typedef struct {
+  double delay_seconds;
+  double injection;
+} WG_NOTE_BODY_LINE_PROFILE;
+
+typedef struct {
+  double frequency_hz;
+  double t60_seconds;
+  double gain;
+  double input_side;
+  double stereo_position;
+} WG_BODY_MODE_PROFILE;
+
+typedef struct {
+  double delay_seconds;
+  double input_side;
+  double injection;
+  double tone_scale;
+} WG_FDN_LINE_PROFILE;
+
+typedef struct {
+  const char *id;
+  uint32_t schema_version;
+  int32_t midi_min;
+  uint32_t key_count;
+  uint32_t sympathetic_mode_count;
+  uint32_t body_mode_count;
+  uint32_t fdn_line_count;
+  uint32_t variation_seed;
+  WG_KEY_PROFILE default_key;
+  const WG_KEY_PROFILE *keys;
+  WG_STRING_PROFILE strings[WG_STRINGS];
+  WG_FELT_MODE_PROFILE felt_modes[FELT_MODES];
+  WG_NOTE_BODY_LINE_PROFILE note_body_lines[BODY_LINES];
+  const WG_BODY_MODE_PROFILE *body_modes;
+  WG_FDN_LINE_PROFILE fdn_lines[RESONANCE_BODY_LINES];
+} WG_PIANO_PROFILE;
+
+/* BEGIN GENERATED PIANO PROFILE DATA */
+static const WG_BODY_MODE_PROFILE wg_generic_2018_body_modes[] = {
+    {58.0, 1.50, 0.34, -0.08, -0.55},
+    {79.0, 1.28, 0.32, 0.06, -0.45},
+    {108.0, 1.10, 0.30, -0.13, -0.35},
+    {149.0, 0.91, 0.275, 0.16, -0.25},
+    {207.0, 0.74, 0.25, -0.19, -0.15},
+    {291.0, 0.58, 0.225, 0.22, -0.05},
+    {413.0, 0.45, 0.20, -0.26, 0.05},
+    {593.0, 0.35, 0.175, 0.30, 0.15},
+    {864.0, 0.28, 0.15, -0.34, 0.25},
+    {1280.0, 0.22, 0.125, 0.38, 0.35},
+    {1960.0, 0.18, 0.10, -0.42, 0.45},
+    {3220.0, 0.145, 0.075, 0.46, 0.55}};
+
+static const WG_PIANO_PROFILE wg_profile_generic_2018 = {
+    .id = "generic_2018",
+    .schema_version = WG_PROFILE_SCHEMA_VERSION,
+    .midi_min = 21,
+    .key_count = 88U,
+    .sympathetic_mode_count = 88U,
+    .body_mode_count = 12U,
+    .fdn_line_count = RESONANCE_BODY_LINES,
+    .variation_seed = 0U,
+    .default_key = {0.0, 1.0, 1.0, 1.0, 1.0,
+                    1.0, 1.0, 1.0, 1.0},
+    .keys = NULL,
+    .strings = {
+        {0.0, 0.025, 0.0, 0.42, 1.000, -0.12},
+        {0.000007, 0.095, 1.0, 1.0, 1.035, 0.12},
+        {0.000015, 0.095, -0.82, -0.88, 0.965, 0.0}},
+    .felt_modes = {
+        {430.0, 0.058, 1.0},
+        {1040.0, 0.041, -0.58},
+        {2380.0, 0.026, 0.31}},
+    .note_body_lines = {
+        {0.01127, 0.33},
+        {0.01361, -0.29},
+        {0.01693, 0.24},
+        {0.01979, -0.20}},
+    .body_modes = wg_generic_2018_body_modes,
+    .fdn_lines = {
+        {557.0 / 48000.0, -0.42, 0.23, 0.72},
+        {683.0 / 48000.0, 0.31, -0.21, 0.83},
+        {809.0 / 48000.0, -0.20, 0.19, 0.92},
+        {947.0 / 48000.0, 0.48, -0.17, 1.00},
+        {1151.0 / 48000.0, -0.36, 0.16, 1.09},
+        {1361.0 / 48000.0, 0.16, -0.145, 1.18},
+        {1601.0 / 48000.0, 0.39, 0.13, 1.28},
+        {1999.0 / 48000.0, -0.27, -0.115, 1.38}}};
+/* END GENERATED PIANO PROFILE DATA */
+
+static const WG_PIANO_PROFILE *const wg_piano_profiles[] = {
+    &wg_profile_generic_2018};
 
 typedef struct WG_PIANO_STATE_ WG_PIANO_STATE;
 
@@ -134,6 +256,10 @@ typedef struct {
   double unison_strike_delay[WG_STRINGS];
   double unison_strike_level[WG_STRINGS];
   double unison_comb_scale[WG_STRINGS];
+  double profile_string_pan[WG_STRINGS];
+  double profile_felt_weight[FELT_MODES];
+  double profile_body_injection[BODY_LINES];
+  double profile_radiation_scale;
   double note_tuning_cents;
   double dispersion_frequency[WG_STRINGS];
   double dispersion_stiffness[WG_STRINGS];
@@ -161,6 +287,8 @@ typedef struct {
   double output_state_left;
   double output_state_right;
   int32_t tuning_initialized;
+  const WG_PIANO_PROFILE *profile;
+  const WG_KEY_PROFILE *key_profile;
   WG_PIANO_STATE *piano;
   int32_t piano_handle;
   uint64_t piano_voice_serial;
@@ -170,6 +298,7 @@ typedef struct {
 
 struct WG_PIANO_STATE_ {
   int32_t handle;
+  const WG_PIANO_PROFILE *profile;
   OPDS *renderer_owner;
   OPDS *renderer_successor;
   OPDS *renderer_retired;
@@ -191,14 +320,14 @@ struct WG_PIANO_STATE_ {
   uint32_t send_ksmps;
   uint64_t send_epoch[2];
   int32_t send_epoch_valid[2];
-  uint32_t held_keys[PIANO_KEYS];
-  uint32_t held_snapshot[2][PIANO_KEYS];
-  uint32_t rendered_held_keys[PIANO_KEYS];
+  uint32_t held_keys[WG_MAX_KEYS];
+  uint32_t held_snapshot[2][WG_MAX_KEYS];
+  uint32_t rendered_held_keys[WG_MAX_KEYS];
   uint64_t held_epoch[2];
   int32_t held_epoch_valid[2];
-  double drift_phase_origin[PIANO_KEYS][WG_STRINGS];
-  double drift_rate[PIANO_KEYS][WG_STRINGS];
-  double felt_scale[PIANO_KEYS][FELT_MODES];
+  double drift_phase_origin[WG_MAX_KEYS][WG_STRINGS];
+  double drift_rate[WG_MAX_KEYS][WG_STRINGS];
+  double felt_scale[WG_MAX_KEYS][FELT_MODES];
 
   double *memory;
   size_t memory_size;
@@ -208,21 +337,26 @@ struct WG_PIANO_STATE_ {
   double body;
   double pedal;
 
-  double body_mode_cos[RESONANCE_BODY_MODES];
-  double body_mode_sin[RESONANCE_BODY_MODES];
-  double body_mode_left[RESONANCE_BODY_MODES];
-  double body_mode_right[RESONANCE_BODY_MODES];
-  double body_mode_y1[RESONANCE_BODY_MODES];
-  double body_mode_y2[RESONANCE_BODY_MODES];
-  double sympathetic_cos[SYMPATHETIC_STRINGS];
-  double sympathetic_sin[SYMPATHETIC_STRINGS];
-  double sympathetic_input_side[SYMPATHETIC_STRINGS];
-  double sympathetic_radius_closed[SYMPATHETIC_STRINGS];
-  double sympathetic_radius_open[SYMPATHETIC_STRINGS];
-  double sympathetic_left[SYMPATHETIC_STRINGS];
-  double sympathetic_right[SYMPATHETIC_STRINGS];
-  double sympathetic_y1[SYMPATHETIC_STRINGS];
-  double sympathetic_y2[SYMPATHETIC_STRINGS];
+  double body_mode_cos[WG_MAX_BODY_MODES];
+  double body_mode_sin[WG_MAX_BODY_MODES];
+  double body_mode_left[WG_MAX_BODY_MODES];
+  double body_mode_right[WG_MAX_BODY_MODES];
+  double body_mode_gain[WG_MAX_BODY_MODES];
+  double body_mode_input_side[WG_MAX_BODY_MODES];
+  double body_mode_y1[WG_MAX_BODY_MODES];
+  double body_mode_y2[WG_MAX_BODY_MODES];
+  double sympathetic_cos[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_sin[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_input_side[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_radius_closed[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_radius_open[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_left[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_right[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_y1[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_y2[WG_MAX_SYMPATHETIC_MODES];
+  double fdn_input_side[RESONANCE_BODY_LINES];
+  double fdn_injection[RESONANCE_BODY_LINES];
+  double fdn_tone_scale[RESONANCE_BODY_LINES];
 
   double input_dc_left;
   double input_dc_right;
@@ -244,6 +378,12 @@ typedef struct {
   OPDS h;
   MYFLT *handle;
 } HLOLLI_WG_PIANO_CREATE;
+
+typedef struct {
+  OPDS h;
+  MYFLT *handle;
+  STRINGDAT *profile_name;
+} HLOLLI_WG_PIANO_CREATE_NAMED;
 
 typedef struct {
   OPDS h;
@@ -286,6 +426,142 @@ static double wg_input(const MYFLT *value, double fallback)
 {
   const double result = (double)*value;
   return isfinite(result) ? result : fallback;
+}
+
+static const WG_PIANO_PROFILE *wg_default_profile(void)
+{
+  return &wg_profile_generic_2018;
+}
+
+static const WG_PIANO_PROFILE *wg_find_profile(const char *name)
+{
+  uint32_t index;
+
+  if (name == NULL || name[0] == '\0') {
+    return NULL;
+  }
+  for (index = 0U;
+       index < (uint32_t)(sizeof(wg_piano_profiles) /
+                          sizeof(wg_piano_profiles[0]));
+       index++) {
+    if (strcmp(name, wg_piano_profiles[index]->id) == 0) {
+      return wg_piano_profiles[index];
+    }
+  }
+  return NULL;
+}
+
+static int32_t wg_key_profile_is_valid(const WG_KEY_PROFILE *key)
+{
+  return key != NULL && isfinite(key->tuning_cents) &&
+         fabs(key->tuning_cents) <= 1200.0 &&
+         key->inharmonicity_scale >= 0.01 &&
+         key->inharmonicity_scale <= 100.0 &&
+         key->string_length_scale >= 0.01 &&
+         key->string_length_scale <= 100.0 &&
+         key->string_loss_scale >= 0.01 &&
+         key->string_loss_scale <= 100.0 &&
+         key->unison_detune_scale >= 0.0 &&
+         key->unison_detune_scale <= 100.0 &&
+         key->hammer_scale >= 0.0 && key->hammer_scale <= 100.0 &&
+         key->damper_scale >= 0.01 && key->damper_scale <= 100.0 &&
+         key->radiation_scale >= 0.0 && key->radiation_scale <= 100.0 &&
+         key->sympathetic_scale >= 0.0 &&
+         key->sympathetic_scale <= 100.0;
+}
+
+static int32_t wg_profile_is_valid(const WG_PIANO_PROFILE *profile)
+{
+  uint32_t index;
+
+  if (profile == NULL || profile->id == NULL || profile->id[0] == '\0' ||
+      strlen(profile->id) > 63U ||
+      profile->schema_version != WG_PROFILE_SCHEMA_VERSION ||
+      profile->key_count == 0U || profile->key_count > WG_MAX_KEYS ||
+      profile->sympathetic_mode_count < 2U ||
+      profile->sympathetic_mode_count > WG_MAX_SYMPATHETIC_MODES ||
+      profile->sympathetic_mode_count > profile->key_count ||
+      profile->body_mode_count == 0U ||
+      profile->body_mode_count > WG_MAX_BODY_MODES ||
+      profile->fdn_line_count != RESONANCE_BODY_LINES ||
+      profile->body_modes == NULL ||
+      profile->midi_min < 0 ||
+      profile->midi_min + (int32_t)profile->key_count - 1 > 127) {
+    return 0;
+  }
+  if (!wg_key_profile_is_valid(&profile->default_key)) {
+    return 0;
+  }
+  if (profile->keys != NULL) {
+    for (index = 0U; index < profile->key_count; index++) {
+      if (!wg_key_profile_is_valid(&profile->keys[index])) {
+        return 0;
+      }
+    }
+  }
+  for (index = 0U; index < WG_STRINGS; index++) {
+    const WG_STRING_PROFILE *string = &profile->strings[index];
+    if (!isfinite(string->strike_seconds) || string->strike_seconds < 0.0 ||
+        string->strike_seconds > 0.04 ||
+        !isfinite(string->strike_error_depth) ||
+        string->strike_error_depth < 0.0 ||
+        string->strike_error_depth > 100.0 ||
+        !isfinite(string->detune_spread) ||
+        fabs(string->detune_spread) > 100.0 ||
+        !isfinite(string->drift_sign) || fabs(string->drift_sign) > 100.0 ||
+        !isfinite(string->loss_scale) ||
+        string->loss_scale < 0.01 || string->loss_scale > 100.0 ||
+        !isfinite(string->pan) || fabs(string->pan) > 1.0) {
+      return 0;
+    }
+  }
+  for (index = 0U; index < FELT_MODES; index++) {
+    const WG_FELT_MODE_PROFILE *mode = &profile->felt_modes[index];
+    if (!(mode->frequency_hz > 0.0) || mode->frequency_hz > 100000.0 ||
+        !(mode->t60_seconds > 0.0) || mode->t60_seconds > 120.0 ||
+        !isfinite(mode->weight) || fabs(mode->weight) > 100.0) {
+      return 0;
+    }
+  }
+  for (index = 0U; index < BODY_LINES; index++) {
+    const WG_NOTE_BODY_LINE_PROFILE *line =
+        &profile->note_body_lines[index];
+    if (!(line->delay_seconds > 0.0) || line->delay_seconds > 2.0 ||
+        !isfinite(line->injection) || fabs(line->injection) > 100.0) {
+      return 0;
+    }
+  }
+  for (index = 0U; index < profile->body_mode_count; index++) {
+    const WG_BODY_MODE_PROFILE *mode = &profile->body_modes[index];
+    if (!(mode->frequency_hz > 0.0) || mode->frequency_hz > 100000.0 ||
+        !(mode->t60_seconds > 0.0) || mode->t60_seconds > 120.0 ||
+        !isfinite(mode->gain) || fabs(mode->gain) > 100.0 ||
+        !isfinite(mode->input_side) || fabs(mode->input_side) > 100.0 ||
+        !isfinite(mode->stereo_position) ||
+        fabs(mode->stereo_position) > 1.0) {
+      return 0;
+    }
+  }
+  for (index = 0U; index < RESONANCE_BODY_LINES; index++) {
+    const WG_FDN_LINE_PROFILE *line = &profile->fdn_lines[index];
+    if (!(line->delay_seconds > 0.0) || line->delay_seconds > 2.0 ||
+        !isfinite(line->input_side) || fabs(line->input_side) > 100.0 ||
+        !isfinite(line->injection) || fabs(line->injection) > 100.0 ||
+        !isfinite(line->tone_scale) ||
+        line->tone_scale < 0.01 || line->tone_scale > 100.0) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+static const WG_KEY_PROFILE *wg_profile_key(
+    const WG_PIANO_PROFILE *profile, uint32_t key)
+{
+  if (profile->keys != NULL && key < profile->key_count) {
+    return &profile->keys[key];
+  }
+  return &profile->default_key;
 }
 
 static double wg_smoothstep(double low, double high, double value)
@@ -437,7 +713,9 @@ static double wg_solve_dispersion(double omega1, double omega_reference,
 }
 
 static double wg_design_dispersion(double frequency, double stiffness,
-                                   double strange, double sample_rate,
+                                   double strange,
+                                   double inharmonicity_scale,
+                                   double sample_rate,
                                    double *inharmonicity,
                                    uint32_t *reference_partial,
                                    uint32_t *stage_count,
@@ -452,6 +730,7 @@ static double wg_design_dispersion(double frequency, double stiffness,
   uint32_t iteration;
 
   *inharmonicity = wg_paper_inharmonicity(frequency) *
+      inharmonicity_scale *
       pow(2.0, 3.5 * (stiffness - 0.42));
   if (strange > 0.0) {
     *inharmonicity *= 1.0 + 6.0 * strange * strange;
@@ -532,21 +811,19 @@ static double wg_white_noise(HLOLLI_WG_PIANO *p)
 
 static void wg_randomize_strike(HLOLLI_WG_PIANO *p)
 {
-  static const double strike_seconds[WG_STRINGS] = {
-      0.0, 0.000007, 0.000015};
   uint32_t index;
 
   /* A piano tuner leaves the note centre steady, but no two unisons or
      hammer contacts are exact copies. These values stay fixed for one hit. */
   p->note_tuning_cents = 0.065 * wg_white_noise(p);
   for (index = 0U; index < WG_STRINGS; index++) {
-    const double error_depth = (index == 0U ? 0.025 : 0.095);
+    const WG_STRING_PROFILE *string = &p->profile->strings[index];
     const double delay_jitter = 0.95 + 0.10 *
         (0.5 + 0.5 * wg_white_noise(p));
     p->unison_static_cents[index] =
-        error_depth * wg_white_noise(p);
+        string->strike_error_depth * wg_white_noise(p);
     p->unison_strike_delay[index] =
-        strike_seconds[index] * p->sample_rate * delay_jitter;
+        string->strike_seconds * p->sample_rate * delay_jitter;
     p->unison_strike_level[index] =
         1.0 + 0.026 * wg_white_noise(p);
     p->unison_comb_scale[index] =
@@ -557,11 +834,13 @@ static void wg_randomize_strike(HLOLLI_WG_PIANO *p)
 static double wg_delay_read(const double *data, uint32_t size,
                             uint32_t write_index, double delay)
 {
-  double position = (double)write_index - delay;
+  double position;
   uint32_t index0;
   uint32_t index1;
   double fraction;
 
+  delay = wg_clamp(delay, 0.0, (double)size - 2.0);
+  position = (double)write_index - delay;
   if (position < 0.0) {
     position += (double)size;
   }
@@ -670,6 +949,7 @@ static void wg_start_hammer(HLOLLI_WG_PIANO *p, double trigger)
   p->hammer_max_samples = 2U * p->hammer_samples + 4U;
   p->hammer_sample = 0U;
   p->hammer_amplitude =
+      p->key_profile->hammer_scale *
       0.62 * pow(velocity, 1.28) * (0.76 + 0.34 * hardness);
   p->hammer_hit_hardness = hardness;
   p->hammer_contact_power = 1.35 + 1.50 * hardness;
@@ -787,13 +1067,15 @@ static uint32_t wg_hash_u32(uint32_t value)
   return value;
 }
 
-static double wg_profile_noise(int32_t handle, uint32_t key,
+static double wg_profile_noise(const WG_PIANO_PROFILE *profile,
+                               int32_t handle, uint32_t key,
                                uint32_t lane, uint32_t salt)
 {
   uint32_t value = (uint32_t)handle * 0x9e3779b9U;
   value ^= key * 0x85ebca6bU;
   value ^= lane * 0xc2b2ae35U;
   value ^= salt;
+  value ^= profile->variation_seed;
   return 2.0 * ((double)wg_hash_u32(value) / 4294967295.0) - 1.0;
 }
 
@@ -802,20 +1084,20 @@ static void wg_initialize_piano_profile(WG_PIANO_STATE *state)
   uint32_t key;
   uint32_t lane;
 
-  for (key = 0U; key < PIANO_KEYS; key++) {
+  for (key = 0U; key < state->profile->key_count; key++) {
     for (lane = 0U; lane < WG_STRINGS; lane++) {
       state->drift_phase_origin[key][lane] =
-          0.5 + 0.5 * wg_profile_noise(state->handle, key, lane,
-                                       0x243f6a88U);
+          0.5 + 0.5 * wg_profile_noise(state->profile, state->handle,
+                                       key, lane, 0x243f6a88U);
       state->drift_rate[key][lane] =
           0.012 + 0.016 *
-          (0.5 + 0.5 * wg_profile_noise(state->handle, key, lane,
-                                        0x13198a2eU));
+          (0.5 + 0.5 * wg_profile_noise(state->profile, state->handle,
+                                        key, lane, 0x13198a2eU));
     }
     for (lane = 0U; lane < FELT_MODES; lane++) {
       state->felt_scale[key][lane] =
-          1.0 + 0.018 * wg_profile_noise(state->handle, key, lane,
-                                         0xa4093822U);
+          1.0 + 0.018 * wg_profile_noise(state->profile, state->handle,
+                                         key, lane, 0xa4093822U);
     }
   }
 }
@@ -934,12 +1216,13 @@ static WG_PIANO_STATE *wg_find_piano_locked(WG_PIANO_MANAGER *manager,
 
 static WG_PIANO_STATE *wg_allocate_piano_state(CSOUND *csound,
                                                 int32_t handle,
-                                                uint32_t ksmps)
+                                                uint32_t ksmps,
+                                                const WG_PIANO_PROFILE *profile)
 {
   WG_PIANO_STATE *state;
   size_t samples;
 
-  if (ksmps == 0U) {
+  if (ksmps == 0U || !wg_profile_is_valid(profile)) {
     return NULL;
   }
   state = (WG_PIANO_STATE *)csound->Calloc(csound,
@@ -948,6 +1231,7 @@ static WG_PIANO_STATE *wg_allocate_piano_state(CSOUND *csound,
     return NULL;
   }
   state->handle = handle;
+  state->profile = profile;
   state->send_ksmps = ksmps;
   state->resonance_lock = csound->Create_Mutex(0);
   state->send_lock = csound->Create_Mutex(0);
@@ -987,7 +1271,8 @@ static WG_PIANO_STATE *wg_get_default_piano(CSOUND *csound, uint32_t ksmps)
   csound->LockMutex(manager->lock);
   state = wg_find_piano_locked(manager, 0);
   if (state == NULL) {
-    state = wg_allocate_piano_state(csound, 0, ksmps);
+    state = wg_allocate_piano_state(csound, 0, ksmps,
+                                    wg_default_profile());
     if (state != NULL) {
       state->next = manager->first;
       manager->first = state;
@@ -1022,14 +1307,19 @@ static WG_PIANO_STATE *wg_get_piano_by_handle(CSOUND *csound,
   return state;
 }
 
-static int32_t hlolli_wg_piano_create_init(
-    CSOUND *csound, HLOLLI_WG_PIANO_CREATE *p)
+static int32_t wg_create_piano(CSOUND *csound, OPDS *h, MYFLT *out_handle,
+                               const WG_PIANO_PROFILE *profile)
 {
-  WG_PIANO_MANAGER *manager = wg_get_piano_manager(csound);
+  WG_PIANO_MANAGER *manager;
   WG_PIANO_STATE *state;
   const uint32_t engine_ksmps = wg_engine_ksmps(csound);
   int32_t handle;
 
+  if (UNLIKELY(!wg_profile_is_valid(profile))) {
+    return csound->InitError(
+        csound, "hlolli_wg_piano_create: invalid piano profile data\n");
+  }
+  manager = wg_get_piano_manager(csound);
   if (UNLIKELY(manager == NULL)) {
     return csound->InitError(
         csound, "hlolli_wg_piano_create: cannot allocate manager\n");
@@ -1038,7 +1328,7 @@ static int32_t hlolli_wg_piano_create_init(
     return csound->InitError(
         csound, "hlolli_wg_piano_create: invalid engine ksmps\n");
   }
-  if (UNLIKELY(p->h.insdshead->ksmps != engine_ksmps)) {
+  if (UNLIKELY(h->insdshead->ksmps != engine_ksmps)) {
     return csound->InitError(
         csound,
         "hlolli_wg_piano_create: piano handles require engine ksmps %u\n",
@@ -1051,7 +1341,7 @@ static int32_t hlolli_wg_piano_create_init(
     return csound->InitError(
         csound, "hlolli_wg_piano_create: no handles remain\n");
   }
-  state = wg_allocate_piano_state(csound, handle, engine_ksmps);
+  state = wg_allocate_piano_state(csound, handle, engine_ksmps, profile);
   if (state == NULL) {
     csound->UnlockMutex(manager->lock);
     return csound->InitError(
@@ -1061,8 +1351,31 @@ static int32_t hlolli_wg_piano_create_init(
   manager->first = state;
   manager->next_handle++;
   csound->UnlockMutex(manager->lock);
-  *p->handle = (MYFLT)handle;
+  *out_handle = (MYFLT)handle;
   return OK;
+}
+
+static int32_t hlolli_wg_piano_create_init(
+    CSOUND *csound, HLOLLI_WG_PIANO_CREATE *p)
+{
+  return wg_create_piano(csound, &p->h, p->handle, wg_default_profile());
+}
+
+static int32_t hlolli_wg_piano_create_named_init(
+    CSOUND *csound, HLOLLI_WG_PIANO_CREATE_NAMED *p)
+{
+  const char *name = p->profile_name != NULL &&
+                             p->profile_name->data != NULL
+                         ? p->profile_name->data
+                         : "";
+  const WG_PIANO_PROFILE *profile = wg_find_profile(name);
+
+  if (UNLIKELY(profile == NULL)) {
+    return csound->InitError(
+        csound, "hlolli_wg_piano_create: unknown piano profile \"%s\"\n",
+        name);
+  }
+  return wg_create_piano(csound, &p->h, p->handle, profile);
 }
 
 static void wg_set_note_key_down(CSOUND *csound,
@@ -1184,8 +1497,6 @@ static void wg_clear_signal_state(HLOLLI_WG_PIANO *p)
 
 static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
 {
-  static const double body_seconds[BODY_LINES] = {
-      0.01127, 0.01361, 0.01693, 0.01979};
   double *memory;
   double initial_frequency;
   double requested_handle;
@@ -1203,16 +1514,57 @@ static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
   p->piano_voice_serial = 0U;
   p->piano_key = 0U;
   p->piano_key_down = 0;
+  p->profile = wg_default_profile();
+  p->key_profile = &p->profile->default_key;
   if (!(p->sample_rate > 1000.0) || p->sample_rate > 768000.0 ||
       !isfinite(p->sample_rate)) {
     return csound->InitError(csound,
                              "hlolli_wg_piano: invalid sample rate\n");
   }
 
+  initial_frequency = wg_clamp(wg_input(p->kfrequency, 440.0), 20.0,
+                               0.45 * p->sample_rate);
+  requested_handle = p->ipiano != NULL ? (double)*p->ipiano : 0.0;
+  if (requested_handle != 0.0) {
+    const int32_t handle = wg_read_piano_handle(p->ipiano);
+    if (UNLIKELY(handle < 1)) {
+      return csound->InitError(
+          csound, "hlolli_wg_piano: piano handle must be a positive integer\n");
+    }
+    p->piano = wg_get_piano_by_handle(csound, handle);
+    if (UNLIKELY(p->piano == NULL)) {
+      return csound->InitError(
+          csound, "hlolli_wg_piano: unknown piano handle %d\n", handle);
+    }
+    if (UNLIKELY(p->piano->send_ksmps != CS_KSMPS)) {
+      return csound->InitError(
+          csound,
+          "hlolli_wg_piano: piano handle %d requires engine ksmps %u\n",
+          handle, p->piano->send_ksmps);
+    }
+    p->piano_handle = handle;
+    p->profile = p->piano->profile;
+  }
+  if (UNLIKELY(!wg_profile_is_valid(p->profile))) {
+    return csound->InitError(
+        csound, "hlolli_wg_piano: invalid piano profile data\n");
+  }
+  for (index = 0U; index < WG_STRINGS; index++) {
+    p->profile_string_pan[index] = p->profile->strings[index].pan;
+  }
+  for (index = 0U; index < FELT_MODES; index++) {
+    p->profile_felt_weight[index] = p->profile->felt_modes[index].weight;
+  }
+  for (index = 0U; index < BODY_LINES; index++) {
+    p->profile_body_injection[index] =
+        p->profile->note_body_lines[index].injection;
+  }
+
   rail_size = (uint32_t)(p->sample_rate / 20.0) + 32U;
   total_doubles = (size_t)rail_size * (WG_STRINGS + 1U);
   for (index = 0U; index < BODY_LINES; index++) {
-    body_sizes[index] = wg_odd_size(p->sample_rate, body_seconds[index]);
+    body_sizes[index] = wg_odd_size(
+        p->sample_rate, p->profile->note_body_lines[index].delay_seconds);
     total_doubles += (size_t)body_sizes[index];
   }
 
@@ -1251,39 +1603,25 @@ static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
     memory += body_sizes[index];
   }
 
-  initial_frequency = wg_clamp(wg_input(p->kfrequency, 440.0), 20.0,
-                               0.45 * p->sample_rate);
-  requested_handle = p->ipiano != NULL ? (double)*p->ipiano : 0.0;
-  if (requested_handle != 0.0) {
-    const int32_t handle = wg_read_piano_handle(p->ipiano);
+  {
     int32_t midi_key;
-    if (UNLIKELY(handle < 1)) {
-      return csound->InitError(
-          csound, "hlolli_wg_piano: piano handle must be a positive integer\n");
-    }
-    p->piano = wg_get_piano_by_handle(csound, handle);
-    if (UNLIKELY(p->piano == NULL)) {
-      return csound->InitError(
-          csound, "hlolli_wg_piano: unknown piano handle %d\n", handle);
-    }
-    if (UNLIKELY(p->piano->send_ksmps != CS_KSMPS)) {
-      return csound->InitError(
-          csound,
-          "hlolli_wg_piano: piano handle %d requires engine ksmps %u\n",
-          handle, p->piano->send_ksmps);
-    }
     midi_key = (int32_t)floor(wg_frequency_to_midi(initial_frequency) + 0.5);
-    if (midi_key < 21) {
-      midi_key = 21;
-    } else if (midi_key > 108) {
-      midi_key = 108;
+    if (midi_key < p->profile->midi_min) {
+      midi_key = p->profile->midi_min;
+    } else if (midi_key >=
+               p->profile->midi_min + (int32_t)p->profile->key_count) {
+      midi_key = p->profile->midi_min +
+                 (int32_t)p->profile->key_count - 1;
     }
-    p->piano_handle = handle;
-    p->piano_key = (uint32_t)(midi_key - 21);
-    csound->LockMutex(p->piano->send_lock);
-    p->piano->voice_serial++;
-    p->piano_voice_serial = p->piano->voice_serial;
-    csound->UnlockMutex(p->piano->send_lock);
+    p->piano_key = (uint32_t)(midi_key - p->profile->midi_min);
+    p->key_profile = wg_profile_key(p->profile, p->piano_key);
+    p->profile_radiation_scale = p->key_profile->radiation_scale;
+    if (p->piano != NULL) {
+      csound->LockMutex(p->piano->send_lock);
+      p->piano->voice_serial++;
+      p->piano_voice_serial = p->piano->voice_serial;
+      csound->UnlockMutex(p->piano->send_lock);
+    }
   }
   p->frequency = initial_frequency;
   p->hardness = wg_clamp(wg_input(p->khardness, 0.45), 0.0, 1.0);
@@ -1334,7 +1672,8 @@ static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
                       (uint32_t)(instance_salt >> 32U) ^
                       (uint32_t)piano_salt ^
                       (uint32_t)(piano_salt >> 32U) ^
-                      (uint32_t)(initial_frequency * 655.0);
+                      (uint32_t)(initial_frequency * 655.0) ^
+                      p->profile->variation_seed;
   }
   if (p->random_state == 0U) {
     p->random_state = 0x9e3779b9U;
@@ -1470,6 +1809,20 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
   double board_dc_coefficient;
   double output_dc_pole;
   int32_t key_down;
+  const double profile_string_pan[WG_STRINGS] = {
+      p->profile_string_pan[0],
+      p->profile_string_pan[1],
+      p->profile_string_pan[2]};
+  const double profile_felt_weight[FELT_MODES] = {
+      p->profile_felt_weight[0],
+      p->profile_felt_weight[1],
+      p->profile_felt_weight[2]};
+  const double profile_body_injection[BODY_LINES] = {
+      p->profile_body_injection[0],
+      p->profile_body_injection[1],
+      p->profile_body_injection[2],
+      p->profile_body_injection[3]};
+  const double profile_radiation_scale = p->profile_radiation_scale;
 
   IGN(csound);
 
@@ -1550,19 +1903,21 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
   detune_cents += 10.0 * p->strange * p->strange;
   detune_cents *=
       1.0 + 0.18 * sin(WG_TWO_PI * p->strange_phase) * fabs(p->strange);
+  detune_cents *= p->key_profile->unison_detune_scale;
 
   {
-    static const double spread[WG_STRINGS] = {0.0, 1.0, -0.82};
-    static const double drift_sign[WG_STRINGS] = {0.42, 1.0, -0.88};
     const double drift_depth =
         (0.012 + 0.040 * p->detune) *
         (1.0 + 2.2 * fabs(p->strange));
     for (string_index = 0U; string_index < WG_STRINGS; string_index++) {
+      const WG_STRING_PROFILE *string =
+          &p->profile->strings[string_index];
       const double drift_cents =
-          drift_sign[string_index] * drift_depth *
+          string->drift_sign * drift_depth *
           sin(WG_TWO_PI * p->unison_drift_phase[string_index]);
-      const double cents = p->note_tuning_cents +
-                           spread[string_index] * detune_cents +
+      const double cents = p->key_profile->tuning_cents +
+                           p->note_tuning_cents +
+                           string->detune_spread * detune_cents +
                            p->unison_static_cents[string_index] +
                            drift_cents;
       string_frequency[string_index] =
@@ -1605,8 +1960,6 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
   bridge_reflection_mix = 0.10 + 0.28 * p->body;
 
   for (string_index = 0U; string_index < WG_STRINGS; string_index++) {
-    static const double unison_loss_scale[WG_STRINGS] = {
-        1.000, 1.035, 0.965};
     double frequency = wg_clamp(string_frequency[string_index], 20.0,
                                 0.43 * sample_rate);
     double inharmonicity;
@@ -1659,7 +2012,8 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
             2.0e-4 ||
         fabs(p->strange - p->dispersion_strange[string_index]) > 2.0e-4) {
       coefficient = wg_design_dispersion(
-          frequency, p->stiffness, p->strange, sample_rate,
+          frequency, p->stiffness, p->strange,
+          p->key_profile->inharmonicity_scale, sample_rate,
           &inharmonicity, &reference_partial,
           &active_dispersion_stages, &dispersion_delay);
       if (active_dispersion_stages !=
@@ -1705,7 +2059,8 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
                                omega, 0.90 * WG_PI);
 
     calibrated_frequency = wg_clamp(frequency, 27.5, 4186.0);
-    length = wg_paper_string_length(calibrated_frequency);
+    length = wg_paper_string_length(calibrated_frequency) *
+             p->key_profile->string_length_scale;
     ideal_frequency = frequency / sqrt(1.0 + inharmonicity);
     b1 = wg_clamp(4.4e-3 * calibrated_frequency - 4.0e-2,
                   0.02, 20.0);
@@ -1716,7 +2071,8 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
        measured equivalent-string loss in Bensa et al. */
     decay_shape = 0.22 + 2.15 * p->decay * p->decay;
     loss_scale = wg_clamp(1.2735 / decay_shape, 0.537, 5.79) *
-                 unison_loss_scale[string_index];
+                 p->profile->strings[string_index].loss_scale *
+                 p->key_profile->string_loss_scale;
     /* The paper's equivalent-string loss already includes the measured
        bridge.  Trim the small extra loss from this reduced unison junction. */
     loss_scale *= 0.92 - 0.06 *
@@ -1740,7 +2096,8 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
     damper_contact = key_down ? 0.0 :
         damper_presence * (1.0 - pedal_open);
     damper_t60 = 0.18 - 0.115 * wg_smoothstep(36.0, 84.0, midi);
-    damper_t60 = wg_clamp(damper_t60, 0.055, 0.18);
+    damper_t60 = wg_clamp(
+        damper_t60 * p->key_profile->damper_scale, 0.025, 2.0);
     damper_rate = WG_LN_1000 / damper_t60;
     lambda1 += damper_contact * damper_rate;
     lambda_reference += damper_contact * damper_rate *
@@ -1860,14 +2217,14 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
       (1.0 - 0.14 * wg_smoothstep(0.0, 0.22, treble_amount)) *
       (1.0 - 0.98 * wg_smoothstep(0.22, 0.88, treble_amount));
   for (string_index = 0U; string_index < FELT_MODES; string_index++) {
-    static const double mode_hz[FELT_MODES] = {430.0, 1040.0, 2380.0};
-    static const double mode_t60[FELT_MODES] = {0.058, 0.041, 0.026};
+    const WG_FELT_MODE_PROFILE *mode =
+        &p->profile->felt_modes[string_index];
     const double mode_frequency = wg_clamp(
-        mode_hz[string_index] * p->felt_mode_scale[string_index] *
+        mode->frequency_hz * p->felt_mode_scale[string_index] *
             (0.94 + 0.06 * treble_amount),
         90.0, 0.42 * sample_rate);
     const double t60 =
-        mode_t60[string_index] * (0.78 + 0.34 * p->body);
+        mode->t60_seconds * (0.78 + 0.34 * p->body);
     const double radius = exp(-WG_LN_1000 / (t60 * sample_rate));
     felt_a1[string_index] =
         2.0 * radius * cos(WG_TWO_PI * mode_frequency / sample_rate);
@@ -1928,10 +2285,6 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
   }
 
   for (sample = offset; sample < limit; sample++) {
-    static const double pan[WG_STRINGS] = {-0.12, 0.12, 0.0};
-    static const double body_injection[BODY_LINES] = {
-        0.33, -0.29, 0.24, -0.20};
-    static const double felt_weight[FELT_MODES] = {1.0, -0.58, 0.31};
     double hammer = wg_hammer_tick(p);
     double hammer_input[WG_STRINGS];
     double hammer_point_motion = 0.0;
@@ -2020,7 +2373,8 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
                           felt_a2[string_index] * p->felt_y2[string_index];
       p->felt_y2[string_index] = p->felt_y1[string_index];
       p->felt_y1[string_index] = mode;
-      felt_resonance += felt_weight[string_index] * register_tilt * mode;
+      felt_resonance += profile_felt_weight[string_index] *
+                        register_tilt * mode;
     }
     felt_resonance *= felt_register_gain;
 
@@ -2090,7 +2444,7 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
           p->unison_strike_level[string_index] *
           string_weight[string_index] * weight_norm;
       const double rail_output = loop_signal[string_index];
-      const double panning = pan[string_index];
+      const double panning = profile_string_pan[string_index];
 
       string->data[string->write_index] =
           loop_gain[string_index] * mixed + injection;
@@ -2143,7 +2497,8 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
             (bridge_input + 0.38 * felt_mix * felt_resonance);
     p->radiation_dc += board_dc_coefficient *
         (p->radiation_lowpass - p->radiation_dc);
-    radiation = p->radiation_lowpass - p->radiation_dc;
+    radiation = (p->radiation_lowpass - p->radiation_dc) *
+                profile_radiation_scale;
 
     for (string_index = 0U; string_index < BODY_LINES; string_index++) {
       BODY_LINE *line = &p->body_lines[string_index];
@@ -2180,7 +2535,7 @@ static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
           body_lowpass_coefficient * line->lowpass +
           (1.0 - body_lowpass_coefficient) * scattered;
       line->data[line->write_index] =
-          body_injection[string_index] * board_input +
+          profile_body_injection[string_index] * board_input +
           body_feedback * line->lowpass;
       line->write_index++;
       if (line->write_index >= line->size) {
@@ -2305,13 +2660,6 @@ static int32_t wg_resonance_state_init(
     CSOUND *csound, OPDS *h, WG_PIANO_STATE *p,
     const MYFLT *kbody, const MYFLT *kpedal)
 {
-  static const double body_mode_hz[RESONANCE_BODY_MODES] = {
-      58.0, 79.0, 108.0, 149.0, 207.0, 291.0,
-      413.0, 593.0, 864.0, 1280.0, 1960.0, 3220.0};
-  static const double body_line_seconds[RESONANCE_BODY_LINES] = {
-      557.0 / 48000.0, 683.0 / 48000.0, 809.0 / 48000.0,
-      947.0 / 48000.0, 1151.0 / 48000.0, 1361.0 / 48000.0,
-      1601.0 / 48000.0, 1999.0 / 48000.0};
   double *memory;
   size_t total_doubles = 0U;
   uint32_t line_sizes[RESONANCE_BODY_LINES];
@@ -2335,9 +2683,13 @@ static int32_t wg_resonance_state_init(
   }
 
   for (index = 0U; index < RESONANCE_BODY_LINES; index++) {
+    const WG_FDN_LINE_PROFILE *line = &p->profile->fdn_lines[index];
     line_sizes[index] = wg_odd_size(p->sample_rate,
-                                    body_line_seconds[index]);
+                                    line->delay_seconds);
     total_doubles += (size_t)line_sizes[index];
+    p->fdn_input_side[index] = line->input_side;
+    p->fdn_injection[index] = line->injection;
+    p->fdn_tone_scale[index] = line->tone_scale;
   }
   p->memory_size = total_doubles * sizeof(double);
   p->memory = (double *)csound->Calloc(csound, p->memory_size);
@@ -2358,24 +2710,26 @@ static int32_t wg_resonance_state_init(
   p->body = wg_clamp(wg_input(kbody, 0.72), 0.0, 1.0);
   p->pedal = wg_clamp(wg_input(kpedal, 0.0), 0.0, 1.0);
 
-  for (index = 0U; index < RESONANCE_BODY_MODES; index++) {
+  for (index = 0U; index < p->profile->body_mode_count; index++) {
+    const WG_BODY_MODE_PROFILE *mode = &p->profile->body_modes[index];
     const double frequency = wg_clamp(
-        body_mode_hz[index], 20.0, 0.42 * p->sample_rate);
-    const double position = -0.55 + 1.10 *
-        ((double)index / (double)(RESONANCE_BODY_MODES - 1U));
+        mode->frequency_hz, 20.0, 0.42 * p->sample_rate);
+    const double position = mode->stereo_position;
     const double angle = WG_TWO_PI * frequency / p->sample_rate;
     p->body_mode_cos[index] =
         cos(angle);
     p->body_mode_sin[index] = sin(angle);
     p->body_mode_left[index] = sqrt(0.5 * (1.0 - position));
     p->body_mode_right[index] = sqrt(0.5 * (1.0 + position));
+    p->body_mode_gain[index] = mode->gain;
+    p->body_mode_input_side[index] = mode->input_side;
   }
 
-  for (index = 0U; index < SYMPATHETIC_STRINGS; index++) {
-    const double midi = 21.0 + (double)index;
+  for (index = 0U; index < p->profile->sympathetic_mode_count; index++) {
+    const double midi = (double)p->profile->midi_min + (double)index;
     const double frequency = 440.0 * pow(2.0, (midi - 69.0) / 12.0);
     const double position = (double)index /
-                            (double)(SYMPATHETIC_STRINGS - 1U);
+                            (double)(p->profile->sympathetic_mode_count - 1U);
     const double pan = -0.72 + 1.44 * position;
     const double t60_open =
         0.75 + 4.75 / (1.0 + pow(frequency / 300.0, 0.72));
@@ -2426,31 +2780,19 @@ static int32_t wg_resonance_process(
     const MYFLT *kbody, const MYFLT *kpedal,
     WG_PIANO_STATE *p)
 {
-  static const double body_mode_t60[RESONANCE_BODY_MODES] = {
-      1.50, 1.28, 1.10, 0.91, 0.74, 0.58,
-      0.45, 0.35, 0.28, 0.22, 0.18, 0.145};
-  static const double body_mode_gain[RESONANCE_BODY_MODES] = {
-      0.34, 0.32, 0.30, 0.275, 0.25, 0.225,
-      0.20, 0.175, 0.15, 0.125, 0.10, 0.075};
-  static const double body_mode_side[RESONANCE_BODY_MODES] = {
-      -0.08, 0.06, -0.13, 0.16, -0.19, 0.22,
-      -0.26, 0.30, -0.34, 0.38, -0.42, 0.46};
-  static const double fdn_input_side[RESONANCE_BODY_LINES] = {
-      -0.42, 0.31, -0.20, 0.48, -0.36, 0.16, 0.39, -0.27};
-  static const double fdn_injection[RESONANCE_BODY_LINES] = {
-      0.23, -0.21, 0.19, -0.17, 0.16, -0.145, 0.13, -0.115};
-  static const double fdn_tone_scale[RESONANCE_BODY_LINES] = {
-      0.72, 0.83, 0.92, 1.00, 1.09, 1.18, 1.28, 1.38};
   const double sample_rate = p->sample_rate;
+  const uint32_t body_mode_count = p->profile->body_mode_count;
+  const uint32_t sympathetic_mode_count =
+      p->profile->sympathetic_mode_count;
   const uint32_t ksmps = h->insdshead->ksmps;
   uint32_t offset = h->insdshead->ksmps_offset;
   uint32_t early = h->insdshead->ksmps_no_end;
   uint32_t limit = ksmps - early;
-  double body_radius[RESONANCE_BODY_MODES];
-  double sympathetic_radius[SYMPATHETIC_STRINGS];
-  double sympathetic_coupling[SYMPATHETIC_STRINGS];
-  double sympathetic_drive[SYMPATHETIC_STRINGS];
-  int32_t held_keys[SYMPATHETIC_STRINGS];
+  double body_radius[WG_MAX_BODY_MODES];
+  double sympathetic_radius[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_coupling[WG_MAX_SYMPATHETIC_MODES];
+  double sympathetic_drive[WG_MAX_SYMPATHETIC_MODES];
+  int32_t held_keys[WG_MAX_KEYS];
   double fdn_feedback[RESONANCE_BODY_LINES];
   double fdn_lowpass[RESONANCE_BODY_LINES];
   double body_target;
@@ -2504,7 +2846,7 @@ static int32_t wg_resonance_process(
       }
     }
   }
-  for (index = 0U; index < SYMPATHETIC_STRINGS; index++) {
+  for (index = 0U; index < sympathetic_mode_count; index++) {
     held_keys[index] = p->rendered_held_keys[index] > 0U;
   }
   csound->UnlockMutex(p->send_lock);
@@ -2530,14 +2872,15 @@ static int32_t wg_resonance_process(
   }
   pedal_open = wg_pedal_open_amount(p->pedal);
 
-  for (index = 0U; index < RESONANCE_BODY_MODES; index++) {
-    const double t60 = body_mode_t60[index] * (0.82 + 0.36 * p->body);
+  for (index = 0U; index < body_mode_count; index++) {
+    const double t60 = p->profile->body_modes[index].t60_seconds *
+                       (0.82 + 0.36 * p->body);
     body_radius[index] = wg_clamp(
         exp(-WG_LN_1000 / (t60 * sample_rate)), 0.0, 0.9999995);
   }
 
-  for (index = 0U; index < SYMPATHETIC_STRINGS; index++) {
-    const double midi = 21.0 + (double)index;
+  for (index = 0U; index < sympathetic_mode_count; index++) {
+    const double midi = (double)p->profile->midi_min + (double)index;
     const double undamped = wg_smoothstep(88.0, 94.0, midi);
     const double key_open = held_keys[index] ? 1.0 : undamped;
     const double decay_open =
@@ -2555,7 +2898,8 @@ static int32_t wg_resonance_process(
     sympathetic_coupling[index] = sqrt(
         (1.0 - p->sympathetic_radius_closed[index]) *
         (1.0 - sympathetic_radius[index]));
-    sympathetic_drive[index] = 0.060 * drive_open;
+    sympathetic_drive[index] = 0.060 * drive_open *
+        wg_profile_key(p->profile, index)->sympathetic_scale;
   }
 
   fdn_t60 = 0.22 + 1.25 * pow(p->body, 1.5) +
@@ -2567,7 +2911,8 @@ static int32_t wg_resonance_process(
   for (index = 0U; index < RESONANCE_BODY_LINES; index++) {
     const double delay_seconds =
         (double)p->body_lines[index].size / sample_rate;
-    const double cutoff = wg_clamp(fdn_cutoff * fdn_tone_scale[index],
+    const double cutoff = wg_clamp(
+        fdn_cutoff * p->fdn_tone_scale[index],
                                    500.0, 0.44 * sample_rate);
     fdn_feedback[index] = wg_clamp(
         exp(-WG_LN_1000 * delay_seconds / fdn_t60), 0.0, 0.995);
@@ -2614,16 +2959,16 @@ static int32_t wg_resonance_process(
     mid = 0.5 * (input_l + input_r);
     side = 0.5 * (input_l - input_r);
 
-    for (index = 0U; index < RESONANCE_BODY_MODES; index++) {
+    for (index = 0U; index < body_mode_count; index++) {
       const double radius = body_radius[index];
       const double cosine = p->body_mode_cos[index];
       const double sine = p->body_mode_sin[index];
       const double old_real = p->body_mode_y1[index];
       const double old_imaginary = p->body_mode_y2[index];
-      const double drive = mid + body_mode_side[index] * side;
+      const double drive = mid + p->body_mode_input_side[index] * side;
       const double real =
           radius * (cosine * old_real - sine * old_imaginary) +
-          2.0 * (1.0 - radius) * body_mode_gain[index] * drive;
+          2.0 * (1.0 - radius) * p->body_mode_gain[index] * drive;
       const double imaginary =
           radius * (sine * old_real + cosine * old_imaginary);
       p->body_mode_y1[index] = real;
@@ -2632,7 +2977,7 @@ static int32_t wg_resonance_process(
       modal_right += p->body_mode_right[index] * real;
     }
 
-    for (index = 0U; index < SYMPATHETIC_STRINGS; index++) {
+    for (index = 0U; index < sympathetic_mode_count; index++) {
       const double radius = sympathetic_radius[index];
       const double cosine = p->sympathetic_cos[index];
       const double sine = p->sympathetic_sin[index];
@@ -2672,8 +3017,8 @@ static int32_t wg_resonance_process(
     for (index = 0U; index < RESONANCE_BODY_LINES; index++) {
       BODY_LINE *line = &p->body_lines[index];
       const double injection =
-          fdn_injection[index] *
-          (fdn_mid + fdn_input_side[index] * fdn_side);
+          p->fdn_injection[index] *
+          (fdn_mid + p->fdn_input_side[index] * fdn_side);
       line->lowpass = fdn_lowpass[index] * line->lowpass +
                       (1.0 - fdn_lowpass[index]) * scattered[index];
       line->data[line->write_index] =
@@ -3069,6 +3414,9 @@ static int32_t hlolli_wg_piano_resonance_handle_deinit(
 static OENTRY localops[] = {
     {"hlolli_wg_piano_create", sizeof(HLOLLI_WG_PIANO_CREATE), 0,
      "i", "", (SUBR)hlolli_wg_piano_create_init, NULL, NULL, NULL, 0},
+    {"hlolli_wg_piano_create", sizeof(HLOLLI_WG_PIANO_CREATE_NAMED), 0,
+     "i", "S", (SUBR)hlolli_wg_piano_create_named_init,
+     NULL, NULL, NULL, 0},
     {"hlolli_wg_piano", sizeof(HLOLLI_WG_PIANO), 0,
      "aa", "kkkkkkkkkko", (SUBR)hlolli_wg_piano_init,
      (SUBR)hlolli_wg_piano_perf, (SUBR)hlolli_wg_piano_deinit, NULL, 0},

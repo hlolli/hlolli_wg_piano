@@ -52,6 +52,8 @@ ksmps = $TEST_KSMPS
 nchnls = 2
 0dbfs = 1
 
+giPiano hlolli_wg_piano_create
+
 instr MeasureNote
   iNote = p4
   iVelocity = p5
@@ -64,14 +66,22 @@ instr MeasureNote
   aLeft, aRight hlolli_wg_piano \
       kTrigger, kFrequency, $TEST_HARDNESS, $TEST_POSITION, \
       $TEST_DECAY, $TEST_STIFFNESS, $TEST_DETUNE, $TEST_BODY, \
-      $TEST_STRANGE, $TEST_PEDAL
+      $TEST_STRANGE, $TEST_PEDAL, giPiano
 
   ; The fade only closes the file cleanly. Metric windows must end before it.
   kClose linsegr 1, $TEST_TAIL_SECONDS - 0.02, 1, 0.02, 0
   outs aLeft * kClose, aRight * kClose
 endin
 
+instr MeasureResonance
+  aLeft, aRight hlolli_wg_piano_resonance \
+      giPiano, $TEST_BODY, $TEST_PEDAL
+  outs aLeft, aRight
+endin
+
 instr ScheduleMeasure
+  event_i "i", "MeasureResonance", 0, \
+      $TEST_KEY_SECONDS + $TEST_TAIL_SECONDS
   event_i "i", "MeasureNote", 0, $TEST_KEY_SECONDS, $TEST_NOTE, \
       $TEST_VELOCITY
 endin

@@ -8,6 +8,7 @@ Create one handle for each piano:
 
 ```csound
 giPiano hlolli_wg_piano_create
+giNamed hlolli_wg_piano_create "generic_2018"
 ```
 
 The note opcode keeps its ten controls and takes the handle as an optional
@@ -26,11 +27,12 @@ aWetLeft, aWetRight hlolli_wg_piano_resonance \
     giPiano, kBody, kPedal
 ```
 
-These signatures are `i <- ""`, `aa <- kkkkkkkkkko`, and `aa <- ikk`. Keep the
-direct note outputs in the mix; the wet opcode does not pass them through. The
-handle owns the body, sympathetic strings, delay tail, control smoothing, and
-their phases until Csound resets. Keep one wet-output instrument alive for each
-piano. If it ends, a later one resumes the same stored state.
+The creator signatures are `i <- ""` and `i <- S`. The note and handled wet
+signatures are `aa <- kkkkkkkkkko` and `aa <- ikk`. Keep the direct note
+outputs in the mix; the wet opcode does not pass them through. The handle owns
+the body, sympathetic strings, delay tail, control smoothing, and their phases
+until Csound resets. Keep one wet-output instrument alive for each piano. If it
+ends, a later one resumes the same stored state.
 
 The old `aa <- aakk` wet form remains available. It takes an explicit stereo
 bus and uses one default piano state. Use it when the score needs a custom send
@@ -52,7 +54,7 @@ Custom.cmake.example           Optional local path settings
 examples/basic.csd             Short chord example
 examples/chopin_aeolian_harp.csd  Longer musical example
 tests/smoke.csd                Native load and render test
-tests/measure_note.csd         Note measurement render
+tests/measure_note.csd         Handled-note and profile measurement render
 tests/shared_resonance.csd     Shared-state and tail render
 tests/handle_resonance.csd     Two-piano isolation render
 tests/handle_handoff.csd       Wet-output handoff and error render
@@ -60,6 +62,7 @@ tests/stress.csd               Range and polyphony stress render
 tests/audio_analysis.py        PCM WAV metrics and tuning checks
 tests/run_shared_resonance_test.py  Shared-tail test driver
 tests/run_handle_state_test.py Piano-handle state test driver
+benchmarks/generic_2018_baseline.md  Pre-profile render and timing baseline
 ```
 
 ## Stand-alone build
@@ -179,9 +182,16 @@ Create a second handle for a second piano. Their modes, phases, held keys, and
 delay memory remain separate.
 
 ```csound
-giGrand   hlolli_wg_piano_create
-giUpright hlolli_wg_piano_create
+giDefault hlolli_wg_piano_create
+giNamed   hlolli_wg_piano_create "generic_2018"
 ```
+
+The no-input form selects `generic_2018`. The named form binds its profile when
+it creates the handle; the profile cannot change while that piano runs. An
+unknown name stops orchestra initialization with an error. Profiles hold fixed
+acoustic data, while each handle keeps its own changing state. At present the
+registry contains only `generic_2018`; later measured pianos can use the same
+creator without changing the note or wet opcodes.
 
 The handle form of `hlolli_wg_piano_resonance` has one i-rate input and two
 k-rate controls:
@@ -209,10 +219,11 @@ voices and the wet opcode unless the score needs a special effect. A held note
 opens its own sympathetic string even when the pedal is closed. Counts keep
 that string open until every overlapping voice for the key has released.
 
-The 88 sympathetic modes use A440 equal temperament. The note opcode still
-accepts other tuning, but the shared modes keep their A440 pitches. A handled
-voice reports the key nearest its initial frequency. Keep large pitch moves in
-a detached voice, or start a new handled voice for the new key.
+The `generic_2018` profile's 88 sympathetic modes use A440 equal temperament.
+The note opcode still accepts other tuning, but those shared modes keep their
+A440 pitches. A handled voice reports the key nearest its initial frequency.
+Keep large pitch moves in a detached voice, or start a new handled voice for
+the new key.
 
 ## Explicit-bus wet form
 
@@ -458,6 +469,7 @@ They do not split internal string loss from bridge and soundboard loss.
 
 Each piano handle owns:
 
+- one immutable piano profile choice;
 - 12 shared body modes from 58 Hz to 3220 Hz;
 - 88 sympathetic resonators, one for each key from A0 to C8;
 - an eight-line feedback-delay tail with stereo input and output;
