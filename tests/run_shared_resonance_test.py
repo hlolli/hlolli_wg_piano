@@ -89,13 +89,19 @@ def main() -> int:
                  for sample in channel), default=0.0)
             disabled_lsb = 1.0 / float(
                 1 << (8 * disabled_data.sample_width - 1))
+            # Csound zeroes the split renderer's terminal p3 frame. Compare
+            # every state-bearing frame before that score-end pad.
             exact_handoff = (
                 handoff_continuous_data.sample_rate ==
                 handoff_split_data.sample_rate and
                 handoff_continuous_data.sample_width ==
                 handoff_split_data.sample_width and
-                handoff_continuous_data.channels ==
-                handoff_split_data.channels)
+                len(handoff_continuous_data.channels) ==
+                len(handoff_split_data.channels) and
+                all(continuous[:-1] == split[:-1]
+                    for continuous, split in zip(
+                        handoff_continuous_data.channels,
+                        handoff_split_data.channels)))
 
             failures = []
             if not bool(metrics["finite"]):

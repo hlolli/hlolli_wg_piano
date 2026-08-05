@@ -77,11 +77,12 @@ benchmarks/generic_2018_baseline.md  Pre-profile render and timing baseline
 The JSON files under `profiles` are the source for fixed piano data. The
 manifest lists each profile and selects the default. The versioned schema sets
 the field names, units, sizes, and limits. The generator applies matching
-built-in checks without an added JSON Schema package. Version 2 stores direct
-per-key string loss, stiffness, choir, unison, hammer-contact, hammer-filter,
-and felt terms. It also stores a key-to-body-mode coupling matrix. The shipped
-profiles use 88 keys and 12 body modes. A profile can set a default key and
-then override its values by MIDI number.
+built-in checks without an added JSON Schema package. Version 3 stores direct
+per-key string loss, stiffness, choir, unison, hammer, felt, damper, and
+sympathetic terms. It also stores a key-to-body-mode coupling matrix and
+profile-wide mechanical-sound gains. The shipped profiles use 88 keys and 12
+body modes. A profile can set a default key and then override its values by
+MIDI number.
 
 The generator checks the JSON and replaces only the marked profile-data block
 inside `hlolli_wg_piano.c`:
@@ -225,7 +226,7 @@ close to an acoustic grand. The optional last input is the i-rate handle from
 | `kDetune` | 0 to 1 | 0.20 to 0.80 | 0.60 | Spread of the active unison strings. Zero keeps a small built-in spread and drift. |
 | `kBody` | 0 to 1 | 0.30 to 0.90 | 0.72 | Common bridge reflection and coupling, plus the short per-note bridge response. |
 | `kStrange` | -1 to 1 | -0.30 to 0.30 | 0 | Prepared and unstable colors. Both signs add detune, nonlinear partials, coupling, and bridge motion. |
-| `kPedal` | 0 to 1 | 0 to 1 | 0 or 0.82 held | Opens this note's damper after key release. The dampers fully clear by about 0.82. A handled note also reports its key state to that piano's sympathetic strings. |
+| `kPedal` | 0 to 1 | 0 to 1 | 0 or 0.82 held | Sets the local damper for a detached note. For a handled note, the wet opcode's shared pedal rail sets the damper. The dampers fully clear by about 0.82. |
 
 ## Piano handle and wet output
 
@@ -253,7 +254,7 @@ k-rate controls:
 |---|---:|---:|---|
 | `iPiano` | valid handle | from `hlolli_wg_piano_create` | Selects the piano state and hidden note send. |
 | `kBody` | 0 to 1 | 0.72 | Wet level, body-mode decay, and tail length and tone. Zero mutes the wet return. |
-| `kPedal` | 0 to 1 | 0 or about 0.82 | Opens the sympathetic modes and lengthens the shared tail. The dampers fully clear by about 0.82. |
+| `kPedal` | 0 to 1 | 0 or about 0.82 | Moves the piano's shared damper rail, opens the sympathetic bank, and lengthens the tail. The dampers fully clear by about 0.82. |
 
 Handled notes write a tagged block buffer and the wet opcode reads the prior
 block. This fixed one-`ksmps` delay makes the result independent of instrument
@@ -267,15 +268,18 @@ output instrument can switch without resetting state. Csound may keep both
 alive for one control block, so the module accepts only an exact,
 non-overlapping handoff. Keep one output instance alive in real-time use.
 
-The opcode clamps and smooths the controls. Use the same pedal value for note
-voices and the wet opcode unless the score needs a special effect. A held note
-opens its own sympathetic string even when the pedal is closed. Counts keep
-that string open until every overlapping voice for the key has released.
+The opcode clamps and smooths the controls. For handled notes, the wet opcode's
+`kPedal` drives one shared damper rail for that piano. Half-pedal and repedalling
+therefore affect the direct strings, sympathetic strings, and tail together. A
+held note keeps its damper open even when the pedal is closed. Counts keep that
+damper open until every overlapping voice for the key has released. Detached
+notes still use their own `kPedal` input.
 
-The 88 sympathetic modes use the profile's per-key tuning. The note opcode can
-still bend a voice away from that stored pitch. A handled voice reports the key
-nearest its initial frequency. Keep large pitch moves in a detached voice, or
-start a new handled voice for the new key.
+The sympathetic bank tracks three inharmonic partials for each of the 88 keys.
+It uses the profile's per-key tuning, decay, and partial levels. The note opcode
+can still bend a voice away from that stored pitch. A handled voice reports the
+key nearest its initial frequency. Keep large pitch moves in a detached voice,
+or start a new handled voice for the new key.
 
 ## Explicit-bus wet form
 
@@ -344,10 +348,10 @@ about `0.035` can restrike a voice while it remains positive.
 Velocity also makes the felt a little harder. A trigger of `1.25` is safe but
 is meant for an accent, not a normal MIDI velocity map.
 
-The note opcode still needs release time. After key-up, `kPedal` sets how far
-that note's damper opens. The highest keys stay undamped. Give the host
-instrument enough release time and fade its output at the end. A useful
-note-only pattern is:
+The note opcode still needs release time. After key-up, a detached note uses
+its own `kPedal`; a handled note uses its piano's shared pedal rail. The highest
+keys stay undamped. Give the host instrument enough release time and fade its
+output at the end. A useful note-only pattern is:
 
 ```csound
 xtratim 2.60
@@ -414,8 +418,8 @@ strike.
 `kStiffness=0.42`, the complete string loop uses the profile's base fit. This
 remains an approximation because the same loop also contains the unison bridge
 and delay filters. Bass strings keep more energy than short treble strings, and
-upper partials lose energy faster. After key release, the note pedal sets a
-separate damper loss.
+upper partials lose energy faster. After key release, the local or shared
+pedal rail sets a separate damper loss.
 
 `kStiffness` scales each key's direct inharmonicity value. The generic profile
 stores the curve through the Bensa et al. C2, C4, and C7 values; recording
@@ -440,17 +444,18 @@ The two opcodes give these controls different jobs:
   tail.
 - On `hlolli_wg_piano_resonance`, `kBody` sets the wet level and shapes the 12
   body modes and eight-line tail.
-- On the note opcode, `kPedal` opens that note's damper after key release.
-- On the wet opcode, `kPedal` opens the 88 sympathetic modes and lengthens
-  the shared tail.
+- On a detached note, `kPedal` opens that note's damper after key release.
+- On the wet opcode, `kPedal` moves the shared damper rail for handled notes,
+  opens the sympathetic bank, and lengthens the shared tail.
 
 For handled notes, the profile's key-to-body-mode matrix sets which shared
 body modes the bridge excites. The shipped matrix uses a smooth modeled bridge
 shape. Body-tap data can replace it with a piano-specific fit later.
 
-Half-pedal values work in both places. Values up to about `0.82` cover the
-useful damper travel; larger values remain fully open. The wet opcode is a
-wet return, so mix it with the direct note output.
+Half-pedal and repedalling work on handled notes through the shared rail. On a
+detached note, half-pedal works through its local control. Values up to about
+`0.82` cover the useful damper travel; larger values remain fully open. The wet
+opcode is a wet return, so mix it with the direct note output.
 
 ### Strange
 
@@ -532,9 +537,11 @@ Each piano handle owns:
 
 - one immutable piano profile choice;
 - 12 shared body modes from 58 Hz to 3220 Hz;
-- 88 sympathetic resonators, one for each key from A0 to C8;
+- three sympathetic partial resonators for each key from A0 to C8;
 - an eight-line feedback-delay tail with stereo input and output;
-- per-key held counts and fixed drift and felt profiles;
+- one shared pedal and damper rail, per-key held counts, and fixed drift and
+  felt profiles;
+- short synthesized key, damper, and pedal sounds scaled by the profile;
 - stereo note sends, per-body-mode bridge sends, and all wet filter phases.
 
 Csound stores these objects in one named global registry per Csound instance.
@@ -542,7 +549,7 @@ It allocates their delay memory outside any note or wet-output instrument and
 frees it at Csound reset. Native builds use a plugin reset callback. The WASI
 loader cannot retain that callback, so Csound's own reset frees the named global
 and its tracked blocks. A wet-output opcode advances one object and returns its
-audio. The 88 sympathetic resonators model one main mode per key, not every
+audio. The sympathetic bank models three inharmonic partials per key, not every
 partial of every unstruck string.
 
 This remains a reduced real-time model, not a full piano action, string set,

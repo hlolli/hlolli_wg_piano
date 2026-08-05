@@ -6,9 +6,9 @@ native and browser plugins self-contained.
 
 `manifest.json` lists the profile source files. `generic_2018.json` holds the
 default profile. `concert_grand_a.json` holds the first small recording-based
-fit under a neutral public name. `schema/piano-profile-v2.schema.json` defines
-the current format. Version 1 stays in `schema/piano-profile-v1.schema.json`
-for old source data; the generator accepts version 2 only.
+fit under a neutral public name. `schema/piano-profile-v3.schema.json` defines
+the current format. Versions 1 and 2 stay in `schema` for old source data; the
+generator accepts version 3 only.
 
 ## Generate the C tables
 
@@ -25,7 +25,7 @@ It validates every listed source and replaces only the marked profile-data
 block in `hlolli_wg_piano.c`. It does not create an include file because the
 browser compiler accepts one plugin C source file.
 
-The script has built-in checks that match the version 2 schema, so it needs no
+The script has built-in checks that match the version 3 schema, so it needs no
 JSON Schema package. It parses the schema file and checks its version link, but
 it does not act as a general JSON Schema engine. Keep the schema and script
 rules in step when the format changes.
@@ -42,7 +42,7 @@ stable text. Do not edit the generated C block by hand.
 ## Add a profile
 
 1. Copy `generic_2018.json` to a file named after the new `id`.
-2. Set `$schema` to `schema/piano-profile-v2.schema.json`.
+2. Set `$schema` to `schema/piano-profile-v3.schema.json`.
 3. Add the file to `manifest.json`.
 4. Fill in the model data and its source notes.
 5. Run the generator and its `--check` form.
@@ -55,7 +55,9 @@ a letter, has at most 63 characters, and matches the source filename. The
 
 `midi_min` and `key_count` set one continuous keyboard range. The last key must
 not exceed MIDI 127. `sympathetic_mode_count` must be at least two and no more
-than `key_count`. `variation_seed` is an unsigned 32-bit integer.
+than `key_count`. It counts keys in the sympathetic bank; the run-time model
+uses three partial resonators for each of those keys. `variation_seed` is an
+unsigned 32-bit integer.
 
 The fixed array sizes match the real-time model:
 
@@ -95,7 +97,8 @@ An empty `keys` object uses only `default_key` and emits a null key-table
 pointer. Both shipped profiles list all 88 MIDI keys. Sparse entries do not
 cause interpolation; a fitting tool must write any fitted values it needs.
 
-Version 2 stores the string and hammer bases for each key:
+Version 3 stores the string, hammer, damper, and sympathetic bases for each
+key:
 
 - `inharmonicity_b` sets the string's base inharmonicity.
 - `loss_rate_per_second` and `loss_slope_per_second` set partial decay as
@@ -106,8 +109,24 @@ Version 2 stores the string and hammer bases for each key:
   `hammer_filter_mix`, and `hammer_string_gain` set the strike base.
 - `felt_frequency_scale` and `felt_gain` tune the shared three-mode felt
   shape for that key.
-- `damper_scale`, `radiation_scale`, and `sympathetic_scale` set damper time,
-  direct output level, and sympathetic drive.
+- `damper_presence` states whether the key has a damper.
+- `damper_closed_t60_seconds` sets the closed-damper decay.
+- `damper_lift_start` and `damper_lift_end` set the useful pedal travel for
+  that key.
+- `sympathetic_open_t60_seconds` sets the open fundamental decay.
+- `sympathetic_second_level` and `sympathetic_third_level` set the two upper
+  inharmonic partial levels.
+- `radiation_scale` and `sympathetic_scale` set direct output level and
+  sympathetic drive.
+
+The top-level `mechanics` object scales the short sounds made by the model:
+
+- `key_action_gain` scales key-down and key-release sounds.
+- `damper_noise_gain` scales damper landing sounds.
+- `pedal_mechanical_gain` scales pedal movement and damper-rail sounds.
+
+These sounds use small built-in filters and noise sources. They do not use
+samples. Set a gain to zero to turn off that part.
 
 `body_coupling` has one row per key and one value per shared body mode. Each
 value sets how strongly that key's bridge signal drives that mode. The rows
@@ -169,8 +188,8 @@ room, or microphone peaks.
 
 The profile stores sound-model terms, not wire gauge, tension, hammer mass, or
 speaking length. Those physical values cannot be split with confidence from
-the current recordings. Each shared sympathetic mode uses its key's stored
-tuning and damper scale, but it remains one resonator rather than a full
+the current recordings. Each key's shared sympathetic bank uses its stored
+tuning and damper data. It tracks three inharmonic partials rather than a full
 dispersive string.
 
 Body modes and FDN lines can include the room and microphone response if they

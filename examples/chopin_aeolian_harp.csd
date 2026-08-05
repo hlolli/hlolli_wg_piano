@@ -31,8 +31,8 @@ instr Piano
   kRelease release
   kTrigger = (kRelease == 0 ? iVelocity : 0)
   kFrequency init cpsmidinn(iNote)
-  ; One piano has one damper pedal. Every note and the shared resonator read
-  ; the same control, so a pedal change also acts on notes already ringing.
+  ; The shared resonator owns this piano's damper rail. The note input stays
+  ; in the call for compatibility; the handle gives ringing notes that rail.
   kPedal = gkSharedPedal
   kTail linsegr 1, 0.01, 1, 2.60, 0
 

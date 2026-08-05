@@ -14,14 +14,14 @@ from decimal import Decimal
 from pathlib import Path
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 MIN_PYTHON = (3, 8)
 MAX_WASI_SOURCE_BYTES = 256 * 1024
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "profiles" / "manifest.json"
-SCHEMA_PATH = ROOT / "profiles" / "schema" / "piano-profile-v2.schema.json"
+SCHEMA_PATH = ROOT / "profiles" / "schema" / "piano-profile-v3.schema.json"
 SOURCE_PATH = ROOT / "hlolli_wg_piano.c"
-PROFILE_SCHEMA_REF = "schema/piano-profile-v2.schema.json"
+PROFILE_SCHEMA_REF = "schema/piano-profile-v3.schema.json"
 BEGIN_MARKER = "/* BEGIN GENERATED PIANO PROFILE DATA */"
 END_MARKER = "/* END GENERATED PIANO PROFILE DATA */"
 PROFILE_ID_RE = re.compile(r"^[a-z][a-z0-9_]{0,62}$")
@@ -48,7 +48,13 @@ KEY_FIELDS = (
     "hammer_string_gain",
     "felt_frequency_scale",
     "felt_gain",
-    "damper_scale",
+    "damper_presence",
+    "damper_closed_t60_seconds",
+    "damper_lift_start",
+    "damper_lift_end",
+    "sympathetic_open_t60_seconds",
+    "sympathetic_second_level",
+    "sympathetic_third_level",
     "radiation_scale",
     "sympathetic_scale",
 )
@@ -74,6 +80,11 @@ FDN_LINE_FIELDS = (
     "input_side",
     "injection",
     "tone_scale",
+)
+MECHANICS_FIELDS = (
+    "key_action_gain",
+    "damper_noise_gain",
+    "pedal_mechanical_gain",
 )
 
 
@@ -220,7 +231,17 @@ KEY_LIMITS = {
     "hammer_string_gain": (decimal("0"), decimal("4"), False),
     "felt_frequency_scale": (decimal("0.25"), decimal("4"), False),
     "felt_gain": (decimal("0"), decimal("4"), False),
-    "damper_scale": (decimal("0.01"), decimal("100"), False),
+    "damper_presence": (decimal("0"), decimal("1"), False),
+    "damper_closed_t60_seconds": (
+        decimal("0.01"), decimal("3"), False
+    ),
+    "damper_lift_start": (decimal("0"), decimal("1"), False),
+    "damper_lift_end": (decimal("0"), decimal("1"), False),
+    "sympathetic_open_t60_seconds": (
+        decimal("0.05"), decimal("30"), False
+    ),
+    "sympathetic_second_level": (decimal("0"), decimal("4"), False),
+    "sympathetic_third_level": (decimal("0"), decimal("4"), False),
     "radiation_scale": (decimal("0"), decimal("100"), False),
     "sympathetic_scale": (decimal("0"), decimal("100"), False),
 }
@@ -254,6 +275,10 @@ FDN_LINE_LIMITS = {
     "injection": (decimal("-100"), decimal("100"), False),
     "tone_scale": (decimal("0.01"), decimal("100"), False),
 }
+MECHANICS_LIMITS = {
+    field: (decimal("0"), decimal("4"), False)
+    for field in MECHANICS_FIELDS
+}
 
 
 def validate_number_object(value, path, fields, limits):
@@ -267,11 +292,17 @@ def validate_number_object(value, path, fields, limits):
     return result
 
 
-def validate_key_contact(value, path):
+def validate_key_profile(value, path):
     if (value["hammer_contact_min_seconds"] +
             value["hammer_contact_range_seconds"] > decimal("0.008")):
         raise ProfileError(
             "{} hammer contact times must total at most 0.008 seconds".format(
+                path
+            )
+        )
+    if value["damper_lift_start"] >= value["damper_lift_end"]:
+        raise ProfileError(
+            "{} damper_lift_start must be below damper_lift_end".format(
                 path
             )
         )
@@ -317,7 +348,7 @@ def validate_sparse_keys(value, path, default_key, midi_min, key_count):
                     item[field], "{}.{}".format(item_path, field),
                     low, high, low_open
                 )
-        validate_key_contact(target, item_path)
+        validate_key_profile(target, item_path)
     return dense
 
 
@@ -353,6 +384,7 @@ PROFILE_FIELDS = (
     "note_body_lines",
     "body_modes",
     "body_coupling",
+    "mechanics",
     "fdn_lines",
     "provenance",
 )
@@ -492,7 +524,7 @@ def validate_profile(value, path):
         value["variation_seed"], "{}.variation_seed".format(path),
         0, 0xFFFFFFFF
     )
-    default_key = validate_key_contact(
+    default_key = validate_key_profile(
         validate_number_object(
             value["default_key"], "{}.default_key".format(path),
             KEY_FIELDS, KEY_LIMITS
@@ -535,6 +567,10 @@ def validate_profile(value, path):
         ),
         "body_modes": body_modes,
         "body_coupling": body_coupling,
+        "mechanics": validate_number_object(
+            value["mechanics"], "{}.mechanics".format(path),
+            MECHANICS_FIELDS, MECHANICS_LIMITS
+        ),
         "fdn_lines": validate_number_array(
             value["fdn_lines"], "{}.fdn_lines".format(path),
             FDN_LINE_FIELDS, FDN_LINE_LIMITS, exact=8
@@ -694,6 +730,11 @@ def generate_profile(lines, profile, body_coupling_symbol,
     lines.append("    },")
     lines.append("    .body_modes = {}_body_modes,".format(symbol))
     lines.append("    .body_coupling = {},".format(body_coupling_symbol))
+    lines.append(
+        "    .mechanics = {},".format(
+            c_row(profile["mechanics"], MECHANICS_FIELDS)
+        )
+    )
     lines.append("    .fdn_lines = {")
     append_rows(lines, profile["fdn_lines"], FDN_LINE_FIELDS, "        ")
     lines.append("    },")
