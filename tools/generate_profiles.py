@@ -14,14 +14,14 @@ from decimal import Decimal
 from pathlib import Path
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 MIN_PYTHON = (3, 8)
 MAX_WASI_SOURCE_BYTES = 256 * 1024
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "profiles" / "manifest.json"
-SCHEMA_PATH = ROOT / "profiles" / "schema" / "piano-profile-v1.schema.json"
+SCHEMA_PATH = ROOT / "profiles" / "schema" / "piano-profile-v2.schema.json"
 SOURCE_PATH = ROOT / "hlolli_wg_piano.c"
-PROFILE_SCHEMA_REF = "schema/piano-profile-v1.schema.json"
+PROFILE_SCHEMA_REF = "schema/piano-profile-v2.schema.json"
 BEGIN_MARKER = "/* BEGIN GENERATED PIANO PROFILE DATA */"
 END_MARKER = "/* END GENERATED PIANO PROFILE DATA */"
 PROFILE_ID_RE = re.compile(r"^[a-z][a-z0-9_]{0,62}$")
@@ -33,11 +33,21 @@ RFC3339_RE = re.compile(
 
 KEY_FIELDS = (
     "tuning_cents",
-    "inharmonicity_scale",
-    "string_length_scale",
-    "string_loss_scale",
-    "unison_detune_scale",
-    "hammer_scale",
+    "inharmonicity_b",
+    "loss_rate_per_second",
+    "loss_slope_per_second",
+    "second_string_level",
+    "third_string_level",
+    "unison_width_cents",
+    "hammer_gain",
+    "hammer_contact_min_seconds",
+    "hammer_contact_range_seconds",
+    "hammer_cutoff_base_hz",
+    "hammer_cutoff_hardness_hz",
+    "hammer_filter_mix",
+    "hammer_string_gain",
+    "felt_frequency_scale",
+    "felt_gain",
     "damper_scale",
     "radiation_scale",
     "sympathetic_scale",
@@ -189,11 +199,27 @@ def require_number(value, path, low, high, low_open=False):
 
 KEY_LIMITS = {
     "tuning_cents": (decimal("-1200"), decimal("1200"), False),
-    "inharmonicity_scale": (decimal("0.01"), decimal("100"), False),
-    "string_length_scale": (decimal("0.01"), decimal("100"), False),
-    "string_loss_scale": (decimal("0.01"), decimal("100"), False),
-    "unison_detune_scale": (decimal("0"), decimal("100"), False),
-    "hammer_scale": (decimal("0"), decimal("100"), False),
+    "inharmonicity_b": (decimal("0.000001"), decimal("0.08"), False),
+    "loss_rate_per_second": (decimal("0"), decimal("100"), False),
+    "loss_slope_per_second": (decimal("0"), decimal("100"), False),
+    "second_string_level": (decimal("0"), decimal("1"), False),
+    "third_string_level": (decimal("0"), decimal("1"), False),
+    "unison_width_cents": (decimal("0"), decimal("20"), False),
+    "hammer_gain": (decimal("0"), decimal("8"), False),
+    "hammer_contact_min_seconds": (
+        decimal("0"), decimal("0.008"), True
+    ),
+    "hammer_contact_range_seconds": (
+        decimal("0"), decimal("0.008"), False
+    ),
+    "hammer_cutoff_base_hz": (decimal("100"), decimal("100000"), False),
+    "hammer_cutoff_hardness_hz": (
+        decimal("0"), decimal("100000"), False
+    ),
+    "hammer_filter_mix": (decimal("0"), decimal("1"), False),
+    "hammer_string_gain": (decimal("0"), decimal("4"), False),
+    "felt_frequency_scale": (decimal("0.25"), decimal("4"), False),
+    "felt_gain": (decimal("0"), decimal("4"), False),
     "damper_scale": (decimal("0.01"), decimal("100"), False),
     "radiation_scale": (decimal("0"), decimal("100"), False),
     "sympathetic_scale": (decimal("0"), decimal("100"), False),
@@ -241,6 +267,17 @@ def validate_number_object(value, path, fields, limits):
     return result
 
 
+def validate_key_contact(value, path):
+    if (value["hammer_contact_min_seconds"] +
+            value["hammer_contact_range_seconds"] > decimal("0.008")):
+        raise ProfileError(
+            "{} hammer contact times must total at most 0.008 seconds".format(
+                path
+            )
+        )
+    return value
+
+
 def validate_number_array(value, path, fields, limits, exact=None,
                           minimum=None, maximum=None):
     values = require_array(value, path, minimum, maximum, exact)
@@ -280,7 +317,24 @@ def validate_sparse_keys(value, path, default_key, midi_min, key_count):
                     item[field], "{}.{}".format(item_path, field),
                     low, high, low_open
                 )
+        validate_key_contact(target, item_path)
     return dense
+
+
+def validate_body_coupling(value, path, key_count, body_mode_count):
+    rows = require_array(value, path, exact=key_count)
+    result = []
+    for key_index, row in enumerate(rows):
+        row_path = "{}[{}]".format(path, key_index)
+        values = require_array(row, row_path, exact=body_mode_count)
+        result.append([
+            require_number(
+                item, "{}[{}]".format(row_path, mode_index),
+                decimal("-4"), decimal("4")
+            )
+            for mode_index, item in enumerate(values)
+        ])
+    return result
 
 
 PROFILE_FIELDS = (
@@ -298,6 +352,7 @@ PROFILE_FIELDS = (
     "felt_modes",
     "note_body_lines",
     "body_modes",
+    "body_coupling",
     "fdn_lines",
     "provenance",
 )
@@ -437,12 +492,23 @@ def validate_profile(value, path):
         value["variation_seed"], "{}.variation_seed".format(path),
         0, 0xFFFFFFFF
     )
-    default_key = validate_number_object(
-        value["default_key"], "{}.default_key".format(path),
-        KEY_FIELDS, KEY_LIMITS
+    default_key = validate_key_contact(
+        validate_number_object(
+            value["default_key"], "{}.default_key".format(path),
+            KEY_FIELDS, KEY_LIMITS
+        ),
+        "{}.default_key".format(path)
     )
     keys = validate_sparse_keys(
         value["keys"], "{}.keys".format(path), default_key, midi_min, key_count
+    )
+    body_modes = validate_number_array(
+        value["body_modes"], "{}.body_modes".format(path),
+        BODY_MODE_FIELDS, BODY_MODE_LIMITS, minimum=1, maximum=64
+    )
+    body_coupling = validate_body_coupling(
+        value["body_coupling"], "{}.body_coupling".format(path),
+        key_count, len(body_modes)
     )
     validate_provenance(value["provenance"], "{}.provenance".format(path))
 
@@ -467,10 +533,8 @@ def validate_profile(value, path):
             value["note_body_lines"], "{}.note_body_lines".format(path),
             NOTE_BODY_LINE_FIELDS, NOTE_BODY_LINE_LIMITS, exact=4
         ),
-        "body_modes": validate_number_array(
-            value["body_modes"], "{}.body_modes".format(path),
-            BODY_MODE_FIELDS, BODY_MODE_LIMITS, minimum=1, maximum=64
-        ),
+        "body_modes": body_modes,
+        "body_coupling": body_coupling,
         "fdn_lines": validate_number_array(
             value["fdn_lines"], "{}.fdn_lines".format(path),
             FDN_LINE_FIELDS, FDN_LINE_LIMITS, exact=8
@@ -568,7 +632,8 @@ def append_rows(lines, rows, fields, indent):
         lines.append("{}{},".format(indent, c_row(row, fields)))
 
 
-def generate_profile(lines, profile):
+def generate_profile(lines, profile, body_coupling_symbol,
+                     emit_body_coupling):
     symbol = "wg_{}".format(profile["id"])
     if profile["keys"] is not None:
         lines.append("static const WG_KEY_PROFILE {}_keys[] = {{".format(symbol))
@@ -582,6 +647,19 @@ def generate_profile(lines, profile):
     append_rows(lines, profile["body_modes"], BODY_MODE_FIELDS, "    ")
     lines.append("};")
     lines.append("")
+
+    if emit_body_coupling:
+        lines.append(
+            "static const double {}[] = {{".format(body_coupling_symbol)
+        )
+        for row in profile["body_coupling"]:
+            lines.append(
+                "    {},".format(
+                    ", ".join(c_float(value) for value in row)
+                )
+            )
+        lines.append("};")
+        lines.append("")
 
     lines.append("static const WG_PIANO_PROFILE wg_profile_{} = {{".format(profile["id"]))
     lines.append('    .id = "{}",'.format(profile["id"]))
@@ -615,6 +693,7 @@ def generate_profile(lines, profile):
     )
     lines.append("    },")
     lines.append("    .body_modes = {}_body_modes,".format(symbol))
+    lines.append("    .body_coupling = {},".format(body_coupling_symbol))
     lines.append("    .fdn_lines = {")
     append_rows(lines, profile["fdn_lines"], FDN_LINE_FIELDS, "        ")
     lines.append("    },")
@@ -626,9 +705,22 @@ def generate_block(profiles, default_profile):
         BEGIN_MARKER,
         "/* Generated piano profile data. Do not edit by hand. */",
     ]
+    coupling_symbols = {}
     for profile in profiles:
+        coupling_key = tuple(
+            tuple(row) for row in profile["body_coupling"]
+        )
+        body_coupling_symbol = coupling_symbols.get(coupling_key)
+        emit_body_coupling = body_coupling_symbol is None
+        if emit_body_coupling:
+            body_coupling_symbol = "wg_{}_body_coupling".format(
+                profile["id"]
+            )
+            coupling_symbols[coupling_key] = body_coupling_symbol
         lines.append("")
-        generate_profile(lines, profile)
+        generate_profile(
+            lines, profile, body_coupling_symbol, emit_body_coupling
+        )
 
     lines.extend(("", "static const WG_PIANO_PROFILE *const wg_piano_profiles[] = {"))
     for profile in profiles:

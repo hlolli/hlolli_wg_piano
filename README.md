@@ -77,8 +77,11 @@ benchmarks/generic_2018_baseline.md  Pre-profile render and timing baseline
 The JSON files under `profiles` are the source for fixed piano data. The
 manifest lists each profile and selects the default. The versioned schema sets
 the field names, units, sizes, and limits. The generator applies matching
-built-in checks without an added JSON Schema package. A profile can set a
-default key and then override any measured key fields by MIDI number.
+built-in checks without an added JSON Schema package. Version 2 stores direct
+per-key string loss, stiffness, choir, unison, hammer-contact, hammer-filter,
+and felt terms. It also stores a key-to-body-mode coupling matrix. The shipped
+profiles use 88 keys and 12 body modes. A profile can set a default key and
+then override its values by MIDI number.
 
 The generator checks the JSON and replaces only the marked profile-data block
 inside `hlolli_wg_piano.c`:
@@ -269,11 +272,10 @@ voices and the wet opcode unless the score needs a special effect. A held note
 opens its own sympathetic string even when the pedal is closed. Counts keep
 that string open until every overlapping voice for the key has released.
 
-The `generic_2018` profile's 88 sympathetic modes use A440 equal temperament.
-The note opcode still accepts other tuning, but those shared modes keep their
-A440 pitches. A handled voice reports the key nearest its initial frequency.
-Keep large pitch moves in a detached voice, or start a new handled voice for
-the new key.
+The 88 sympathetic modes use the profile's per-key tuning. The note opcode can
+still bend a voice away from that stored pitch. A handled voice reports the key
+nearest its initial frequency. Keep large pitch moves in a detached voice, or
+start a new handled voice for the new key.
 
 ## Explicit-bus wet form
 
@@ -361,10 +363,13 @@ outs aLeft * kTail, aRight * kTail
 ```
 
 Each note instance owns its string rails, hammer, and short bridge response.
-When it has a handle, it sends its raw stereo model output to that piano before
-any gain or pan that follows the opcode. The handle owns the long body and
-sympathetic state. Use the explicit-bus wet form when the wet send must follow
-an outside gain, pan, or effect.
+When it has a handle, it sends its raw stereo output for the sympathetic modes
+and tail. It also sends the bridge signal through that key's 12 body-mode
+coupling values. Both sends happen before any gain or pan that follows the
+opcode. The handle owns the long body and sympathetic state. Use the
+explicit-bus wet form when the wet send must follow an outside gain, pan, or
+effect. That form has no key identity, so its body modes use the supplied
+stereo position instead of the key-coupling matrix.
 
 The handle also gives each key a stable felt scale and slow unison-drift phase.
 New voices for that key start from the same piano profile at the current Csound
@@ -377,11 +382,13 @@ this version does not keep all 88 struck-string rails in the global state.
 about 25 ms and the string delay follows over about 18 ms, so pitch changes
 glide instead of stepping. Normal piano use should pass `cpsmidinn()` values
 from MIDI note 21 through 108. With a piano handle, held-key damping and the
-per-key felt and drift profile keep using the key chosen at init time.
+shared drift state keep using the key chosen at init time. Handled and detached
+notes also keep that key's string, hammer, and felt profile for the full voice.
 
-The model uses one audible string in the low bass. A second string fades in
-from about 39 to 49 Hz. The third fades in from about 116 to 147 Hz. Small
-inactive-string floors keep the internal state safe but remain inaudible.
+Each profile sets the second- and third-string level for every key. In
+`generic_2018`, the second string fades in from about 39 to 49 Hz and the third
+from about 116 to 147 Hz. Small inactive-string floors keep the internal state
+safe but remain inaudible.
 
 ### Hammer hardness and position
 
@@ -403,26 +410,26 @@ strike.
 
 ### Decay, stiffness, and detune
 
-`kDecay` scales note-dependent string loss. At `kDecay=0.70` and
-`kStiffness=0.42`, the complete string loop is tuned to keyboard fits based on
-Bensa et al. This remains an approximation because the same loop also contains
-the unison bridge and delay filters. Bass strings keep more energy than short
-treble strings, and upper partials lose energy faster. After key release, the
-note pedal sets a separate damper loss.
+`kDecay` scales each key's direct string-loss terms. At `kDecay=0.70` and
+`kStiffness=0.42`, the complete string loop uses the profile's base fit. This
+remains an approximation because the same loop also contains the unison bridge
+and delay filters. Bass strings keep more energy than short treble strings, and
+upper partials lose energy faster. After key release, the note pedal sets a
+separate damper loss.
 
-`kStiffness` scales a note-dependent inharmonicity curve through the paper's
-C2, C4, and C7 values, with the wrapped-bass rise kept in the low range. Four
-to eight dispersion stages fit the fundamental and one upper reference
-partial. The partials between them remain approximate; normal-range test
-renders stay within about 12 cents of the target curve. At `0.42`, the control
-uses the paper-based curve without extra scale. Keep it below about `0.70` for
-a piano; higher values are useful for bell-like tones.
+`kStiffness` scales each key's direct inharmonicity value. The generic profile
+stores the curve through the Bensa et al. C2, C4, and C7 values; recording
+profiles can replace it key by key. Four to eight dispersion stages fit the
+fundamental and one upper reference partial. The partials between them remain
+approximate; normal-range test renders stay within about 12 cents of the target
+curve. At `0.42`, the control uses the profile value without extra scale. Keep
+it below about `0.70` for a piano; higher values are useful for bell-like tones.
 
-`kDetune` controls a curved unison spread. Before register scaling, the main
-spread is about `0.18 + 1.05*kDetune^2` cents. Every strike also gets very small
-errors in pitch, level, contact time, and comb position. Each string has its own
-slow pitch drift. These changes stop repeated notes from being exact copies
-without making a normal preset sound out of tune.
+`kDetune` scales each key's `unison_width_cents`; `0.35` uses the stored width.
+Every strike also gets very small errors in pitch, level, contact time, and
+comb position. Each string has its own slow pitch drift. These changes stop
+repeated notes from being exact copies without making a normal preset sound
+out of tune.
 
 ### Body and pedal
 
@@ -436,6 +443,10 @@ The two opcodes give these controls different jobs:
 - On the note opcode, `kPedal` opens that note's damper after key release.
 - On the wet opcode, `kPedal` opens the 88 sympathetic modes and lengthens
   the shared tail.
+
+For handled notes, the profile's key-to-body-mode matrix sets which shared
+body modes the bridge excites. The shipped matrix uses a smooth modeled bridge
+shape. Body-tap data can replace it with a piano-specific fit later.
 
 Half-pedal values work in both places. Values up to about `0.82` cover the
 useful damper travel; larger values remain fully open. The wet opcode is a
@@ -524,7 +535,7 @@ Each piano handle owns:
 - 88 sympathetic resonators, one for each key from A0 to C8;
 - an eight-line feedback-delay tail with stereo input and output;
 - per-key held counts and fixed drift and felt profiles;
-- tagged stereo send blocks and all wet filter phases.
+- stereo note sends, per-body-mode bridge sends, and all wet filter phases.
 
 Csound stores these objects in one named global registry per Csound instance.
 It allocates their delay memory outside any note or wet-output instrument and

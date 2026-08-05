@@ -1,0 +1,664 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/hlolli/hlolli_wg_piano/main/profiles/schema/piano-profile-v2.schema.json",
+  "title": "hlolli_wg_piano piano profile source, version 2",
+  "description": "Build-time source data for one immutable piano profile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "id",
+    "display_name",
+    "schema_version",
+    "midi_min",
+    "key_count",
+    "sympathetic_mode_count",
+    "variation_seed",
+    "default_key",
+    "keys",
+    "strings",
+    "felt_modes",
+    "note_body_lines",
+    "body_modes",
+    "body_coupling",
+    "fdn_lines",
+    "provenance"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "schema/piano-profile-v2.schema.json"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,62}$"
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 127
+    },
+    "schema_version": {
+      "const": 2
+    },
+    "midi_min": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 127
+    },
+    "key_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 97
+    },
+    "sympathetic_mode_count": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 97
+    },
+    "variation_seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+    },
+    "default_key": {
+      "$ref": "#/$defs/keyProfile"
+    },
+    "keys": {
+      "type": "object",
+      "maxProperties": 97,
+      "propertyNames": {
+        "pattern": "^(0|[1-9]|[1-9][0-9]|1[01][0-9]|12[0-7])$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/keyOverride"
+      }
+    },
+    "strings": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/stringProfile"
+      }
+    },
+    "felt_modes": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/feltMode"
+      }
+    },
+    "note_body_lines": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/noteBodyLine"
+      }
+    },
+    "body_modes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "$ref": "#/$defs/bodyMode"
+      }
+    },
+    "body_coupling": {
+      "type": "array",
+      "$comment": "The generator requires one row per key and one value per body mode. Shipped modeled rows use unit RMS; negative values reverse modal drive polarity.",
+      "minItems": 1,
+      "maxItems": 97,
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 64,
+        "items": {
+          "type": "number",
+          "minimum": -4.0,
+          "maximum": 4.0
+        }
+      }
+    },
+    "fdn_lines": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/fdnLine"
+      }
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    }
+  },
+  "$defs": {
+    "tuningCents": {
+      "type": "number",
+      "minimum": -1200.0,
+      "maximum": 1200.0
+    },
+    "positiveScale": {
+      "type": "number",
+      "minimum": 0.01,
+      "maximum": 100.0
+    },
+    "nonnegativeScale": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 100.0
+    },
+    "keyProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "$comment": "The generator also requires the two hammer contact times to total at most 0.008 seconds.",
+      "required": [
+        "tuning_cents",
+        "inharmonicity_b",
+        "loss_rate_per_second",
+        "loss_slope_per_second",
+        "second_string_level",
+        "third_string_level",
+        "unison_width_cents",
+        "hammer_gain",
+        "hammer_contact_min_seconds",
+        "hammer_contact_range_seconds",
+        "hammer_cutoff_base_hz",
+        "hammer_cutoff_hardness_hz",
+        "hammer_filter_mix",
+        "hammer_string_gain",
+        "felt_frequency_scale",
+        "felt_gain",
+        "damper_scale",
+        "radiation_scale",
+        "sympathetic_scale"
+      ],
+      "properties": {
+        "tuning_cents": {
+          "$ref": "#/$defs/tuningCents"
+        },
+        "inharmonicity_b": {
+          "type": "number",
+          "minimum": 0.000001,
+          "maximum": 0.08
+        },
+        "loss_rate_per_second": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0
+        },
+        "loss_slope_per_second": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0
+        },
+        "second_string_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "third_string_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "unison_width_cents": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 20.0
+        },
+        "hammer_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 8.0
+        },
+        "hammer_contact_min_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0.0,
+          "maximum": 0.008
+        },
+        "hammer_contact_range_seconds": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.008
+        },
+        "hammer_cutoff_base_hz": {
+          "type": "number",
+          "minimum": 100.0,
+          "maximum": 100000.0
+        },
+        "hammer_cutoff_hardness_hz": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100000.0
+        },
+        "hammer_filter_mix": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "hammer_string_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "felt_frequency_scale": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 4.0
+        },
+        "felt_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "damper_scale": {
+          "$ref": "#/$defs/positiveScale"
+        },
+        "radiation_scale": {
+          "$ref": "#/$defs/nonnegativeScale"
+        },
+        "sympathetic_scale": {
+          "$ref": "#/$defs/nonnegativeScale"
+        }
+      }
+    },
+    "keyOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "$comment": "After merging with default_key, the generator requires the two hammer contact times to total at most 0.008 seconds.",
+      "minProperties": 1,
+      "properties": {
+        "tuning_cents": {
+          "$ref": "#/$defs/tuningCents"
+        },
+        "inharmonicity_b": {
+          "type": "number",
+          "minimum": 0.000001,
+          "maximum": 0.08
+        },
+        "loss_rate_per_second": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0
+        },
+        "loss_slope_per_second": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0
+        },
+        "second_string_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "third_string_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "unison_width_cents": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 20.0
+        },
+        "hammer_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 8.0
+        },
+        "hammer_contact_min_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0.0,
+          "maximum": 0.008
+        },
+        "hammer_contact_range_seconds": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.008
+        },
+        "hammer_cutoff_base_hz": {
+          "type": "number",
+          "minimum": 100.0,
+          "maximum": 100000.0
+        },
+        "hammer_cutoff_hardness_hz": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100000.0
+        },
+        "hammer_filter_mix": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "hammer_string_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "felt_frequency_scale": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 4.0
+        },
+        "felt_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "damper_scale": {
+          "$ref": "#/$defs/positiveScale"
+        },
+        "radiation_scale": {
+          "$ref": "#/$defs/nonnegativeScale"
+        },
+        "sympathetic_scale": {
+          "$ref": "#/$defs/nonnegativeScale"
+        }
+      }
+    },
+    "stringProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strike_seconds",
+        "strike_error_depth",
+        "detune_spread",
+        "drift_sign",
+        "loss_scale",
+        "pan"
+      ],
+      "properties": {
+        "strike_seconds": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.04
+        },
+        "strike_error_depth": {
+          "$ref": "#/$defs/nonnegativeScale"
+        },
+        "detune_spread": {
+          "type": "number",
+          "minimum": -100.0,
+          "maximum": 100.0
+        },
+        "drift_sign": {
+          "type": "number",
+          "minimum": -100.0,
+          "maximum": 100.0
+        },
+        "loss_scale": {
+          "$ref": "#/$defs/positiveScale"
+        },
+        "pan": {
+          "type": "number",
+          "minimum": -1.0,
+          "maximum": 1.0
+        }
+      }
+    },
+    "feltMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frequency_hz",
+        "t60_seconds",
+        "weight"
+      ],
+      "properties": {
+        "frequency_hz": {
+          "$ref": "#/$defs/frequencyHz"
+        },
+        "t60_seconds": {
+          "$ref": "#/$defs/t60Seconds"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": -100.0,
+          "maximum": 100.0
+        }
+      }
+    },
+    "noteBodyLine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "delay_seconds",
+        "injection"
+      ],
+      "properties": {
+        "delay_seconds": {
+          "$ref": "#/$defs/delaySeconds"
+        },
+        "injection": {
+          "type": "number",
+          "minimum": -100.0,
+          "maximum": 100.0
+        }
+      }
+    },
+    "bodyMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frequency_hz",
+        "t60_seconds",
+        "gain",
+        "input_side",
+        "stereo_position"
+      ],
+      "properties": {
+        "frequency_hz": {
+          "$ref": "#/$defs/frequencyHz"
+        },
+        "t60_seconds": {
+          "$ref": "#/$defs/t60Seconds"
+        },
+        "gain": {
+          "type": "number",
+          "minimum": -100.0,
+          "maximum": 100.0
+        },
+        "input_side": {
+          "type": "number",
+          "minimum": -100.0,
+          "maximum": 100.0
+        },
+        "stereo_position": {
+          "type": "number",
+          "minimum": -1.0,
+          "maximum": 1.0
+        }
+      }
+    },
+    "fdnLine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "delay_seconds",
+        "input_side",
+        "injection",
+        "tone_scale"
+      ],
+      "properties": {
+        "delay_seconds": {
+          "$ref": "#/$defs/delaySeconds"
+        },
+        "input_side": {
+          "type": "number",
+          "minimum": -100.0,
+          "maximum": 100.0
+        },
+        "injection": {
+          "type": "number",
+          "minimum": -100.0,
+          "maximum": 100.0
+        },
+        "tone_scale": {
+          "$ref": "#/$defs/positiveScale"
+        }
+      }
+    },
+    "frequencyHz": {
+      "type": "number",
+      "exclusiveMinimum": 0.0,
+      "maximum": 100000.0
+    },
+    "t60Seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0.0,
+      "maximum": 120.0
+    },
+    "delaySeconds": {
+      "type": "number",
+      "exclusiveMinimum": 0.0,
+      "maximum": 2.0
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "sources"
+      ],
+      "properties": {
+        "method": {
+          "enum": [
+            "modeled",
+            "measured",
+            "hybrid"
+          ]
+        },
+        "instrument": {
+          "$ref": "#/$defs/instrument"
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "derived_with": {
+          "$ref": "#/$defs/derivedWith"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "enum": [
+                  "measured",
+                  "hybrid"
+                ]
+              }
+            },
+            "required": [
+              "method"
+            ]
+          },
+          "then": {
+            "required": [
+              "instrument"
+            ]
+          }
+        }
+      ]
+    },
+    "instrument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "class"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,62}$"
+        },
+        "class": {
+          "enum": [
+            "grand",
+            "upright",
+            "other"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,62}$"
+        },
+        "kind": {
+          "enum": [
+            "paper",
+            "audio_manifest",
+            "dataset",
+            "other"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "uri": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        }
+      }
+    },
+    "derivedWith": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "tool_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        },
+        "tool_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 127
+        },
+        "created_utc": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}
