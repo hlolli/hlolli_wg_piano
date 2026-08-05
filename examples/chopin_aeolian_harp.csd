@@ -98,8 +98,8 @@ instr HarpBeat
       0.32, 0.14, 0.77, 0.35, 0.54, 0.68, 0, 0.82, 0.37
 endin
 
-; The handle owns the shared board and pedal state. The audio bus below remains
-; only for the dry mix and the room input.
+; The handle owns the shared board, sympathetic strings, phases and pedal state.
+; The audio bus remains only for the dry mix and the room input.
 instr Master
   gkSharedPedal portk gkPedalTarget, 0.025
   aPianoWetLeft, aPianoWetRight hlolli_wg_piano_resonance \

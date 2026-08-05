@@ -107,6 +107,13 @@ browser compiler's 256 KiB source limit. Builds never run it on their own. The
 checked-in C file still holds all runtime data and remains a single source file
 for native and WASI builds.
 
+The browser demo keeps a byte-for-byte copy of `hlolli_wg_piano.c` at
+`demos/demo1/wg-piano.c` in the
+[`csound-wasm-plugin-compiler`](https://github.com/hlolli/csound-wasm-plugin-compiler)
+repository. Make model and profile changes here first, run the native checks,
+then replace that demo file and run its piano build-and-play check. The WASI
+build uses the same model and tables; only mutex and reset cleanup code differs.
+
 ## Piano capture data
 
 The [capture guide](recordings/README.md) sets out a practical recording method
