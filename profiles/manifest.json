@@ -2,6 +2,7 @@
   "schema_version": 1,
   "default_profile": "generic_2018",
   "profiles": [
-    "generic_2018.json"
+    "generic_2018.json",
+    "concert_grand_a.json"
   ]
 }

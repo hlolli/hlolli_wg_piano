@@ -53,6 +53,7 @@ LICENSE                        MIT license
 Custom.cmake.example           Optional local path settings
 profiles/manifest.json         Profile order and default choice
 profiles/generic_2018.json     Source data for the current piano
+profiles/concert_grand_a.json  Small concert-grand recording fit
 profiles/schema/               Versioned profile format
 tools/generate_profiles.py     Profile checker and C-table generator
 recordings/README.md           Piano recording and data rules

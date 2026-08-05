@@ -1,0 +1,222 @@
+{
+  "$schema": "schema/piano-profile-v1.schema.json",
+  "schema_version": 1,
+  "id": "concert_grand_a",
+  "display_name": "Concert Grand A",
+  "midi_min": 21,
+  "key_count": 88,
+  "sympathetic_mode_count": 88,
+  "variation_seed": 1128743217,
+  "default_key": {
+    "tuning_cents": 0.0,
+    "inharmonicity_scale": 1.0,
+    "string_length_scale": 1.0,
+    "string_loss_scale": 1.0,
+    "unison_detune_scale": 1.0,
+    "hammer_scale": 1.0,
+    "damper_scale": 1.0,
+    "radiation_scale": 1.0,
+    "sympathetic_scale": 1.0
+  },
+  "keys": {
+    "21": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 1.000, "string_loss_scale": 1.000},
+    "22": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.953, "string_loss_scale": 0.953},
+    "23": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.905, "string_loss_scale": 0.907},
+    "24": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.858, "string_loss_scale": 0.860},
+    "25": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.811, "string_loss_scale": 0.813},
+    "26": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.763, "string_loss_scale": 0.767},
+    "27": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.716, "string_loss_scale": 0.720},
+    "28": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.669, "string_loss_scale": 0.673},
+    "29": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.621, "string_loss_scale": 0.627},
+    "30": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.574, "string_loss_scale": 0.580},
+    "31": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.527, "string_loss_scale": 0.533},
+    "32": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.479, "string_loss_scale": 0.487},
+    "33": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.432, "string_loss_scale": 0.440},
+    "34": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.385, "string_loss_scale": 0.393},
+    "35": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.337, "string_loss_scale": 0.347},
+    "36": {"tuning_cents": -2.86, "inharmonicity_scale": 1.621, "string_length_scale": 0.290, "string_loss_scale": 0.300},
+    "37": {"tuning_cents": -2.52, "inharmonicity_scale": 1.542, "string_length_scale": 0.289, "string_loss_scale": 0.297},
+    "38": {"tuning_cents": -2.17, "inharmonicity_scale": 1.462, "string_length_scale": 0.288, "string_loss_scale": 0.293},
+    "39": {"tuning_cents": -1.83, "inharmonicity_scale": 1.383, "string_length_scale": 0.287, "string_loss_scale": 0.290},
+    "40": {"tuning_cents": -1.48, "inharmonicity_scale": 1.304, "string_length_scale": 0.287, "string_loss_scale": 0.287},
+    "41": {"tuning_cents": -1.14, "inharmonicity_scale": 1.224, "string_length_scale": 0.286, "string_loss_scale": 0.283},
+    "42": {"tuning_cents": -0.79, "inharmonicity_scale": 1.145, "string_length_scale": 0.285, "string_loss_scale": 0.280},
+    "43": {"tuning_cents": -0.45, "inharmonicity_scale": 1.066, "string_length_scale": 0.284, "string_loss_scale": 0.277},
+    "44": {"tuning_cents": -0.11, "inharmonicity_scale": 0.986, "string_length_scale": 0.283, "string_loss_scale": 0.273},
+    "45": {"tuning_cents": 0.24, "inharmonicity_scale": 0.907, "string_length_scale": 0.283, "string_loss_scale": 0.270},
+    "46": {"tuning_cents": 0.58, "inharmonicity_scale": 0.828, "string_length_scale": 0.282, "string_loss_scale": 0.267},
+    "47": {"tuning_cents": 0.93, "inharmonicity_scale": 0.748, "string_length_scale": 0.281, "string_loss_scale": 0.263},
+    "48": {"tuning_cents": 1.27, "inharmonicity_scale": 0.669, "string_length_scale": 0.280, "string_loss_scale": 0.260},
+    "49": {"tuning_cents": 1.64, "inharmonicity_scale": 0.686, "string_length_scale": 0.274, "string_loss_scale": 0.249},
+    "50": {"tuning_cents": 2.01, "inharmonicity_scale": 0.703, "string_length_scale": 0.268, "string_loss_scale": 0.237},
+    "51": {"tuning_cents": 2.38, "inharmonicity_scale": 0.720, "string_length_scale": 0.263, "string_loss_scale": 0.226},
+    "52": {"tuning_cents": 2.76, "inharmonicity_scale": 0.736, "string_length_scale": 0.257, "string_loss_scale": 0.215},
+    "53": {"tuning_cents": 3.13, "inharmonicity_scale": 0.753, "string_length_scale": 0.251, "string_loss_scale": 0.203},
+    "54": {"tuning_cents": 3.50, "inharmonicity_scale": 0.770, "string_length_scale": 0.245, "string_loss_scale": 0.192},
+    "55": {"tuning_cents": 3.50, "inharmonicity_scale": 0.789, "string_length_scale": 0.253, "string_loss_scale": 0.195},
+    "56": {"tuning_cents": 3.50, "inharmonicity_scale": 0.809, "string_length_scale": 0.262, "string_loss_scale": 0.199},
+    "57": {"tuning_cents": 3.50, "inharmonicity_scale": 0.828, "string_length_scale": 0.270, "string_loss_scale": 0.202},
+    "58": {"tuning_cents": 3.50, "inharmonicity_scale": 0.847, "string_length_scale": 0.278, "string_loss_scale": 0.205},
+    "59": {"tuning_cents": 3.50, "inharmonicity_scale": 0.867, "string_length_scale": 0.287, "string_loss_scale": 0.209},
+    "60": {"tuning_cents": 3.50, "inharmonicity_scale": 0.886, "string_length_scale": 0.295, "string_loss_scale": 0.212},
+    "61": {"tuning_cents": 3.53, "inharmonicity_scale": 0.897, "string_length_scale": 0.307, "string_loss_scale": 0.212},
+    "62": {"tuning_cents": 3.55, "inharmonicity_scale": 0.908, "string_length_scale": 0.319, "string_loss_scale": 0.213},
+    "63": {"tuning_cents": 3.58, "inharmonicity_scale": 0.920, "string_length_scale": 0.331, "string_loss_scale": 0.213},
+    "64": {"tuning_cents": 3.61, "inharmonicity_scale": 0.931, "string_length_scale": 0.343, "string_loss_scale": 0.213},
+    "65": {"tuning_cents": 3.63, "inharmonicity_scale": 0.942, "string_length_scale": 0.355, "string_loss_scale": 0.214},
+    "66": {"tuning_cents": 3.66, "inharmonicity_scale": 0.954, "string_length_scale": 0.367, "string_loss_scale": 0.214},
+    "67": {"tuning_cents": 3.69, "inharmonicity_scale": 0.965, "string_length_scale": 0.380, "string_loss_scale": 0.214},
+    "68": {"tuning_cents": 3.71, "inharmonicity_scale": 0.976, "string_length_scale": 0.392, "string_loss_scale": 0.215},
+    "69": {"tuning_cents": 3.74, "inharmonicity_scale": 0.987, "string_length_scale": 0.404, "string_loss_scale": 0.215},
+    "70": {"tuning_cents": 3.77, "inharmonicity_scale": 0.998, "string_length_scale": 0.416, "string_loss_scale": 0.215},
+    "71": {"tuning_cents": 3.79, "inharmonicity_scale": 1.010, "string_length_scale": 0.428, "string_loss_scale": 0.216},
+    "72": {"tuning_cents": 3.82, "inharmonicity_scale": 1.021, "string_length_scale": 0.440, "string_loss_scale": 0.216},
+    "73": {"tuning_cents": 4.14, "inharmonicity_scale": 0.964, "string_length_scale": 0.435, "string_loss_scale": 0.201},
+    "74": {"tuning_cents": 4.45, "inharmonicity_scale": 0.908, "string_length_scale": 0.430, "string_loss_scale": 0.186},
+    "75": {"tuning_cents": 4.77, "inharmonicity_scale": 0.851, "string_length_scale": 0.425, "string_loss_scale": 0.171},
+    "76": {"tuning_cents": 5.12, "inharmonicity_scale": 0.843, "string_length_scale": 0.439, "string_loss_scale": 0.168},
+    "77": {"tuning_cents": 5.48, "inharmonicity_scale": 0.836, "string_length_scale": 0.453, "string_loss_scale": 0.165},
+    "78": {"tuning_cents": 5.83, "inharmonicity_scale": 0.828, "string_length_scale": 0.467, "string_loss_scale": 0.162},
+    "79": {"tuning_cents": 6.18, "inharmonicity_scale": 0.821, "string_length_scale": 0.481, "string_loss_scale": 0.159},
+    "80": {"tuning_cents": 6.54, "inharmonicity_scale": 0.813, "string_length_scale": 0.494, "string_loss_scale": 0.157},
+    "81": {"tuning_cents": 6.89, "inharmonicity_scale": 0.806, "string_length_scale": 0.508, "string_loss_scale": 0.154},
+    "82": {"tuning_cents": 7.24, "inharmonicity_scale": 0.798, "string_length_scale": 0.522, "string_loss_scale": 0.151},
+    "83": {"tuning_cents": 7.60, "inharmonicity_scale": 0.791, "string_length_scale": 0.536, "string_loss_scale": 0.148},
+    "84": {"tuning_cents": 7.95, "inharmonicity_scale": 0.783, "string_length_scale": 0.550, "string_loss_scale": 0.145},
+    "85": {"tuning_cents": 8.87, "inharmonicity_scale": 0.765, "string_length_scale": 0.589, "string_loss_scale": 0.146},
+    "86": {"tuning_cents": 9.79, "inharmonicity_scale": 0.748, "string_length_scale": 0.628, "string_loss_scale": 0.147},
+    "87": {"tuning_cents": 10.71, "inharmonicity_scale": 0.730, "string_length_scale": 0.667, "string_loss_scale": 0.148},
+    "88": {"tuning_cents": 11.63, "inharmonicity_scale": 0.712, "string_length_scale": 0.706, "string_loss_scale": 0.149},
+    "89": {"tuning_cents": 12.55, "inharmonicity_scale": 0.695, "string_length_scale": 0.744, "string_loss_scale": 0.151},
+    "90": {"tuning_cents": 13.47, "inharmonicity_scale": 0.677, "string_length_scale": 0.783, "string_loss_scale": 0.152},
+    "91": {"tuning_cents": 14.39, "inharmonicity_scale": 0.659, "string_length_scale": 0.822, "string_loss_scale": 0.153},
+    "92": {"tuning_cents": 15.31, "inharmonicity_scale": 0.642, "string_length_scale": 0.861, "string_loss_scale": 0.154},
+    "93": {"tuning_cents": 16.23, "inharmonicity_scale": 0.624, "string_length_scale": 0.900, "string_loss_scale": 0.155},
+    "94": {"tuning_cents": 18.88, "inharmonicity_scale": 0.613, "string_length_scale": 0.900, "string_loss_scale": 0.177},
+    "95": {"tuning_cents": 21.53, "inharmonicity_scale": 0.602, "string_length_scale": 0.900, "string_loss_scale": 0.198},
+    "96": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "97": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "98": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "99": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "100": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "101": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "102": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "103": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "104": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "105": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "106": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "107": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220},
+    "108": {"tuning_cents": 24.18, "inharmonicity_scale": 0.591, "string_length_scale": 0.900, "string_loss_scale": 0.220}
+  },
+  "strings": [
+    {
+      "strike_seconds": 0.0,
+      "strike_error_depth": 0.025,
+      "detune_spread": 0.0,
+      "drift_sign": 0.42,
+      "loss_scale": 1.0,
+      "pan": -0.12
+    },
+    {
+      "strike_seconds": 0.000007,
+      "strike_error_depth": 0.095,
+      "detune_spread": 1.0,
+      "drift_sign": 1.0,
+      "loss_scale": 1.035,
+      "pan": 0.12
+    },
+    {
+      "strike_seconds": 0.000015,
+      "strike_error_depth": 0.095,
+      "detune_spread": -0.82,
+      "drift_sign": -0.88,
+      "loss_scale": 0.965,
+      "pan": 0.0
+    }
+  ],
+  "felt_modes": [
+    {
+      "frequency_hz": 468.0,
+      "t60_seconds": 0.058,
+      "weight": 1.0
+    },
+    {
+      "frequency_hz": 908.0,
+      "t60_seconds": 0.041,
+      "weight": -0.58
+    },
+    {
+      "frequency_hz": 1573.0,
+      "t60_seconds": 0.026,
+      "weight": 0.31
+    }
+  ],
+  "note_body_lines": [
+    {
+      "delay_seconds": 0.01127,
+      "injection": 0.33
+    },
+    {
+      "delay_seconds": 0.01361,
+      "injection": -0.29
+    },
+    {
+      "delay_seconds": 0.01693,
+      "injection": 0.24
+    },
+    {
+      "delay_seconds": 0.01979,
+      "injection": -0.20
+    }
+  ],
+  "body_modes": [
+    {"frequency_hz": 58.0, "t60_seconds": 1.50, "gain": 0.34, "input_side": -0.08, "stereo_position": -0.55},
+    {"frequency_hz": 79.0, "t60_seconds": 1.28, "gain": 0.32, "input_side": 0.06, "stereo_position": -0.45},
+    {"frequency_hz": 108.0, "t60_seconds": 1.10, "gain": 0.30, "input_side": -0.13, "stereo_position": -0.35},
+    {"frequency_hz": 149.0, "t60_seconds": 0.91, "gain": 0.275, "input_side": 0.16, "stereo_position": -0.25},
+    {"frequency_hz": 207.0, "t60_seconds": 0.74, "gain": 0.25, "input_side": -0.19, "stereo_position": -0.15},
+    {"frequency_hz": 291.0, "t60_seconds": 0.58, "gain": 0.225, "input_side": 0.22, "stereo_position": -0.05},
+    {"frequency_hz": 413.0, "t60_seconds": 0.45, "gain": 0.20, "input_side": -0.26, "stereo_position": 0.05},
+    {"frequency_hz": 593.0, "t60_seconds": 0.35, "gain": 0.175, "input_side": 0.30, "stereo_position": 0.15},
+    {"frequency_hz": 864.0, "t60_seconds": 0.28, "gain": 0.15, "input_side": -0.34, "stereo_position": 0.25},
+    {"frequency_hz": 1280.0, "t60_seconds": 0.22, "gain": 0.125, "input_side": 0.38, "stereo_position": 0.35},
+    {"frequency_hz": 1960.0, "t60_seconds": 0.18, "gain": 0.10, "input_side": -0.42, "stereo_position": 0.45},
+    {"frequency_hz": 3220.0, "t60_seconds": 0.145, "gain": 0.075, "input_side": 0.46, "stereo_position": 0.55}
+  ],
+  "fdn_lines": [
+    {"delay_seconds": 0.011604166666666667, "input_side": -0.42, "injection": 0.23, "tone_scale": 0.72},
+    {"delay_seconds": 0.014229166666666666, "input_side": 0.31, "injection": -0.21, "tone_scale": 0.83},
+    {"delay_seconds": 0.016854166666666667, "input_side": -0.20, "injection": 0.19, "tone_scale": 0.92},
+    {"delay_seconds": 0.019729166666666666, "input_side": 0.48, "injection": -0.17, "tone_scale": 1.00},
+    {"delay_seconds": 0.023979166666666666, "input_side": -0.36, "injection": 0.16, "tone_scale": 1.09},
+    {"delay_seconds": 0.028354166666666666, "input_side": 0.16, "injection": -0.145, "tone_scale": 1.18},
+    {"delay_seconds": 0.033354166666666664, "input_side": 0.39, "injection": 0.13, "tone_scale": 1.28},
+    {"delay_seconds": 0.04164583333333333, "input_side": -0.27, "injection": -0.115, "tone_scale": 1.38}
+  ],
+  "provenance": {
+    "method": "hybrid",
+    "instrument": {
+      "id": "concert_grand_a",
+      "class": "grand"
+    },
+    "sources": [
+      {
+        "id": "iowa_piano_reference",
+        "kind": "dataset",
+        "title": "University of Iowa piano reference recordings",
+        "uri": "https://theremin.music.uiowa.edu/MISPiano.html"
+      },
+      {
+        "id": "bank_chabassier_2018",
+        "kind": "paper",
+        "title": "Model-based digital pianos: from physics to sound synthesis"
+      },
+      {
+        "id": "bensa_bilbao_kronland_martinet_smith_2003",
+        "kind": "paper",
+        "title": "The simulation of piano string vibration: From physical models to finite difference schemes and digital waveguides"
+      }
+    ],
+    "notes": "Tuning, inharmonicity, loss-model effective string length, and decay use mf and ff recordings at C2, C3, Gb3, C4, C5, Eb5, C6, A6, and C7. Values between anchors use linear interpolation. Low-bass loss values blend back to the generic model at A0; upper values use the C7 anchor. Felt frequencies use non-harmonic attack-residual centers shared by the same notes, not isolated felt measurements. The short bridge, body, FDN, damper, radiation, and sympathetic values stay modeled because the source has no isolated body impulse, pedal sweep, or dry room reference."
+  }
+}

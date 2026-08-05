@@ -46,13 +46,16 @@
 #ifndef TEST_PEDAL
 #define TEST_PEDAL #0.0#
 #endif
+#ifndef TEST_PROFILE
+#define TEST_PROFILE #"generic_2018"#
+#endif
 
 sr = $TEST_SR
 ksmps = $TEST_KSMPS
 nchnls = 2
 0dbfs = 1
 
-giPiano hlolli_wg_piano_create
+giPiano hlolli_wg_piano_create $TEST_PROFILE
 
 instr MeasureNote
   iNote = p4

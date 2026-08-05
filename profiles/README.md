@@ -5,8 +5,9 @@ into `hlolli_wg_piano.c`. Csound does not read them at run time. This keeps the
 native and browser plugins self-contained.
 
 `manifest.json` lists the profile source files. `generic_2018.json` holds the
-default profile. `schema/piano-profile-v1.schema.json` defines the strict
-version 1 format.
+default profile. `concert_grand_a.json` holds the first small recording-based
+fit under a neutral public name. `schema/piano-profile-v1.schema.json` defines
+the strict version 1 format.
 
 ## Generate the C tables
 
