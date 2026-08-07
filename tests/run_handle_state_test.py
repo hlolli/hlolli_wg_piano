@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check per-piano handles, isolation, and persistent wet state."""
+"""Check per-piano handles, isolation, and persistent wet and key state."""
 
 from __future__ import annotations
 
@@ -64,12 +64,25 @@ def same_audio(left, right) -> bool:
         left.channels == right.channels)
 
 
+def same_audio_from(left, right, start: float) -> bool:
+    if (left.sample_rate != right.sample_rate or
+            left.sample_width != right.sample_width or
+            len(left.channels) != len(right.channels)):
+        return False
+    first = int(round(start * left.sample_rate))
+    return all(
+        left_channel[first:] == right_channel[first:]
+        for left_channel, right_channel in zip(
+            left.channels, right.channels))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--csound", required=True, type=Path)
     parser.add_argument("--module", required=True, type=Path)
     parser.add_argument("--isolation-csd", required=True, type=Path)
     parser.add_argument("--handoff-csd", required=True, type=Path)
+    parser.add_argument("--held-gap-csd", required=True, type=Path)
     arguments = parser.parse_args()
 
     try:
@@ -87,6 +100,8 @@ def main() -> int:
             boundary_threads_path = temporary / "boundary-threads.wav"
             early_boundary_path = temporary / "early-boundary.wav"
             early_boundary_threads_path = temporary / "early-boundary-threads.wav"
+            held_early_path = temporary / "held-early.wav"
+            held_recent_path = temporary / "held-recent.wav"
 
             render(arguments.csound, arguments.module, arguments.isolation_csd,
                    piano_a_path, [])
@@ -124,6 +139,10 @@ def main() -> int:
                    ["TEST_SPLIT_OUTPUT=1",
                     "TEST_SPLIT_TIME=0.0106666666666667"],
                    ["--sample-accurate", "--num-threads=4"])
+            render(arguments.csound, arguments.module, arguments.held_gap_csd,
+                   held_early_path, [])
+            render(arguments.csound, arguments.module, arguments.held_gap_csd,
+                   held_recent_path, ["TEST_SNAPSHOT_TIME=0.9999"])
 
             piano_a = read_pcm_wav(piano_a_path)
             piano_b = read_pcm_wav(piano_b_path)
@@ -137,6 +156,8 @@ def main() -> int:
             early_boundary = read_pcm_wav(early_boundary_path)
             early_boundary_threads = read_pcm_wav(
                 early_boundary_threads_path)
+            held_early = read_pcm_wav(held_early_path)
+            held_recent = read_pcm_wav(held_recent_path)
             a_active = channel_rms(piano_a, 0, 0.02, 2.0)
             a_leak = max(abs(value) for value in piano_a.channels[1])
             b_active = channel_rms(piano_b, 1, 0.02, 2.0)
@@ -156,6 +177,8 @@ def main() -> int:
                 continuous_threads, early_boundary_threads)
             same_continuous_threads = same_audio(
                 continuous, continuous_threads)
+            same_held_restart = same_audio_from(
+                held_early, held_recent, 1.0)
 
             duplicate = run_csound(
                 arguments.csound, arguments.module, arguments.handoff_csd,
@@ -194,6 +217,9 @@ def main() -> int:
             if not same_continuous_threads:
                 failures.append(
                     "worker threads changed the continuous handle output")
+            if not same_held_restart:
+                failures.append(
+                    "renderer restart lost an older held-key snapshot")
             if not same_threaded_handoff:
                 failures.append(
                     "four worker threads changed the sample-accurate handoff")
@@ -230,13 +256,13 @@ def main() -> int:
                 "exact_boundary={}, exact_threaded_boundary={}, "
                 "exact_early_boundary={}, "
                 "exact_threaded_early_boundary={}, "
-                "exact_continuous_threads={}".format(
+                "exact_continuous_threads={}, exact_held_restart={}".format(
                     a_active, a_leak, b_active, b_leak,
                     handoff_tail, same_handoff, same_threaded,
                     same_threaded_handoff, same_boundary_handoff,
                     same_threaded_boundary, same_early_boundary,
                     same_threaded_early_boundary,
-                    same_continuous_threads))
+                    same_continuous_threads, same_held_restart))
             for failure in failures:
                 print("failure: {}".format(failure), file=sys.stderr)
             return 1 if failures else 0

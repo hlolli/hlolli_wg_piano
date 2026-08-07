@@ -8,7 +8,7 @@ Create one handle for each piano:
 
 ```csound
 giPiano hlolli_wg_piano_create
-giNamed hlolli_wg_piano_create "generic_2018"
+giNamed hlolli_wg_piano_create "concert_grand_a"
 ```
 
 The note opcode keeps its ten controls and takes the handle as an optional
@@ -52,7 +52,7 @@ README.md                      Build and control reference
 LICENSE                        MIT license
 Custom.cmake.example           Optional local path settings
 profiles/manifest.json         Profile order and default choice
-profiles/generic_2018.json     Source data for the current piano
+profiles/generic_2018.json     Source data for the default modeled piano
 profiles/concert_grand_a.json  Small concert-grand recording fit
 profiles/schema/               Versioned profile format
 tools/generate_profiles.py     Profile checker and C-table generator
@@ -65,6 +65,7 @@ tests/measure_note.csd         Handled-note and profile measurement render
 tests/shared_resonance.csd     Shared-state and tail render
 tests/handle_resonance.csd     Two-piano isolation render
 tests/handle_handoff.csd       Wet-output handoff and error render
+tests/held_renderer_gap.csd    Held-key renderer restart render
 tests/stress.csd               Range and polyphony stress render
 tests/audio_analysis.py        PCM WAV metrics and tuning checks
 tests/run_shared_resonance_test.py  Shared-tail test driver
@@ -244,15 +245,17 @@ delay memory remain separate.
 
 ```csound
 giDefault hlolli_wg_piano_create
-giNamed   hlolli_wg_piano_create "generic_2018"
+giNamed   hlolli_wg_piano_create "concert_grand_a"
 ```
 
-The no-input form selects `generic_2018`. The named form binds its profile when
-it creates the handle; the profile cannot change while that piano runs. An
-unknown name stops orchestra initialization with an error. Profiles hold fixed
-acoustic data, while each handle keeps its own changing state. At present the
-registry contains only `generic_2018`; later measured pianos can use the same
-creator without changing the note or wet opcodes.
+The no-input form selects the compiled default profile, currently
+`generic_2018`, which is also the current manifest default. The named form
+binds its profile when it creates the handle; the profile cannot change while
+that piano runs. An unknown name stops orchestra initialization with an error.
+Profiles hold fixed acoustic data,
+while each handle keeps its own changing state. The registry contains
+`generic_2018` and `concert_grand_a`, in the order listed in
+`profiles/manifest.json`.
 
 The handle form of `hlolli_wg_piano_resonance` has one i-rate input and two
 k-rate controls:

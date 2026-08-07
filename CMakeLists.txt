@@ -233,6 +233,18 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
               -n -d -m128
               "${CMAKE_CURRENT_LIST_DIR}/tests/smoke.csd")
 
+    add_test(NAME hlolli_wg_piano.concert_grand_a
+      COMMAND "${CSOUND_EXECUTABLE}"
+              "--opcode-lib=$<TARGET_FILE:hlolli_wg_piano>"
+              "--omacro:TEST_PROFILE=\"concert_grand_a\""
+              "--omacro:TEST_KEY_SECONDS=0.05"
+              "--omacro:TEST_TAIL_SECONDS=0.20"
+              -n -d -m128
+              "${CMAKE_CURRENT_LIST_DIR}/tests/measure_note.csd")
+    set_tests_properties(hlolli_wg_piano.concert_grand_a PROPERTIES
+      LABELS "audio"
+      TIMEOUT 30)
+
     add_test(NAME hlolli_wg_piano.stress
       COMMAND "${CSOUND_EXECUTABLE}"
               "--opcode-lib=$<TARGET_FILE:hlolli_wg_piano>"
@@ -259,7 +271,9 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
                 --isolation-csd
                 "${CMAKE_CURRENT_LIST_DIR}/tests/handle_resonance.csd"
                 --handoff-csd
-                "${CMAKE_CURRENT_LIST_DIR}/tests/handle_handoff.csd")
+                "${CMAKE_CURRENT_LIST_DIR}/tests/handle_handoff.csd"
+                --held-gap-csd
+                "${CMAKE_CURRENT_LIST_DIR}/tests/held_renderer_gap.csd")
     else()
       message(WARNING
         "Python 3 was not found; audio checks get render-only tests.")
