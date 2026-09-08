@@ -61,6 +61,8 @@ def read_pcm_wav(path: Path) -> WavData:
         frame_count = source.getnframes()
         raw = source.readframes(frame_count)
 
+    if len(raw) != frame_count * channel_count * sample_width:
+        raise ValueError("truncated PCM WAV data")
     interleaved = _decode_pcm(raw, sample_width)
     channels = [interleaved[index::channel_count]
                 for index in range(channel_count)]
@@ -126,10 +128,14 @@ def estimate_tuning(data: WavData, midi_note: float, start: float,
         (0.5 - 0.5 * math.cos(2.0 * math.pi * index / denominator))
         for index, sample in enumerate(values)
     ]
+    if not any(values):
+        raise ValueError("the tuning window has no AC signal")
 
     ratio = math.pow(2.0, search_cents / 1200.0)
     lower = expected / ratio
     upper = expected * ratio
+    if search_cents <= 0.0 or not 0.0 < lower < upper < data.sample_rate / 2.0:
+        raise ValueError("the tuning search must lie between zero and Nyquist")
     duration = len(values) / data.sample_rate
     point_count = max(
         5, min(2049, int(math.ceil((upper - lower) * duration * 8.0)) + 1))
@@ -183,9 +189,31 @@ def parse_window(specification: str) -> Tuple[str, float, float]:
         end = float(fields[2])
     except ValueError as error:
         raise argparse.ArgumentTypeError(str(error)) from error
-    if start < 0.0 or end <= start:
+    if (not math.isfinite(start) or not math.isfinite(end) or
+            start < 0.0 or end <= start):
         raise argparse.ArgumentTypeError("window end must be greater than start")
     return fields[0], start, end
+
+
+def finite_float(value: str) -> float:
+    number = float(value)
+    if not math.isfinite(number):
+        raise argparse.ArgumentTypeError("value must be finite")
+    return number
+
+
+def nonnegative_float(value: str) -> float:
+    number = finite_float(value)
+    if number < 0.0:
+        raise argparse.ArgumentTypeError("value must be nonnegative")
+    return number
+
+
+def positive_float(value: str) -> float:
+    number = finite_float(value)
+    if number <= 0.0:
+        raise argparse.ArgumentTypeError("value must be positive")
+    return number
 
 
 def analyse(path: Path, clip_level: float,
@@ -229,14 +257,14 @@ def analyse(path: Path, clip_level: float,
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wav", type=Path)
-    parser.add_argument("--clip-level", type=float, default=0.999)
+    parser.add_argument("--clip-level", type=positive_float, default=0.999)
     parser.add_argument("--window", action="append", type=parse_window,
                         default=[], metavar="LABEL:START:END")
-    parser.add_argument("--midi", type=float)
-    parser.add_argument("--tuning-start", type=float, default=0.10)
-    parser.add_argument("--tuning-end", type=float)
-    parser.add_argument("--search-cents", type=float, default=75.0)
-    parser.add_argument("--max-abs-cents", type=float)
+    parser.add_argument("--midi", type=finite_float)
+    parser.add_argument("--tuning-start", type=nonnegative_float, default=0.10)
+    parser.add_argument("--tuning-end", type=positive_float)
+    parser.add_argument("--search-cents", type=positive_float, default=75.0)
+    parser.add_argument("--max-abs-cents", type=nonnegative_float)
     parser.add_argument("--max-clipped-samples", type=int)
     arguments = parser.parse_args(argv)
 

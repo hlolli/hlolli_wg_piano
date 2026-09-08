@@ -68,6 +68,8 @@ tests/handle_handoff.csd       Wet-output handoff and error render
 tests/held_renderer_gap.csd    Held-key renderer restart render
 tests/stress.csd               Range and polyphony stress render
 tests/audio_analysis.py        PCM WAV metrics and tuning checks
+tests/initial_controls.csd     First-block note control render
+tests/run_initial_controls_test.py  Initial and k-rate control comparison
 tests/run_shared_resonance_test.py  Shared-tail test driver
 tests/run_handle_state_test.py Piano-handle state test driver
 benchmarks/generic_2018_baseline.md  Pre-profile render and timing baseline
@@ -396,8 +398,11 @@ this version does not keep all 88 struck-string rails in the global state.
 about 25 ms and the string delay follows over about 18 ms, so pitch changes
 glide instead of stepping. Normal piano use should pass `cpsmidinn()` values
 from MIDI note 21 through 108. With a piano handle, held-key damping and the
-shared drift state keep using the key chosen at init time. Handled and detached
-notes also keep that key's string, hammer, and felt profile for the full voice.
+shared drift state keep using the key chosen at the first performance block.
+The opcode reads the first k-rate control values before it strikes, so `init`
+and ordinary k-rate assignments give the same initial sound. Handled and
+detached notes keep that key's string, hammer, and felt profile for the full
+voice.
 
 Each profile sets the second- and third-string level for every key. In
 `generic_2018`, the second string fades in from about 39 to 49 Hz and the third
@@ -575,6 +580,24 @@ A-flat major, Op. 25 No. 1. Its top melody overlaps each next beat. It routes
 all notes through one piano handle, then adds a small room.
 
 `tests/smoke.csd` gives a short render that calls both opcodes.
+
+`tests/run_initial_controls_test.py` compares direct and wet renders from
+equivalent initial and k-rate controls across both profiles and three block
+sizes. `tools/test_audio_analysis.py` checks known pitch, silence, truncated
+files, and measurement limits. Both run through CTest.
+
+`tools/piano_fit_adapter.py` uses the analyzer's same checked renderer and
+fit/check selector as the violin project. It sweeps the public body, hammer
+hardness, and hammer-position controls over low, middle, and high notes. This
+proves that the fit interface does not depend on violin strings or profiles.
+
+The current piano adapter is render-only. Its fit manifest has no saved-profile
+paths, so the shared profile writer rejects it. This is deliberate: the three
+public controls do not each map to one fixed field in a piano profile. Add an
+exact profile rule before enabling piano profile output.
+
+Reference conversion uses a windowed-sinc filter to preserve the measured
+bands and remove frequencies above the new sample rate's Nyquist limit.
 
 The same C source and either CSD can also be pasted into the
 [Csound opcode workbench](https://hlolli.github.io/plugin-compiler/).

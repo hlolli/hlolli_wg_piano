@@ -669,6 +669,8 @@ typedef struct {
   double mechanical_noise_lowpass;
   double mechanical_energy;
   int32_t tuning_initialized;
+  int32_t controls_initialized;
+  uint64_t note_start_sample;
   int32_t key_state;
   const WG_PIANO_PROFILE *profile;
   const WG_KEY_PROFILE *key_profile;
@@ -2163,118 +2165,16 @@ static void wg_clear_signal_state(HLOLLI_WG_PIANO *p)
   p->mechanical_energy = 0.0;
 }
 
-static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
+/* K-rate expressions may still hold zero during init. Repeat this setup at
+   the first performance block, before the strike, when every input is ready.
+   Later blocks keep the chosen key and smooth control changes as usual. */
+static void wg_initialize_note_controls(CSOUND *csound, HLOLLI_WG_PIANO *p)
 {
-  double *memory;
-  double initial_frequency;
-  double requested_handle;
-  size_t total_doubles;
-  uint32_t rail_size;
-  uint32_t body_sizes[BODY_LINES];
+  const double initial_frequency = wg_clamp(
+      wg_input(p->kfrequency, 440.0), 20.0, 0.45 * p->sample_rate);
   uint32_t index;
 
-  if (p->piano != NULL) {
-    wg_set_note_key_down(csound, p, 0);
-  }
-  p->sample_rate = (double)CS_ESR;
-  p->piano = NULL;
-  p->piano_handle = 0;
-  p->piano_voice_serial = 0U;
-  p->piano_key = 0U;
-  p->piano_send_lane = 0U;
-  p->piano_key_down = 0;
-  p->profile = NULL;
-  p->key_profile = NULL;
-  if (!(p->sample_rate > 1000.0) || p->sample_rate > 768000.0 ||
-      !isfinite(p->sample_rate)) {
-    return csound->InitError(csound,
-                             "hlolli_wg_piano: invalid sample rate\n");
-  }
-  if (UNLIKELY(wg_get_piano_manager(csound) == NULL)) {
-    return csound->InitError(
-        csound, "hlolli_wg_piano: cannot initialize piano profiles\n");
-  }
-  p->profile = wg_default_profile();
-  p->key_profile = &p->profile->default_key;
-
-  initial_frequency = wg_clamp(wg_input(p->kfrequency, 440.0), 20.0,
-                               0.45 * p->sample_rate);
-  requested_handle = p->ipiano != NULL ? (double)*p->ipiano : 0.0;
-  if (requested_handle != 0.0) {
-    const int32_t handle = wg_read_piano_handle(p->ipiano);
-    if (UNLIKELY(handle < 1)) {
-      return csound->InitError(
-          csound, "hlolli_wg_piano: piano handle must be a positive integer\n");
-    }
-    p->piano = wg_get_piano_by_handle(csound, handle);
-    if (UNLIKELY(p->piano == NULL)) {
-      return csound->InitError(
-          csound, "hlolli_wg_piano: unknown piano handle %d\n", handle);
-    }
-    if (UNLIKELY(p->piano->send_ksmps != CS_KSMPS)) {
-      return csound->InitError(
-          csound,
-          "hlolli_wg_piano: piano handle %d requires engine ksmps %u\n",
-          handle, p->piano->send_ksmps);
-    }
-    p->piano_handle = handle;
-    p->profile = p->piano->profile;
-  }
-  for (index = 0U; index < WG_STRINGS; index++) {
-    p->profile_string_pan[index] = p->profile->strings[index].pan;
-  }
-  for (index = 0U; index < FELT_MODES; index++) {
-    p->profile_felt_weight[index] = p->profile->felt_modes[index].weight;
-  }
-  for (index = 0U; index < BODY_LINES; index++) {
-    p->profile_body_injection[index] =
-        p->profile->note_body_lines[index].injection;
-  }
-
-  rail_size = (uint32_t)(p->sample_rate / 20.0) + 32U;
-  total_doubles = (size_t)rail_size * (WG_STRINGS + 1U);
-  for (index = 0U; index < BODY_LINES; index++) {
-    body_sizes[index] = wg_odd_size(
-        p->sample_rate, p->profile->note_body_lines[index].delay_seconds);
-    total_doubles += (size_t)body_sizes[index];
-  }
-  total_doubles += (size_t)CS_KSMPS;
-
-  csound->AuxAlloc(csound, total_doubles * sizeof(double), &p->memory);
-  if (UNLIKELY(p->memory.auxp == NULL)) {
-    return csound->InitError(csound,
-                             "hlolli_wg_piano: cannot allocate delay memory\n");
-  }
-  memset(p->memory.auxp, 0, total_doubles * sizeof(double));
-  memory = (double *)p->memory.auxp;
-
-  for (index = 0U; index < WG_STRINGS; index++) {
-    p->strings[index].data = memory;
-    p->strings[index].size = rail_size;
-    p->strings[index].write_index = 0U;
-    p->strings[index].loop_previous = 0.0;
-    p->strings[index].dc_input_previous = 0.0;
-    p->strings[index].dc_output_previous = 0.0;
-    memset(p->strings[index].allpass_x, 0,
-           sizeof(p->strings[index].allpass_x));
-    memset(p->strings[index].allpass_y, 0,
-           sizeof(p->strings[index].allpass_y));
-    memory += rail_size;
-  }
-
-  p->hammer_history = memory;
-  p->hammer_history_size = rail_size;
-  p->hammer_history_index = 0U;
-  memory += rail_size;
-
-  for (index = 0U; index < BODY_LINES; index++) {
-    p->body_lines[index].data = memory;
-    p->body_lines[index].size = body_sizes[index];
-    p->body_lines[index].write_index = 0U;
-    p->body_lines[index].lowpass = 0.0;
-    memory += body_sizes[index];
-  }
-
+  wg_set_note_key_down(csound, p, 0);
   {
     int32_t midi_key;
     midi_key = (int32_t)floor(wg_frequency_to_midi(initial_frequency) + 0.5);
@@ -2288,14 +2188,6 @@ static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
     p->piano_key = (uint32_t)(midi_key - p->profile->midi_min);
     p->key_profile = wg_profile_key(p->profile, p->piano_key);
     p->profile_radiation_scale = p->key_profile->radiation_scale;
-    if (p->piano != NULL) {
-      csound->LockMutex(p->piano->state_lock);
-      p->piano->voice_serial++;
-      p->piano_voice_serial = p->piano->voice_serial;
-      p->piano_send_lane = (uint32_t)(
-          p->piano_voice_serial % WG_SEND_LANES);
-      csound->UnlockMutex(p->piano->state_lock);
-    }
   }
   p->frequency = initial_frequency;
   p->hardness = wg_clamp(wg_input(p->khardness, 0.45), 0.0, 1.0);
@@ -2332,8 +2224,7 @@ static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
   memset(p->hammer_excitation_lowpass2, 0,
          sizeof(p->hammer_excitation_lowpass2));
   {
-    const uint64_t start_sample =
-        (uint64_t)csound->GetCurrentTimeSamples(csound);
+    const uint64_t start_sample = p->note_start_sample;
     const uint64_t instance_salt = p->piano != NULL
         ? 0U : (uint64_t)(uintptr_t)(void *)p;
     const uint64_t piano_salt = p->piano != NULL
@@ -2362,7 +2253,7 @@ static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
     p->unison_static_cents[index] = 0.0;
     if (p->piano != NULL) {
       const double elapsed =
-          ((double)csound->GetCurrentTimeSamples(csound) +
+          ((double)p->note_start_sample +
            (double)p->h.insdshead->ksmps_offset) / p->sample_rate;
       p->unison_drift_rate[index] =
           p->piano->drift_rate[p->piano_key][index];
@@ -2434,15 +2325,141 @@ static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
     p->last_trigger = trigger;
     p->trigger_armed = 0;
   }
-  wg_set_note_key_down(
-      csound, p, wg_input(p->ktrigger, 0.0) > 0.0001);
   p->key_state = wg_input(p->ktrigger, 0.0) > 0.0001;
+}
+
+static int32_t hlolli_wg_piano_init(CSOUND *csound, HLOLLI_WG_PIANO *p)
+{
+  double *memory;
+  double requested_handle;
+  size_t total_doubles;
+  uint32_t rail_size;
+  uint32_t body_sizes[BODY_LINES];
+  uint32_t index;
+
+  if (p->piano != NULL) {
+    wg_set_note_key_down(csound, p, 0);
+  }
+  p->sample_rate = (double)CS_ESR;
+  p->piano = NULL;
+  p->piano_handle = 0;
+  p->piano_voice_serial = 0U;
+  p->piano_key = 0U;
+  p->piano_send_lane = 0U;
+  p->piano_key_down = 0;
+  p->profile = NULL;
+  p->key_profile = NULL;
+  if (!(p->sample_rate > 1000.0) || p->sample_rate > 768000.0 ||
+      !isfinite(p->sample_rate)) {
+    return csound->InitError(csound,
+                             "hlolli_wg_piano: invalid sample rate\n");
+  }
+  if (UNLIKELY(wg_get_piano_manager(csound) == NULL)) {
+    return csound->InitError(
+        csound, "hlolli_wg_piano: cannot initialize piano profiles\n");
+  }
+  p->profile = wg_default_profile();
+  p->key_profile = &p->profile->default_key;
+
+  requested_handle = p->ipiano != NULL ? (double)*p->ipiano : 0.0;
+  if (requested_handle != 0.0) {
+    const int32_t handle = wg_read_piano_handle(p->ipiano);
+    if (UNLIKELY(handle < 1)) {
+      return csound->InitError(
+          csound, "hlolli_wg_piano: piano handle must be a positive integer\n");
+    }
+    p->piano = wg_get_piano_by_handle(csound, handle);
+    if (UNLIKELY(p->piano == NULL)) {
+      return csound->InitError(
+          csound, "hlolli_wg_piano: unknown piano handle %d\n", handle);
+    }
+    if (UNLIKELY(p->piano->send_ksmps != CS_KSMPS)) {
+      return csound->InitError(
+          csound,
+          "hlolli_wg_piano: piano handle %d requires engine ksmps %u\n",
+          handle, p->piano->send_ksmps);
+    }
+    p->piano_handle = handle;
+    p->profile = p->piano->profile;
+  }
+  if (p->piano != NULL) {
+    csound->LockMutex(p->piano->state_lock);
+    p->piano->voice_serial++;
+    p->piano_voice_serial = p->piano->voice_serial;
+    p->piano_send_lane = (uint32_t)(
+        p->piano_voice_serial % WG_SEND_LANES);
+    csound->UnlockMutex(p->piano->state_lock);
+  }
+  for (index = 0U; index < WG_STRINGS; index++) {
+    p->profile_string_pan[index] = p->profile->strings[index].pan;
+  }
+  for (index = 0U; index < FELT_MODES; index++) {
+    p->profile_felt_weight[index] = p->profile->felt_modes[index].weight;
+  }
+  for (index = 0U; index < BODY_LINES; index++) {
+    p->profile_body_injection[index] =
+        p->profile->note_body_lines[index].injection;
+  }
+
+  rail_size = (uint32_t)(p->sample_rate / 20.0) + 32U;
+  total_doubles = (size_t)rail_size * (WG_STRINGS + 1U);
+  for (index = 0U; index < BODY_LINES; index++) {
+    body_sizes[index] = wg_odd_size(
+        p->sample_rate, p->profile->note_body_lines[index].delay_seconds);
+    total_doubles += (size_t)body_sizes[index];
+  }
+  total_doubles += (size_t)CS_KSMPS;
+
+  csound->AuxAlloc(csound, total_doubles * sizeof(double), &p->memory);
+  if (UNLIKELY(p->memory.auxp == NULL)) {
+    return csound->InitError(csound,
+                             "hlolli_wg_piano: cannot allocate delay memory\n");
+  }
+  memset(p->memory.auxp, 0, total_doubles * sizeof(double));
+  memory = (double *)p->memory.auxp;
+
+  for (index = 0U; index < WG_STRINGS; index++) {
+    p->strings[index].data = memory;
+    p->strings[index].size = rail_size;
+    p->strings[index].write_index = 0U;
+    p->strings[index].loop_previous = 0.0;
+    p->strings[index].dc_input_previous = 0.0;
+    p->strings[index].dc_output_previous = 0.0;
+    memset(p->strings[index].allpass_x, 0,
+           sizeof(p->strings[index].allpass_x));
+    memset(p->strings[index].allpass_y, 0,
+           sizeof(p->strings[index].allpass_y));
+    memory += rail_size;
+  }
+
+  p->hammer_history = memory;
+  p->hammer_history_size = rail_size;
+  p->hammer_history_index = 0U;
+  memory += rail_size;
+
+  for (index = 0U; index < BODY_LINES; index++) {
+    p->body_lines[index].data = memory;
+    p->body_lines[index].size = body_sizes[index];
+    p->body_lines[index].write_index = 0U;
+    p->body_lines[index].lowpass = 0.0;
+    memory += body_sizes[index];
+  }
+
+  p->note_start_sample =
+      (uint64_t)csound->GetCurrentTimeSamples(csound);
+  wg_initialize_note_controls(csound, p);
+  p->controls_initialized = 0;
 
   return OK;
 }
 
 static int32_t hlolli_wg_piano_perf(CSOUND *csound, HLOLLI_WG_PIANO *p)
 {
+  if (!p->controls_initialized) {
+    wg_initialize_note_controls(csound, p);
+    p->controls_initialized = 1;
+  }
+
   MYFLT *out_left = p->out_left;
   MYFLT *out_right = p->out_right;
   const double sample_rate = p->sample_rate;

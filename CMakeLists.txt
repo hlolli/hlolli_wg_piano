@@ -94,7 +94,7 @@ if(NOT HLOLLI_CSOUND_INCLUDE_DIR AND NOT _hlolli_csound_header_target)
 endif()
 
 if(NOT HLOLLI_CSOUND_INCLUDE_DIR AND NOT _hlolli_csound_header_target)
-  find_path(HLOLLI_CSOUND_INCLUDE_DIR
+  find_path(_hlolli_csound_system_include
     NAMES csdl.h
     HINTS
       "$ENV{CSOUND_INCLUDE_DIR}"
@@ -104,6 +104,9 @@ if(NOT HLOLLI_CSOUND_INCLUDE_DIR AND NOT _hlolli_csound_header_target)
       "/Library/Frameworks/CsoundLib64.framework/Headers"
       "/Applications/Csound/CsoundLib64.framework/Headers"
     PATH_SUFFIXES csound Headers)
+  if(_hlolli_csound_system_include)
+    set(HLOLLI_CSOUND_INCLUDE_DIR "${_hlolli_csound_system_include}")
+  endif()
 endif()
 
 if(HLOLLI_CSOUND_INCLUDE_DIR)
@@ -221,10 +224,25 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
     set_tests_properties(hlolli_wg_piano.profile_data PROPERTIES
       LABELS "tooling"
       TIMEOUT 30)
+    add_test(NAME hlolli_wg_piano.fit_adapter
+      COMMAND "${Python3_EXECUTABLE}" -B
+              "${CMAKE_CURRENT_LIST_DIR}/tools/test_piano_fit_adapter.py")
+    set_tests_properties(hlolli_wg_piano.fit_adapter PROPERTIES
+      LABELS "tooling;fit"
+      TIMEOUT 30)
+    add_test(NAME hlolli_wg_piano.audio_analysis
+      COMMAND "${Python3_EXECUTABLE}" -B
+              "${CMAKE_CURRENT_LIST_DIR}/tools/test_audio_analysis.py")
+    set_tests_properties(hlolli_wg_piano.audio_analysis PROPERTIES
+      LABELS "tooling;audio"
+      TIMEOUT 30)
   endif()
   set(CSOUND_EXECUTABLE "" CACHE FILEPATH "Path to the Csound executable")
   if(NOT CSOUND_EXECUTABLE)
-    find_program(CSOUND_EXECUTABLE NAMES csound csound64)
+    find_program(_hlolli_csound_executable NAMES csound csound64)
+    if(_hlolli_csound_executable)
+      set(CSOUND_EXECUTABLE "${_hlolli_csound_executable}")
+    endif()
   endif()
   if(CSOUND_EXECUTABLE)
     add_test(NAME hlolli_wg_piano.smoke
@@ -255,6 +273,16 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
       TIMEOUT 120)
 
     if(Python3_Interpreter_FOUND)
+      add_test(NAME hlolli_wg_piano.initial_controls
+        COMMAND "${Python3_EXECUTABLE}"
+                -B
+                "${CMAKE_CURRENT_LIST_DIR}/tests/run_initial_controls_test.py"
+                --csound "${CSOUND_EXECUTABLE}"
+                --module "$<TARGET_FILE:hlolli_wg_piano>"
+                --csd "${CMAKE_CURRENT_LIST_DIR}/tests/initial_controls.csd")
+      set_tests_properties(hlolli_wg_piano.initial_controls PROPERTIES
+        LABELS "audio"
+        TIMEOUT 60)
       add_test(NAME hlolli_wg_piano.shared_resonance
         COMMAND "${Python3_EXECUTABLE}"
                 -B

@@ -1,0 +1,86 @@
+{
+  "schema": "hwa-instrument-fit",
+  "schema_version": 1,
+  "adapter_id": "hlolli-wg-piano-v1",
+  "parameters": [
+    {
+      "id": "body_control",
+      "unit": "ratio",
+      "minimum": 0.45,
+      "maximum": 0.9,
+      "baseline": 0.72,
+      "profile_paths": []
+    },
+    {
+      "id": "hammer_hardness",
+      "unit": "ratio",
+      "minimum": 0.25,
+      "maximum": 0.75,
+      "baseline": 0.43,
+      "profile_paths": []
+    },
+    {
+      "id": "hammer_position",
+      "unit": "string_fraction",
+      "minimum": 0.07,
+      "maximum": 0.2,
+      "baseline": 0.12,
+      "profile_paths": []
+    }
+  ],
+  "objectives": [
+    {
+      "id": "fit_low_mid",
+      "kind": "experiment-gap",
+      "response": "final.band.120-250",
+      "split": "fit",
+      "weight": 0.8,
+      "scale": 6.0
+    },
+    {
+      "id": "fit_presence",
+      "kind": "experiment-gap",
+      "response": "final.band.2-4k",
+      "split": "fit",
+      "weight": 1.0,
+      "scale": 6.0
+    },
+    {
+      "id": "fit_metal",
+      "kind": "experiment-gap",
+      "response": "final.band.4-8k",
+      "split": "fit",
+      "weight": 1.0,
+      "scale": 6.0
+    },
+    {
+      "id": "check_low_mid",
+      "kind": "experiment-gap",
+      "response": "final.band.120-250",
+      "split": "check",
+      "weight": 0.8,
+      "scale": 6.0
+    },
+    {
+      "id": "check_presence",
+      "kind": "experiment-gap",
+      "response": "final.band.2-4k",
+      "split": "check",
+      "weight": 1.0,
+      "scale": 6.0
+    },
+    {
+      "id": "check_metal",
+      "kind": "experiment-gap",
+      "response": "final.band.4-8k",
+      "split": "check",
+      "weight": 1.0,
+      "scale": 6.0
+    }
+  ],
+  "selection": {
+    "check_weight": 1.0,
+    "max_check_loss_increase": 0.08,
+    "max_candidate_worst_harm": 4.0
+  }
+}
