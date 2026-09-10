@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import importlib.util
+import copy
 import json
 import math
 from pathlib import Path
@@ -8,6 +9,7 @@ import struct
 import tempfile
 import types
 import unittest
+from unittest import mock
 import wave
 
 
@@ -27,6 +29,141 @@ def silent_wave(path: Path) -> None:
 
 
 class PianoFitAdapterTests(unittest.TestCase):
+    def profile_bundle(self, root):
+        headers = root / "headers"
+        headers.mkdir()
+        for name in ("csdl.h", "version.h", "float-version.h"):
+            (headers / name).write_text("/* test header */")
+        source = root / "source.json"
+        source.write_bytes((ROOT / "profiles" / "concert_grand_a.json").read_bytes())
+        csound, compiler = root / "csound", root / "cc"
+        csound.write_bytes(b"csound")
+        compiler.write_bytes(b"compiler")
+        reference = root / "reference.wav"
+        silent_wave(reference)
+        arguments = types.SimpleNamespace(
+            output_dir=root / "bundle with spaces", csound=csound, module=None,
+            profile=source, cc=compiler, include_dir=headers, fit_manifest=None,
+            library_path=None, sample_count=1,
+            **{"reference_" + name: reference for name in (
+                "low_fit", "low_check", "mid_fit", "mid_check", "high_fit", "high_check")})
+        MODULE.build(arguments)
+        renderer = types.ModuleType("frozen_piano")
+        renderer.__file__ = str(arguments.output_dir / "renderer")
+        exec(compile(Path(renderer.__file__).read_bytes(), renderer.__file__, "exec"),
+             renderer.__dict__)
+        return arguments, renderer
+
+    def test_profile_bundle_and_validator_preserve_unmapped_fields(self):
+        with tempfile.TemporaryDirectory() as text:
+            arguments, renderer = self.profile_bundle(Path(text))
+            bundle = arguments.output_dir
+            manifest = MODULE.load_json(bundle / "fit.json")
+            profile = MODULE.load_json(bundle / "source-profile.json")
+            self.assertEqual(manifest["adapter_id"], "hlolli-wg-piano-profile-v1")
+            self.assertTrue(manifest["parameters"][0]["profile_paths"])
+            candidate = MODULE.apply_profile_parameters(
+                profile, manifest["parameters"], {"radiation_scale": 1.25})
+            self.assertEqual(candidate["keys"]["36"]["hammer_string_gain"],
+                             profile["keys"]["36"]["hammer_string_gain"])
+            output = Path(text) / "candidate.json"
+            output.write_text(json.dumps(candidate))
+            renderer.validate_candidate(output)
+            self.assertEqual(profile, MODULE.load_json(arguments.profile))
+            candidate["mechanics"]["key_action_gain"] = 2.5
+            output.write_text(json.dumps(candidate))
+            with self.assertRaisesRegex(renderer.AdapterError, "outside"):
+                renderer.validate_candidate(output)
+
+    def test_profile_validator_rejects_unmapped_changes_and_out_of_range(self):
+        with tempfile.TemporaryDirectory() as text:
+            arguments, renderer = self.profile_bundle(Path(text))
+            profile = MODULE.load_json(arguments.output_dir / "source-profile.json")
+            manifest = MODULE.load_json(arguments.output_dir / "fit.json")
+            output = Path(text) / "candidate.json"
+            for value in (0.1, 2.1):
+                candidate = MODULE.apply_profile_parameters(
+                    profile, manifest["parameters"], {"radiation_scale": value})
+                output.write_text(json.dumps(candidate))
+                with self.assertRaisesRegex(renderer.AdapterError, "out of range"):
+                    renderer.validate_candidate(output)
+            for change in ("mechanics", "one-key"):
+                candidate = copy.deepcopy(profile)
+                if change == "mechanics":
+                    candidate["mechanics"]["key_action_gain"] = 2.5
+                else:
+                    candidate["keys"]["36"]["radiation_scale"] = 1.3
+                output.write_text(json.dumps(candidate))
+                with self.assertRaisesRegex(renderer.AdapterError, "outside"):
+                    renderer.validate_candidate(output)
+
+    def test_profile_inputs_are_frozen_and_hash_checked(self):
+        with tempfile.TemporaryDirectory() as text:
+            arguments, renderer = self.profile_bundle(Path(text))
+            source = arguments.output_dir / "source-profile.json"
+            arguments.profile.write_text("{}")
+            renderer.validate_candidate(source)
+            header = arguments.output_dir / "profile-inputs" / "include" / "csdl.h"
+            header.write_text("changed")
+            with self.assertRaisesRegex(renderer.AdapterError, "hash changed"):
+                renderer.validate_candidate(source)
+
+    def test_custom_profile_mapping_and_bad_paths(self):
+        profile = MODULE.load_json(ROOT / "profiles" / "concert_grand_a.json")
+        manifest = MODULE.profile_fit_manifest(profile, None)
+        manifest["parameters"] = [{
+            "id": "hammer_gain_36", "unit": "ratio", "minimum": 0.1,
+            "maximum": 2.0, "baseline": profile["keys"]["36"]["hammer_string_gain"],
+            "profile_paths": [["keys", "36", "hammer_string_gain"]],
+        }]
+        with tempfile.TemporaryDirectory() as text:
+            path = Path(text) / "fit.json"
+            path.write_text(json.dumps(manifest))
+            self.assertEqual(MODULE.profile_fit_manifest(profile, path), manifest)
+            for target in (["midi_min"], ["keys", "missing", "radiation_scale"],
+                           ["body_modes", -1, "gain"], ["mechanics"]):
+                with self.assertRaises(MODULE.AdapterError):
+                    MODULE.profile_target(profile, target)
+            for mutate in ("duplicate", "baseline", "boolean"):
+                bad = copy.deepcopy(manifest)
+                if mutate == "duplicate":
+                    bad["parameters"][0]["profile_paths"] *= 2
+                elif mutate == "baseline":
+                    bad["parameters"][0]["baseline"] = 1.99
+                else:
+                    bad["parameters"][0]["minimum"] = False
+                path.write_text(json.dumps(bad))
+                with self.assertRaises(MODULE.AdapterError):
+                    MODULE.profile_fit_manifest(profile, path)
+
+    def test_profile_render_rejects_duplicate_and_boolean_parameters(self):
+        with tempfile.TemporaryDirectory() as text:
+            arguments, renderer = self.profile_bundle(Path(text))
+            root = Path(text)
+            request = {
+                "schema": "hwa-render-job", "schema_version": 1,
+                "case_id": "mid-fit", "outputs": [
+                    {"id": "model.final", "path": str(root / "output.wav")}],
+                "parameters": [{"id": "radiation_scale", "value": 1.0}],
+            }
+            path = root / "job.json"
+            for rows in ([request["parameters"][0]] * 2,
+                         [{"id": "radiation_scale", "value": True}]):
+                request["parameters"] = rows
+                path.write_text(json.dumps(request))
+                with mock.patch.object(renderer, "compile_candidate") as compiler:
+                    with self.assertRaises(renderer.AdapterError):
+                        renderer.render_job(path, root)
+                    compiler.assert_not_called()
+
+    def test_json_rejects_duplicate_keys_and_nonfinite_values(self):
+        with tempfile.TemporaryDirectory() as text:
+            path = Path(text) / "bad.json"
+            for contents in ('{"a":1,"a":2}', '{"a":NaN}', '{"a":Infinity}'):
+                path.write_text(contents)
+                with self.assertRaises(MODULE.AdapterError):
+                    MODULE.load_json(path)
+
     def test_resampling_removes_content_above_target_nyquist(self):
         source_rate = 96000
         target_rate = 48000
@@ -40,6 +177,50 @@ class PianoFitAdapterTests(unittest.TestCase):
         rms = math.sqrt(sum(value * value for value in interior) / len(interior))
         self.assertLess(rms, 16.0)
         self.assertEqual(len(samples), 4800)
+
+    def test_failed_render_removes_partial_audio(self):
+        with tempfile.TemporaryDirectory() as text:
+            arguments, renderer = self.profile_bundle(Path(text))
+            root = Path(text)
+            output, request = root / "output.wav", root / "job.json"
+            request.write_text(json.dumps({
+                "schema": "hwa-render-job", "schema_version": 1,
+                "case_id": "mid-fit", "outputs": [
+                    {"id": "model.final", "path": str(output)}],
+                "parameters": [{"id": "radiation_scale", "value": 1.0}],
+            }))
+
+            def compile_stub(values, directory):
+                (directory / "candidate.json").write_text('{"id":"concert_grand_a"}')
+                return directory / "fake.so"
+
+            def fail(*args):
+                output.write_bytes(b"partial wave")
+                raise renderer.AdapterError("render failed")
+
+            with mock.patch.object(renderer, "compile_candidate", compile_stub):
+                with mock.patch.object(renderer, "render_audio", fail):
+                    with self.assertRaisesRegex(renderer.AdapterError, "render failed"):
+                        renderer.render_job(request, root)
+            self.assertFalse(output.exists())
+
+    def test_invalid_profile_stops_before_compiler_runs(self):
+        with tempfile.TemporaryDirectory() as text:
+            arguments, renderer = self.profile_bundle(Path(text))
+            renderer.FROZEN_CONFIG["parameters"] = [{
+                "id": "bad", "profile_paths": [["default_key", "radiation_scale"]]}]
+            work = Path(text) / "work"
+            work.mkdir()
+            with mock.patch.object(renderer.subprocess, "run") as process:
+                with self.assertRaises(ValueError):
+                    renderer.compile_candidate({"bad": -1.0}, work)
+                process.assert_not_called()
+
+    def test_custom_mapping_never_flattens_key_variation(self):
+        profile = MODULE.load_json(ROOT / "profiles" / "concert_grand_a.json")
+        profile["keys"]["36"]["radiation_scale"] = 0.5
+        with self.assertRaisesRegex(MODULE.AdapterError, "baseline"):
+            MODULE.profile_fit_manifest(profile, None)
 
     def test_resampling_preserves_fit_band_and_stereo_channels(self):
         for source_rate in (44100, 96000):

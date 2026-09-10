@@ -214,6 +214,10 @@ endif()
 
 option(HLOLLI_WG_PIANO_BUILD_TESTS "Add the native Csound tests"
        ${_hlolli_wg_piano_top_level})
+set(HLOLLI_WG_ANALYZER_EXECUTABLE "" CACHE FILEPATH
+    "Analyzer executable for the optional saved-profile fit test")
+set(HLOLLI_WG_ANALYZER_FIT_TOOL "" CACHE FILEPATH
+    "Analyzer instrument_fit.py for the optional saved-profile fit test")
 if(HLOLLI_WG_PIANO_BUILD_TESTS)
   enable_testing()
   if(Python3_Interpreter_FOUND)
@@ -327,5 +331,27 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
   else()
     message(WARNING
       "Csound was not found; the plugin will build but its tests are off.")
+  endif()
+  if(HLOLLI_WG_ANALYZER_EXECUTABLE OR HLOLLI_WG_ANALYZER_FIT_TOOL)
+    if(NOT EXISTS "${HLOLLI_WG_ANALYZER_EXECUTABLE}"
+       OR NOT EXISTS "${HLOLLI_WG_ANALYZER_FIT_TOOL}"
+       OR NOT Python3_Interpreter_FOUND OR NOT CSOUND_EXECUTABLE
+       OR NOT HLOLLI_CSOUND_INCLUDE_DIR OR NOT UNIX)
+      message(FATAL_ERROR
+        "The profile-fit test needs both analyzer paths, Python, Csound, "
+        "generated Csound headers, and a macOS or Linux host.")
+    endif()
+    get_filename_component(_hlolli_fit_csound "${CSOUND_EXECUTABLE}" REALPATH)
+    get_filename_component(_hlolli_fit_cc "${CMAKE_C_COMPILER}" REALPATH)
+    add_test(NAME hlolli_wg_piano.profile_fit
+      COMMAND "${Python3_EXECUTABLE}" -B
+        "${CMAKE_CURRENT_LIST_DIR}/tools/test_piano_profile_fit.py"
+        --csound "${_hlolli_fit_csound}" --cc "${_hlolli_fit_cc}"
+        --include-dir "${HLOLLI_CSOUND_INCLUDE_DIR}"
+        --analyzer "${HLOLLI_WG_ANALYZER_EXECUTABLE}"
+        --fit-tool "${HLOLLI_WG_ANALYZER_FIT_TOOL}")
+    set_tests_properties(hlolli_wg_piano.profile_fit PROPERTIES
+      LABELS "audio;fit"
+      TIMEOUT 300)
   endif()
 endif()

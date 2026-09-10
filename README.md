@@ -72,7 +72,6 @@ tests/initial_controls.csd     First-block note control render
 tests/run_initial_controls_test.py  Initial and k-rate control comparison
 tests/run_shared_resonance_test.py  Shared-tail test driver
 tests/run_handle_state_test.py Piano-handle state test driver
-benchmarks/generic_2018_baseline.md  Pre-profile render and timing baseline
 ```
 
 ## Piano profile data
