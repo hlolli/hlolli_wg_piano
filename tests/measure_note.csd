@@ -46,8 +46,12 @@
 #ifndef TEST_PEDAL
 #define TEST_PEDAL #0.0#
 #endif
-#ifndef TEST_PROFILE
-#define TEST_PROFILE #"generic_2018"#
+
+#ifndef TEST_DIRECT_GAIN
+#define TEST_DIRECT_GAIN #0.70#
+#endif
+#ifndef TEST_WET_GAIN
+#define TEST_WET_GAIN #0.36#
 #endif
 
 sr = $TEST_SR
@@ -55,7 +59,7 @@ ksmps = $TEST_KSMPS
 nchnls = 2
 0dbfs = 1
 
-giPiano hlolli_wg_piano_create $TEST_PROFILE
+giPiano hlolli_wg_piano_create
 
 instr MeasureNote
   iNote = p4
@@ -73,13 +77,13 @@ instr MeasureNote
 
   ; The fade only closes the file cleanly. Metric windows must end before it.
   kClose linsegr 1, $TEST_TAIL_SECONDS - 0.02, 1, 0.02, 0
-  outs aLeft * kClose, aRight * kClose
+  outs $TEST_DIRECT_GAIN * aLeft * kClose, $TEST_DIRECT_GAIN * aRight * kClose
 endin
 
 instr MeasureResonance
   aLeft, aRight hlolli_wg_piano_resonance \
       giPiano, $TEST_BODY, $TEST_PEDAL
-  outs aLeft, aRight
+  outs $TEST_WET_GAIN * aLeft, $TEST_WET_GAIN * aRight
 endin
 
 instr ScheduleMeasure

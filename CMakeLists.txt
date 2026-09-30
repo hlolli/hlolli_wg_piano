@@ -161,18 +161,18 @@ add_library(hlolli::wg_piano ALIAS hlolli_wg_piano)
 
 find_package(Python3 3.8 COMPONENTS Interpreter QUIET)
 if(Python3_Interpreter_FOUND)
-  add_custom_target(hlolli_wg_piano_generate_profiles
+  add_custom_target(hlolli_wg_piano_generate_model
     COMMAND "${Python3_EXECUTABLE}" -B
             "${CMAKE_CURRENT_LIST_DIR}/tools/generate_profiles.py"
     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
-    COMMENT "Generating embedded piano profile tables"
+    COMMENT "Generating embedded concert-grand tables"
     VERBATIM)
-  add_custom_target(hlolli_wg_piano_check_profiles
+  add_custom_target(hlolli_wg_piano_check_model
     COMMAND "${Python3_EXECUTABLE}" -B
             "${CMAKE_CURRENT_LIST_DIR}/tools/generate_profiles.py"
             --check
     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
-    COMMENT "Checking piano profile data and generated tables"
+    COMMENT "Checking concert-grand data and generated tables"
     VERBATIM)
 endif()
 
@@ -221,22 +221,35 @@ set(HLOLLI_WG_ANALYZER_FIT_TOOL "" CACHE FILEPATH
 if(HLOLLI_WG_PIANO_BUILD_TESTS)
   enable_testing()
   if(Python3_Interpreter_FOUND)
-    add_test(NAME hlolli_wg_piano.profile_data
+    add_test(NAME hlolli_wg_piano.model_data
       COMMAND "${Python3_EXECUTABLE}" -B
               "${CMAKE_CURRENT_LIST_DIR}/tools/generate_profiles.py"
               --check)
-    set_tests_properties(hlolli_wg_piano.profile_data PROPERTIES
+    set_tests_properties(hlolli_wg_piano.model_data PROPERTIES
       LABELS "tooling"
       TIMEOUT 30)
+    add_test(NAME hlolli_wg_piano.string_delay
+      COMMAND "${Python3_EXECUTABLE}" -B
+              "${CMAKE_CURRENT_LIST_DIR}/tests/run_string_delay_test.py"
+              --cc "${CMAKE_C_COMPILER}")
+    set_tests_properties(hlolli_wg_piano.string_delay PROPERTIES
+      LABELS "audio;dsp" TIMEOUT 30)
+    set(HLOLLI_PIANO_ANALYSIS_PYTHON "${Python3_EXECUTABLE}" CACHE FILEPATH
+        "Python with NumPy for offline timbre tests and fitting")
+    add_test(NAME hlolli_wg_piano.timbre_analysis
+      COMMAND "${HLOLLI_PIANO_ANALYSIS_PYTHON}" -B
+              "${CMAKE_CURRENT_LIST_DIR}/tests/test_piano_timbre.py")
+    set_tests_properties(hlolli_wg_piano.timbre_analysis PROPERTIES
+      LABELS "audio;fit" TIMEOUT 30 SKIP_RETURN_CODE 77)
     add_test(NAME hlolli_wg_piano.fit_adapter
       COMMAND "${Python3_EXECUTABLE}" -B
-              "${CMAKE_CURRENT_LIST_DIR}/tools/test_piano_fit_adapter.py")
+              "${CMAKE_CURRENT_LIST_DIR}/tests/test_piano_fit_adapter.py")
     set_tests_properties(hlolli_wg_piano.fit_adapter PROPERTIES
       LABELS "tooling;fit"
       TIMEOUT 30)
     add_test(NAME hlolli_wg_piano.audio_analysis
       COMMAND "${Python3_EXECUTABLE}" -B
-              "${CMAKE_CURRENT_LIST_DIR}/tools/test_audio_analysis.py")
+              "${CMAKE_CURRENT_LIST_DIR}/tests/test_audio_analysis.py")
     set_tests_properties(hlolli_wg_piano.audio_analysis PROPERTIES
       LABELS "tooling;audio"
       TIMEOUT 30)
@@ -255,15 +268,14 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
               -n -d -m128
               "${CMAKE_CURRENT_LIST_DIR}/tests/smoke.csd")
 
-    add_test(NAME hlolli_wg_piano.concert_grand_a
+    add_test(NAME hlolli_wg_piano.measurement_render
       COMMAND "${CSOUND_EXECUTABLE}"
               "--opcode-lib=$<TARGET_FILE:hlolli_wg_piano>"
-              "--omacro:TEST_PROFILE=\"concert_grand_a\""
               "--omacro:TEST_KEY_SECONDS=0.05"
               "--omacro:TEST_TAIL_SECONDS=0.20"
               -n -d -m128
               "${CMAKE_CURRENT_LIST_DIR}/tests/measure_note.csd")
-    set_tests_properties(hlolli_wg_piano.concert_grand_a PROPERTIES
+    set_tests_properties(hlolli_wg_piano.measurement_render PROPERTIES
       LABELS "audio"
       TIMEOUT 30)
 
@@ -277,6 +289,13 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
       TIMEOUT 120)
 
     if(Python3_Interpreter_FOUND)
+      add_test(NAME hlolli_wg_piano.timbre_render
+        COMMAND "${HLOLLI_PIANO_ANALYSIS_PYTHON}" -B
+                "${CMAKE_CURRENT_LIST_DIR}/tests/run_timbre_test.py"
+                --csound "${CSOUND_EXECUTABLE}"
+                --module "$<TARGET_FILE:hlolli_wg_piano>")
+      set_tests_properties(hlolli_wg_piano.timbre_render PROPERTIES
+        LABELS "audio;fit" TIMEOUT 120 SKIP_RETURN_CODE 77)
       add_test(NAME hlolli_wg_piano.initial_controls
         COMMAND "${Python3_EXECUTABLE}"
                 -B
@@ -345,7 +364,7 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
     get_filename_component(_hlolli_fit_cc "${CMAKE_C_COMPILER}" REALPATH)
     add_test(NAME hlolli_wg_piano.profile_fit
       COMMAND "${Python3_EXECUTABLE}" -B
-        "${CMAKE_CURRENT_LIST_DIR}/tools/test_piano_profile_fit.py"
+        "${CMAKE_CURRENT_LIST_DIR}/tests/test_piano_profile_fit.py"
         --csound "${_hlolli_fit_csound}" --cc "${_hlolli_fit_cc}"
         --include-dir "${HLOLLI_CSOUND_INCLUDE_DIR}"
         --analyzer "${HLOLLI_WG_ANALYZER_EXECUTABLE}"

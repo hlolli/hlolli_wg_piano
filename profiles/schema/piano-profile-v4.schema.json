@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/hlolli/hlolli_wg_piano/main/profiles/schema/piano-profile-v1.schema.json",
-  "title": "hlolli_wg_piano piano profile source, version 1",
+  "$id": "https://raw.githubusercontent.com/hlolli/hlolli_wg_piano/main/profiles/schema/piano-profile-v4.schema.json",
+  "title": "hlolli_wg_piano piano profile source, version 4",
   "description": "Build-time source data for one immutable piano profile.",
   "type": "object",
   "additionalProperties": false,
@@ -20,12 +20,15 @@
     "felt_modes",
     "note_body_lines",
     "body_modes",
+    "body_coupling",
+    "mechanics",
     "fdn_lines",
-    "provenance"
+    "provenance",
+    "radiation"
   ],
   "properties": {
     "$schema": {
-      "const": "schema/piano-profile-v1.schema.json"
+      "const": "schema/piano-profile-v4.schema.json"
     },
     "id": {
       "type": "string",
@@ -37,7 +40,7 @@
       "maxLength": 127
     },
     "schema_version": {
-      "const": 1
+      "const": 4
     },
     "midi_min": {
       "type": "integer",
@@ -104,6 +107,25 @@
         "$ref": "#/$defs/bodyMode"
       }
     },
+    "body_coupling": {
+      "type": "array",
+      "$comment": "The generator requires one row per key and one value per body mode. Shipped modeled rows use unit RMS; negative values reverse modal drive polarity.",
+      "minItems": 1,
+      "maxItems": 97,
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 64,
+        "items": {
+          "type": "number",
+          "minimum": -4.0,
+          "maximum": 4.0
+        }
+      }
+    },
+    "mechanics": {
+      "$ref": "#/$defs/mechanics"
+    },
     "fdn_lines": {
       "type": "array",
       "minItems": 8,
@@ -114,6 +136,47 @@
     },
     "provenance": {
       "$ref": "#/$defs/provenance"
+    },
+    "radiation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "centres_hz",
+        "q",
+        "key_gain_db"
+      ],
+      "properties": {
+        "centres_hz": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "type": "number",
+            "minimum": 40,
+            "maximum": 18000
+          }
+        },
+        "q": {
+          "type": "number",
+          "minimum": 0.3,
+          "maximum": 2
+        },
+        "key_gain_db": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 97,
+          "items": {
+            "type": "array",
+            "minItems": 6,
+            "maxItems": 6,
+            "items": {
+              "type": "number",
+              "minimum": -12,
+              "maximum": 12
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
@@ -135,78 +198,328 @@
     "keyProfile": {
       "type": "object",
       "additionalProperties": false,
+      "$comment": "The generator also requires the two hammer contact times to total at most 0.008 seconds and damper_lift_start to be below damper_lift_end.",
       "required": [
         "tuning_cents",
-        "inharmonicity_scale",
-        "string_length_scale",
-        "string_loss_scale",
-        "unison_detune_scale",
-        "hammer_scale",
-        "damper_scale",
+        "inharmonicity_b",
+        "loss_rate_per_second",
+        "loss_slope_per_second",
+        "second_string_level",
+        "third_string_level",
+        "unison_width_cents",
+        "hammer_gain",
+        "hammer_contact_min_seconds",
+        "hammer_contact_range_seconds",
+        "hammer_cutoff_base_hz",
+        "hammer_cutoff_hardness_hz",
+        "hammer_filter_mix",
+        "hammer_string_gain",
+        "felt_frequency_scale",
+        "felt_gain",
+        "damper_presence",
+        "damper_closed_t60_seconds",
+        "damper_lift_start",
+        "damper_lift_end",
+        "sympathetic_open_t60_seconds",
+        "sympathetic_second_level",
+        "sympathetic_third_level",
         "radiation_scale",
-        "sympathetic_scale"
+        "sympathetic_scale",
+        "hammer_velocity_hardness",
+        "bridge_loss_per_second"
       ],
       "properties": {
         "tuning_cents": {
           "$ref": "#/$defs/tuningCents"
         },
-        "inharmonicity_scale": {
-          "$ref": "#/$defs/positiveScale"
+        "inharmonicity_b": {
+          "type": "number",
+          "minimum": 1e-06,
+          "maximum": 0.08
         },
-        "string_length_scale": {
-          "$ref": "#/$defs/positiveScale"
+        "loss_rate_per_second": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0
         },
-        "string_loss_scale": {
-          "$ref": "#/$defs/positiveScale"
+        "loss_slope_per_second": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0
         },
-        "unison_detune_scale": {
-          "$ref": "#/$defs/nonnegativeScale"
+        "second_string_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
         },
-        "hammer_scale": {
-          "$ref": "#/$defs/nonnegativeScale"
+        "third_string_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
         },
-        "damper_scale": {
-          "$ref": "#/$defs/positiveScale"
+        "unison_width_cents": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 20.0
+        },
+        "hammer_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 8.0
+        },
+        "hammer_contact_min_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0.0,
+          "maximum": 0.008
+        },
+        "hammer_contact_range_seconds": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.008
+        },
+        "hammer_cutoff_base_hz": {
+          "type": "number",
+          "minimum": 100.0,
+          "maximum": 100000.0
+        },
+        "hammer_cutoff_hardness_hz": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100000.0
+        },
+        "hammer_filter_mix": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "hammer_string_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "felt_frequency_scale": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 4.0
+        },
+        "felt_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "damper_presence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "damper_closed_t60_seconds": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 3.0
+        },
+        "damper_lift_start": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "damper_lift_end": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "sympathetic_open_t60_seconds": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 30.0
+        },
+        "sympathetic_second_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "sympathetic_third_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
         },
         "radiation_scale": {
           "$ref": "#/$defs/nonnegativeScale"
         },
         "sympathetic_scale": {
           "$ref": "#/$defs/nonnegativeScale"
+        },
+        "hammer_velocity_hardness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.8
+        },
+        "bridge_loss_per_second": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 12
         }
       }
     },
     "keyOverride": {
       "type": "object",
       "additionalProperties": false,
+      "$comment": "After merging with default_key, the generator requires the two hammer contact times to total at most 0.008 seconds and damper_lift_start to be below damper_lift_end.",
       "minProperties": 1,
       "properties": {
         "tuning_cents": {
           "$ref": "#/$defs/tuningCents"
         },
-        "inharmonicity_scale": {
-          "$ref": "#/$defs/positiveScale"
+        "inharmonicity_b": {
+          "type": "number",
+          "minimum": 1e-06,
+          "maximum": 0.08
         },
-        "string_length_scale": {
-          "$ref": "#/$defs/positiveScale"
+        "loss_rate_per_second": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0
         },
-        "string_loss_scale": {
-          "$ref": "#/$defs/positiveScale"
+        "loss_slope_per_second": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100.0
         },
-        "unison_detune_scale": {
-          "$ref": "#/$defs/nonnegativeScale"
+        "second_string_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
         },
-        "hammer_scale": {
-          "$ref": "#/$defs/nonnegativeScale"
+        "third_string_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
         },
-        "damper_scale": {
-          "$ref": "#/$defs/positiveScale"
+        "unison_width_cents": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 20.0
+        },
+        "hammer_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 8.0
+        },
+        "hammer_contact_min_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0.0,
+          "maximum": 0.008
+        },
+        "hammer_contact_range_seconds": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.008
+        },
+        "hammer_cutoff_base_hz": {
+          "type": "number",
+          "minimum": 100.0,
+          "maximum": 100000.0
+        },
+        "hammer_cutoff_hardness_hz": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 100000.0
+        },
+        "hammer_filter_mix": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "hammer_string_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "felt_frequency_scale": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 4.0
+        },
+        "felt_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "damper_presence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "damper_closed_t60_seconds": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 3.0
+        },
+        "damper_lift_start": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "damper_lift_end": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "sympathetic_open_t60_seconds": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 30.0
+        },
+        "sympathetic_second_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "sympathetic_third_level": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
         },
         "radiation_scale": {
           "$ref": "#/$defs/nonnegativeScale"
         },
         "sympathetic_scale": {
           "$ref": "#/$defs/nonnegativeScale"
+        },
+        "hammer_velocity_hardness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.8
+        },
+        "bridge_loss_per_second": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 12
+        }
+      }
+    },
+    "mechanics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key_action_gain",
+        "damper_noise_gain",
+        "pedal_mechanical_gain"
+      ],
+      "properties": {
+        "key_action_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "damper_noise_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
+        },
+        "pedal_mechanical_gain": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 4.0
         }
       }
     },

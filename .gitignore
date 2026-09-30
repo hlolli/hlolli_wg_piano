@@ -1,4 +1,6 @@
 /build/
+# Local sound experiments, audit reports, and scratch tests.
+/dev/
 /Custom.cmake
 /recordings/raw/
 /recordings/private/
@@ -7,3 +9,4 @@
 *.bwf
 *.flac
 .DS_Store
+__pycache__/

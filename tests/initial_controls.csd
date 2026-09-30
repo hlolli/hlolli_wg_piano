@@ -7,16 +7,13 @@
 #ifndef TEST_KSMPS
 #define TEST_KSMPS #32#
 #endif
-#ifndef TEST_PROFILE
-#define TEST_PROFILE #"generic_2018"#
-#endif
 
 sr = 48000
 ksmps = $TEST_KSMPS
 nchnls = 4
 0dbfs = 1
 
-giPiano hlolli_wg_piano_create $TEST_PROFILE
+giPiano hlolli_wg_piano_create
 
 instr Note
   xtratim 0.6

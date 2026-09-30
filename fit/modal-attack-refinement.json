@@ -1,0 +1,539 @@
+{
+  "status": "Refined C4 accepted by listening; use it for future C4 work. The other five approved clips remain unchanged.",
+  "accepted_data_sha256": "0ff3cc3ea6c6b699e93a62f0e5a314d538987141a1d4006618abed1c37fdfb9a",
+  "script_sha256": "e1b0f0d39fb99d7488122da666ce5b10e7dd642a937bf1ec15e45a8884ac60b8",
+  "source_sha256": "54b88f3b92533ee30bba09d37f5753ad695db1733674ff4da2291ca5aae52661",
+  "native_score_sha256": "098b7e0f67a05d3fb2f78c89fd0854b2946ae2f1e4a6f324243bbdde07606347",
+  "spectrum_helper_sha256": "7cc921bf495a1a73b7d18307b5e80a0dc65d9ca3f0468c2e542f7e2aa4fe7674",
+  "runtime_sha256": "288686bc9908469ff28615e9f53e38826dbdec0ad6a33e5e03d818ef5d16e871",
+  "model_sha256": "e113e90c8daa111add0efe44590b5491a69937e210ce2e51a8ccad735e079249",
+  "settings": {
+    "initial_gain": 0.5967,
+    "duration_seconds": 0.1286,
+    "output_gain_multiplier": 1.193,
+    "windows_seconds": [
+      [
+        0,
+        0.02
+      ],
+      [
+        0.02,
+        0.04
+      ],
+      [
+        0.04,
+        0.08
+      ],
+      [
+        0.08,
+        0.12
+      ],
+      [
+        0.12,
+        0.3
+      ],
+      [
+        0.3,
+        0.8
+      ],
+      [
+        0.8,
+        1.5
+      ],
+      [
+        1.5,
+        2.8
+      ]
+    ],
+    "before_error_db": [
+      2.8535934538954564,
+      2.104425426110076,
+      0.6320530019133308,
+      -0.8914736457391577,
+      -1.4617351084169883,
+      -1.496466520052941,
+      -1.5443510989416112,
+      -1.6604141423818106
+    ],
+    "predicted_error_db": [
+      0.07411169980484544,
+      -0.058704422429578074,
+      -0.07184780092980247,
+      0.09868985417154263,
+      0.06970107240912427,
+      0.03634235335389491,
+      -0.011542225534768136,
+      -0.1276052689749676
+    ]
+  },
+  "cases": [
+    {
+      "note": 72,
+      "dynamic": "mf",
+      "label": "C5 mf",
+      "settings": {
+        "initial_gain": 1,
+        "duration_seconds": 0,
+        "output_gain_multiplier": 1
+      },
+      "checks": [
+        {
+          "sample_rate": 44100,
+          "ksmps": 32,
+          "max_sample_error": 1.1897635322181011e-07,
+          "onset_sample": 15434,
+          "peak": 0.07486546039581299
+        }
+      ],
+      "coefficients_sha256": "f400857639681efc5bc4c4f96214e3ab61d7aff006c61422e4ede4ddcee7f886",
+      "accepted_audio_sha256": "4d0ec51806557aff213023ed543e003ac6708a40ef874d710ff860cf4d07fcaa",
+      "audio": "/Users/hlolli/csound/hlolli_wg_piano/build/modal-refinement/final/72-mf/refined.wav",
+      "audio_sha256": "4d0ec51806557aff213023ed543e003ac6708a40ef874d710ff860cf4d07fcaa",
+      "after_ramp_gain_multiplier": 1,
+      "max_sample_error_after_ramp_vs_scaled_accepted": 0.0,
+      "whole_clip_identical": true
+    },
+    {
+      "note": 60,
+      "dynamic": "mf",
+      "label": "C4 mf",
+      "settings": {
+        "initial_gain": 0.5967,
+        "duration_seconds": 0.1286,
+        "output_gain_multiplier": 1.193,
+        "windows_seconds": [
+          [
+            0,
+            0.02
+          ],
+          [
+            0.02,
+            0.04
+          ],
+          [
+            0.04,
+            0.08
+          ],
+          [
+            0.08,
+            0.12
+          ],
+          [
+            0.12,
+            0.3
+          ],
+          [
+            0.3,
+            0.8
+          ],
+          [
+            0.8,
+            1.5
+          ],
+          [
+            1.5,
+            2.8
+          ]
+        ],
+        "before_error_db": [
+          2.8535934538954564,
+          2.104425426110076,
+          0.6320530019133308,
+          -0.8914736457391577,
+          -1.4617351084169883,
+          -1.496466520052941,
+          -1.5443510989416112,
+          -1.6604141423818106
+        ],
+        "predicted_error_db": [
+          0.07411169980484544,
+          -0.058704422429578074,
+          -0.07184780092980247,
+          0.09868985417154263,
+          0.06970107240912427,
+          0.03634235335389491,
+          -0.011542225534768136,
+          -0.1276052689749676
+        ]
+      },
+      "checks": [
+        {
+          "sample_rate": 44100,
+          "ksmps": 32,
+          "max_sample_error": 1.1897585510669759e-07,
+          "onset_sample": 15434,
+          "peak": 0.08697962760925293
+        },
+        {
+          "sample_rate": 48000,
+          "ksmps": 1,
+          "max_sample_error": 1.1897644358941067e-07,
+          "onset_sample": 16800,
+          "peak": 0.08701610565185547
+        },
+        {
+          "sample_rate": 48000,
+          "ksmps": 64,
+          "max_sample_error": 1.1897644358941067e-07,
+          "onset_sample": 16800,
+          "peak": 0.08701610565185547
+        }
+      ],
+      "coefficients_sha256": "709fd276dc6c353321d3e926298ce150c287177f99cb7e442997d12df848cada",
+      "accepted_audio_sha256": "38bbb146744e67010ec492ac8071fa6cd156919bbd4f8b8de9319b979fc1900a",
+      "audio": "/Users/hlolli/csound/hlolli_wg_piano/build/modal-refinement/final/60-mf/refined.wav",
+      "audio_sha256": "e248f5cb314cafa479855c4a1fcdd35f153a5b2c276e7eed7823f346bca8631e",
+      "after_ramp_gain_multiplier": 1.193,
+      "max_sample_error_after_ramp_vs_scaled_accepted": 1.299381256103689e-07,
+      "whole_clip_identical": false,
+      "after_error_db": [
+        0.07411133063154551,
+        -0.05870496606508979,
+        -0.07184718016433322
+      ],
+      "all_window_error_db": [
+        0.07411133063154551,
+        -0.05870496606508979,
+        -0.07184718016433322,
+        0.09868948630636964,
+        0.06970121734340395,
+        0.03634238978056459,
+        -0.01154243855154391,
+        -0.1276049904880665
+      ],
+      "partial_metrics": {
+        "balance_rmse_db": 0.19785763185924551,
+        "decay_rmse_db": 0.28883610376700647,
+        "envelope_rmse_db": 0.08182744488479336,
+        "usable_partial_count": 8,
+        "usable_envelope_frames": 98,
+        "loss": 0.08253472258869467
+      },
+      "listening_status": "accepted; replaces the earlier C4 prototype"
+    },
+    {
+      "note": 67,
+      "dynamic": "mf",
+      "label": "G4 mf",
+      "settings": {
+        "initial_gain": 1,
+        "duration_seconds": 0,
+        "output_gain_multiplier": 1
+      },
+      "checks": [
+        {
+          "sample_rate": 44100,
+          "ksmps": 32,
+          "max_sample_error": 1.1897590437414535e-07,
+          "onset_sample": 15434,
+          "peak": 0.12508642673492432
+        }
+      ],
+      "coefficients_sha256": "b2dd8b48456b40052e2262f8000ad6ea5b56c1e99935609b526fea020e7d801d",
+      "accepted_audio_sha256": "ad8bb888cbdf0677d321447891075c4844976e751afc6848905fb322f3d9000d",
+      "audio": "/Users/hlolli/csound/hlolli_wg_piano/build/modal-refinement/final/67-mf/refined.wav",
+      "audio_sha256": "ad8bb888cbdf0677d321447891075c4844976e751afc6848905fb322f3d9000d",
+      "after_ramp_gain_multiplier": 1,
+      "max_sample_error_after_ramp_vs_scaled_accepted": 0.0,
+      "whole_clip_identical": true
+    },
+    {
+      "note": 79,
+      "dynamic": "mf",
+      "label": "G5 mf",
+      "settings": {
+        "initial_gain": 1,
+        "duration_seconds": 0,
+        "output_gain_multiplier": 1
+      },
+      "checks": [
+        {
+          "sample_rate": 44100,
+          "ksmps": 32,
+          "max_sample_error": 1.1897511827650437e-07,
+          "onset_sample": 15434,
+          "peak": 0.10162186622619629
+        }
+      ],
+      "coefficients_sha256": "49dc0dd6c48718a1a7f83f3dd31bed0cc8b3a7c9b1a40e3ee4f270b7faa02c49",
+      "accepted_audio_sha256": "2f06e9e537e8556d016f5d909480f50ca394bf1b4abb4cf2360980205ae5438e",
+      "audio": "/Users/hlolli/csound/hlolli_wg_piano/build/modal-refinement/final/79-mf/refined.wav",
+      "audio_sha256": "2f06e9e537e8556d016f5d909480f50ca394bf1b4abb4cf2360980205ae5438e",
+      "after_ramp_gain_multiplier": 1,
+      "max_sample_error_after_ramp_vs_scaled_accepted": 0.0,
+      "whole_clip_identical": true
+    },
+    {
+      "note": 72,
+      "dynamic": "pp",
+      "label": "C5 pp",
+      "settings": {
+        "initial_gain": 1,
+        "duration_seconds": 0,
+        "output_gain_multiplier": 1
+      },
+      "checks": [
+        {
+          "sample_rate": 44100,
+          "ksmps": 32,
+          "max_sample_error": 1.1897584175360942e-07,
+          "onset_sample": 15434,
+          "peak": 0.06395542621612549
+        }
+      ],
+      "coefficients_sha256": "987d27650fdc9db0632817f3a4a414110417d5ea9033472dcc78e39601af0144",
+      "accepted_audio_sha256": "754cba697b787e14d0cec97b7d83ad6df93d5e6a89ec5cbaff4fa7ca783dd884",
+      "audio": "/Users/hlolli/csound/hlolli_wg_piano/build/modal-refinement/final/72-pp/refined.wav",
+      "audio_sha256": "754cba697b787e14d0cec97b7d83ad6df93d5e6a89ec5cbaff4fa7ca783dd884",
+      "after_ramp_gain_multiplier": 1,
+      "max_sample_error_after_ramp_vs_scaled_accepted": 0.0,
+      "whole_clip_identical": true
+    },
+    {
+      "note": 72,
+      "dynamic": "ff",
+      "label": "C5 ff",
+      "settings": {
+        "initial_gain": 1,
+        "duration_seconds": 0,
+        "output_gain_multiplier": 1
+      },
+      "checks": [
+        {
+          "sample_rate": 44100,
+          "ksmps": 32,
+          "max_sample_error": 1.1897608391975983e-07,
+          "onset_sample": 15434,
+          "peak": 0.06998038291931152
+        }
+      ],
+      "coefficients_sha256": "6d5a10f8e6d021d2d99e41b2738d4996d5bb848b82d6397ad069c05368730920",
+      "accepted_audio_sha256": "2eeac01eeec278b832abb6f838d81cb263b1ef9f508c6d05c427ff15dd031de2",
+      "audio": "/Users/hlolli/csound/hlolli_wg_piano/build/modal-refinement/final/72-ff/refined.wav",
+      "audio_sha256": "2eeac01eeec278b832abb6f838d81cb263b1ef9f508c6d05c427ff15dd031de2",
+      "after_ramp_gain_multiplier": 1,
+      "max_sample_error_after_ramp_vs_scaled_accepted": 0.0,
+      "whole_clip_identical": true
+    }
+  ],
+  "baseline_probe": {
+    "method": "bounded early-only cubic gain; no re-normalization after attack edit",
+    "windows_seconds": [
+      [
+        0,
+        0.02
+      ],
+      [
+        0.02,
+        0.04
+      ],
+      [
+        0.04,
+        0.08
+      ]
+    ],
+    "baseline_error_db": [
+      2.8535934538954564,
+      2.104425426110076,
+      0.6320530019133308
+    ],
+    "gain_at_onset": 0.6929125742398615,
+    "end_seconds": 0.07999999999999993,
+    "refined_error_db": [
+      -0.0571559302414002,
+      0.07021612853596437,
+      0.0645909288755604
+    ],
+    "rise_only_seconds": 0.011948767095197462,
+    "rise_only_error_db": [
+      -0.5949221382831738,
+      1.2969678550937722,
+      0.5328625420304718
+    ],
+    "timing_only_best": {
+      "mse_db": 2.3708772178404556,
+      "shift_seconds": 0.0074603174603174605
+    },
+    "reference_sha256": "b4353c3be8fa1a7709efa3c69a727aeaabd5073c5a70f3d41b29ef00966fd874",
+    "accepted_sha256": "38bbb146744e67010ec492ac8071fa6cd156919bbd4f8b8de9319b979fc1900a"
+  },
+  "scope": "Refinement of accepted fixed-note native prototypes; main piano runtime integration remains separate.",
+  "audio": {
+    "C4_comparison": {
+      "file": "build/modal-refinement/final/C4-comparison.wav",
+      "sha256": "805a7b1eef0eb480e74c231fe7197cdc0cab6fa5207dbb4f58dbc6a43d5378c9"
+    }
+  },
+  "validation": {
+    "analysis_tests_passed": 8,
+    "native_render_checks": 8,
+    "unchanged_approved_clips": 5
+  },
+  "later_tail_observations": [
+    {
+      "note": 72,
+      "dynamic": "mf",
+      "windows_seconds": [
+        [
+          3,
+          4.4
+        ],
+        [
+          4.6,
+          5.5
+        ]
+      ],
+      "accepted_prototype_and_reference_dbfs": {
+        "reference": [
+          -59.242018387198854,
+          -65.02021214012615
+        ],
+        "modal": [
+          -58.75360317836937,
+          -62.716599714985286
+        ]
+      }
+    },
+    {
+      "note": 60,
+      "dynamic": "mf",
+      "windows_seconds": [
+        [
+          3,
+          4.4
+        ],
+        [
+          4.6,
+          5.5
+        ]
+      ],
+      "accepted_prototype_and_reference_dbfs": {
+        "reference": [
+          -57.95478308828664,
+          -61.267670735827345
+        ],
+        "modal": [
+          -60.07509327091131,
+          -65.16816629515485
+        ]
+      }
+    },
+    {
+      "note": 67,
+      "dynamic": "mf",
+      "windows_seconds": [
+        [
+          3,
+          4.4
+        ],
+        [
+          4.6,
+          5.5
+        ]
+      ],
+      "accepted_prototype_and_reference_dbfs": {
+        "reference": [
+          -55.27394514325307,
+          -60.389441388236406
+        ],
+        "modal": [
+          -55.81283222353379,
+          -61.39143566722397
+        ]
+      }
+    },
+    {
+      "note": 79,
+      "dynamic": "mf",
+      "windows_seconds": [
+        [
+          3,
+          4.4
+        ],
+        [
+          4.6,
+          5.5
+        ]
+      ],
+      "accepted_prototype_and_reference_dbfs": {
+        "reference": [
+          -62.22292170040947,
+          -63.321366687874274
+        ],
+        "modal": [
+          -67.53567550627264,
+          -69.15021695585835
+        ]
+      }
+    },
+    {
+      "note": 72,
+      "dynamic": "pp",
+      "windows_seconds": [
+        [
+          3,
+          4.4
+        ],
+        [
+          4.6,
+          5.5
+        ]
+      ],
+      "accepted_prototype_and_reference_dbfs": {
+        "reference": [
+          -55.43163215356393,
+          -56.2832061566196
+        ],
+        "modal": [
+          -58.49345303450929,
+          -55.633787510591205
+        ]
+      }
+    },
+    {
+      "note": 72,
+      "dynamic": "ff",
+      "windows_seconds": [
+        [
+          3,
+          4.4
+        ],
+        [
+          4.6,
+          5.5
+        ]
+      ],
+      "accepted_prototype_and_reference_dbfs": {
+        "reference": [
+          -61.68928576172999,
+          -70.22750584228645
+        ],
+        "modal": [
+          -60.29594248463109,
+          -65.628071494846
+        ]
+      }
+    }
+  ],
+  "accepted_synthesis": {
+    "feedback": "yes it's a little better agree, keep refined C4",
+    "date": "2026-09-30",
+    "note": 60,
+    "dynamic": "mf",
+    "audio": "build/modal-refinement/final/60-mf/refined.wav",
+    "audio_sha256": "e248f5cb314cafa479855c4a1fcdd35f153a5b2c276e7eed7823f346bca8631e",
+    "supersedes_audio_sha256": "38bbb146744e67010ec492ac8071fa6cd156919bbd4f8b8de9319b979fc1900a",
+    "coefficients_sha256": "709fd276dc6c353321d3e926298ce150c287177f99cb7e442997d12df848cada",
+    "native_source_sha256": "54b88f3b92533ee30bba09d37f5753ad695db1733674ff4da2291ca5aae52661",
+    "native_score_sha256": "098b7e0f67a05d3fb2f78c89fd0854b2946ae2f1e4a6f324243bbdde07606347",
+    "settings": {
+      "initial_gain": 0.5967,
+      "duration_seconds": 0.1286,
+      "output_gain_multiplier": 1.193
+    },
+    "native_comparison_gain": 1.0047195935136495,
+    "rise_seconds": 0.004,
+    "channels": "left duplicated to both speakers",
+    "scope": "Accepted fixed-note native prototype; not yet integrated into the main piano opcode."
+  }
+}

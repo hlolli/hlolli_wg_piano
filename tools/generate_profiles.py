@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate piano profiles and update their marked C data block."""
+"""Validate the concert grand and update its marked C data block."""
 
 import argparse
 import json
@@ -14,14 +14,14 @@ from decimal import Decimal
 from pathlib import Path
 
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 MIN_PYTHON = (3, 8)
 MAX_WASI_SOURCE_BYTES = 256 * 1024
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST_PATH = ROOT / "profiles" / "manifest.json"
-SCHEMA_PATH = ROOT / "profiles" / "schema" / "piano-profile-v3.schema.json"
+MODEL_PATH = ROOT / "profiles" / "concert_grand_a.json"
+SCHEMA_PATH = ROOT / "profiles" / "schema" / "piano-profile-v4.schema.json"
 SOURCE_PATH = ROOT / "hlolli_wg_piano.c"
-PROFILE_SCHEMA_REF = "schema/piano-profile-v3.schema.json"
+PROFILE_SCHEMA_REF = "schema/piano-profile-v4.schema.json"
 BEGIN_MARKER = "/* BEGIN GENERATED PIANO PROFILE DATA */"
 END_MARKER = "/* END GENERATED PIANO PROFILE DATA */"
 PROFILE_ID_RE = re.compile(r"^[a-z][a-z0-9_]{0,62}$")
@@ -36,10 +36,12 @@ KEY_FIELDS = (
     "inharmonicity_b",
     "loss_rate_per_second",
     "loss_slope_per_second",
+    "bridge_loss_per_second",
     "second_string_level",
     "third_string_level",
     "unison_width_cents",
     "hammer_gain",
+    "hammer_velocity_hardness",
     "hammer_contact_min_seconds",
     "hammer_contact_range_seconds",
     "hammer_cutoff_base_hz",
@@ -212,10 +214,12 @@ KEY_LIMITS = {
     "tuning_cents": (decimal("-1200"), decimal("1200"), False),
     "inharmonicity_b": (decimal("0.000001"), decimal("0.08"), False),
     "loss_rate_per_second": (decimal("0"), decimal("100"), False),
+    "bridge_loss_per_second": (decimal("0"), decimal("12"), False),
     "loss_slope_per_second": (decimal("0"), decimal("100"), False),
     "second_string_level": (decimal("0"), decimal("1"), False),
     "third_string_level": (decimal("0"), decimal("1"), False),
     "unison_width_cents": (decimal("0"), decimal("20"), False),
+    "hammer_velocity_hardness": (decimal("0"), decimal("0.8"), False),
     "hammer_gain": (decimal("0"), decimal("8"), False),
     "hammer_contact_min_seconds": (
         decimal("0"), decimal("0.008"), True
@@ -384,6 +388,7 @@ PROFILE_FIELDS = (
     "note_body_lines",
     "body_modes",
     "body_coupling",
+    "radiation",
     "mechanics",
     "fdn_lines",
     "provenance",
@@ -495,6 +500,20 @@ def validate_provenance(value, path):
         raise ProfileError("{} lacks instrument".format(path))
 
 
+def validate_radiation(value, path, key_count):
+    value = require_object(value, path, ("centres_hz", "q", "key_gain_db"))
+    centres = [require_number(x, path + ".centres_hz", decimal("40"), decimal("18000"))
+               for x in require_array(value["centres_hz"], path + ".centres_hz", exact=6)]
+    if any(a >= b for a, b in zip(centres, centres[1:])):
+        raise ProfileError(path + ".centres_hz must increase")
+    rows = require_array(value["key_gain_db"], path + ".key_gain_db", exact=key_count)
+    return {"centres_hz": centres,
+            "q": require_number(value["q"], path + ".q", decimal("0.3"), decimal("2")),
+            "key_gain_db": [[require_number(x, path + ".key_gain_db", decimal("-12"), decimal("12"))
+                             for x in require_array(row, path + ".key_gain_db", exact=6)]
+                            for row in rows]}
+
+
 def validate_profile(value, path):
     value = require_object(value, path, PROFILE_FIELDS)
     schema_ref = require_string(value["$schema"], "{}.$schema".format(path))
@@ -567,6 +586,7 @@ def validate_profile(value, path):
         ),
         "body_modes": body_modes,
         "body_coupling": body_coupling,
+        "radiation": validate_radiation(value["radiation"], str(path) + ".radiation", key_count),
         "mechanics": validate_number_object(
             value["mechanics"], "{}.mechanics".format(path),
             MECHANICS_FIELDS, MECHANICS_LIMITS
@@ -578,7 +598,7 @@ def validate_profile(value, path):
     }
 
 
-def load_profiles():
+def load_model():
     schema = load_json(SCHEMA_PATH)
     if type(schema) is not dict:
         raise ProfileError("{} must contain a JSON object".format(SCHEMA_PATH))
@@ -604,55 +624,7 @@ def load_profiles():
             )
         )
 
-    manifest = require_object(
-        load_json(MANIFEST_PATH), "manifest",
-        ("schema_version", "default_profile", "profiles")
-    )
-    require_integer(
-        manifest["schema_version"], "manifest.schema_version",
-        SCHEMA_VERSION, SCHEMA_VERSION
-    )
-    default_profile = require_string(
-        manifest["default_profile"], "manifest.default_profile"
-    )
-    names = require_array(manifest["profiles"], "manifest.profiles", minimum=1)
-
-    profiles = []
-    seen_files = set()
-    seen_ids = set()
-    for index, name in enumerate(names):
-        name = require_string(name, "manifest.profiles[{}]".format(index))
-        profile_path = Path(name)
-        if profile_path.name != name or profile_path.suffix != ".json":
-            raise ProfileError(
-                "manifest.profiles[{}] must be a JSON filename".format(index)
-            )
-        if name == MANIFEST_PATH.name:
-            raise ProfileError("manifest cannot list itself as a profile")
-        if name in seen_files:
-            raise ProfileError("manifest repeats profile file {!r}".format(name))
-        seen_files.add(name)
-        profile = validate_profile(
-            load_json(MANIFEST_PATH.parent / profile_path), name
-        )
-        if profile["id"] in seen_ids:
-            raise ProfileError(
-                "duplicate profile id {!r}".format(profile["id"])
-            )
-        seen_ids.add(profile["id"])
-        if profile_path.stem != profile["id"]:
-            raise ProfileError(
-                "profile id {!r} must match filename {!r}".format(
-                    profile["id"], profile_path.name
-                )
-            )
-        profiles.append(profile)
-
-    if default_profile not in seen_ids:
-        raise ProfileError(
-            "manifest.default_profile {!r} is not listed".format(default_profile)
-        )
-    return profiles, default_profile
+    return validate_profile(load_json(MODEL_PATH), MODEL_PATH.name)
 
 
 def c_float(value):
@@ -668,9 +640,9 @@ def append_rows(lines, rows, fields, indent):
         lines.append("{}{},".format(indent, c_row(row, fields)))
 
 
-def generate_profile(lines, profile, body_coupling_symbol,
-                     emit_body_coupling):
-    symbol = "wg_{}".format(profile["id"])
+def generate_profile(lines, profile):
+    symbol = "wg_concert_grand"
+    body_coupling_symbol = symbol + "_body_coupling"
     if profile["keys"] is not None:
         lines.append("static const WG_KEY_PROFILE {}_keys[] = {{".format(symbol))
         append_rows(lines, profile["keys"], KEY_FIELDS, "    ")
@@ -684,21 +656,23 @@ def generate_profile(lines, profile, body_coupling_symbol,
     lines.append("};")
     lines.append("")
 
-    if emit_body_coupling:
+    lines.append(
+        "static const double {}[] = {{".format(body_coupling_symbol)
+    )
+    for row in profile["body_coupling"]:
         lines.append(
-            "static const double {}[] = {{".format(body_coupling_symbol)
-        )
-        for row in profile["body_coupling"]:
-            lines.append(
-                "    {},".format(
-                    ", ".join(c_float(value) for value in row)
-                )
+            "    {},".format(
+                ", ".join(c_float(value) for value in row)
             )
-        lines.append("};")
-        lines.append("")
+        )
+    lines.append("};")
+    lines.append("")
 
-    lines.append("static const WG_PIANO_PROFILE wg_profile_{} = {{".format(profile["id"]))
-    lines.append('    .id = "{}",'.format(profile["id"]))
+    lines.append("static const double wg_radiation_eq[] = {")
+    for row in profile["radiation"]["key_gain_db"]:
+        lines.append("    " + ", ".join(c_float(x) for x in row) + ",")
+    lines.extend(["};", ""])
+    lines.append("static const WG_PIANO_PROFILE wg_concert_grand_profile = {")
     lines.append("    .schema_version = WG_PROFILE_SCHEMA_VERSION,")
     lines.append("    .midi_min = {},".format(profile["midi_min"]))
     lines.append("    .key_count = {}U,".format(profile["key_count"]))
@@ -730,6 +704,9 @@ def generate_profile(lines, profile, body_coupling_symbol,
     lines.append("    },")
     lines.append("    .body_modes = {}_body_modes,".format(symbol))
     lines.append("    .body_coupling = {},".format(body_coupling_symbol))
+    lines.append("    .radiation_centres = {" + ", ".join(c_float(x) for x in profile["radiation"]["centres_hz"]) + "},")
+    lines.append("    .radiation_q = " + c_float(profile["radiation"]["q"]) + ",")
+    lines.append("    .radiation_eq = wg_radiation_eq,")
     lines.append(
         "    .mechanics = {},".format(
             c_row(profile["mechanics"], MECHANICS_FIELDS)
@@ -741,35 +718,10 @@ def generate_profile(lines, profile, body_coupling_symbol,
     lines.append("};")
 
 
-def generate_block(profiles, default_profile):
-    lines = [
-        BEGIN_MARKER,
-        "/* Generated piano profile data. Do not edit by hand. */",
-    ]
-    coupling_symbols = {}
-    for profile in profiles:
-        coupling_key = tuple(
-            tuple(row) for row in profile["body_coupling"]
-        )
-        body_coupling_symbol = coupling_symbols.get(coupling_key)
-        emit_body_coupling = body_coupling_symbol is None
-        if emit_body_coupling:
-            body_coupling_symbol = "wg_{}_body_coupling".format(
-                profile["id"]
-            )
-            coupling_symbols[coupling_key] = body_coupling_symbol
-        lines.append("")
-        generate_profile(
-            lines, profile, body_coupling_symbol, emit_body_coupling
-        )
-
-    lines.extend(("", "static const WG_PIANO_PROFILE *const wg_piano_profiles[] = {"))
-    for profile in profiles:
-        lines.append("    &wg_profile_{},".format(profile["id"]))
-    lines.append("};")
-    lines.append("")
-    lines.append("static const WG_PIANO_PROFILE *const wg_default_piano_profile =")
-    lines.append("    &wg_profile_{};".format(default_profile))
+def generate_block(profile):
+    lines = [BEGIN_MARKER,
+             "/* Generated concert-grand data. Do not edit by hand. */", ""]
+    generate_profile(lines, profile)
     lines.append(END_MARKER)
     return "\n".join(lines)
 
@@ -828,8 +780,8 @@ def main(argv=None):
         )
         return 2
     try:
-        profiles, default_profile = load_profiles()
-        block = generate_block(profiles, default_profile)
+        model = load_model()
+        block = generate_block(model)
         if args.stdout:
             sys.stdout.write(block + "\n")
             return 0

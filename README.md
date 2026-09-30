@@ -8,7 +8,6 @@ Create one handle for each piano:
 
 ```csound
 giPiano hlolli_wg_piano_create
-giNamed hlolli_wg_piano_create "concert_grand_a"
 ```
 
 The note opcode keeps its ten controls and takes the handle as an optional
@@ -27,7 +26,7 @@ aWetLeft, aWetRight hlolli_wg_piano_resonance \
     giPiano, kBody, kPedal
 ```
 
-The creator signatures are `i <- ""` and `i <- S`. The note and handled wet
+The creator signature is `i <- ""`. The note and handled wet
 signatures are `aa <- kkkkkkkkkko` and `aa <- ikk`. Keep the direct note
 outputs in the mix; the wet opcode does not pass them through. The handle owns
 the body, sympathetic strings, delay tail, control smoothing, and their phases
@@ -51,17 +50,20 @@ hlolli_wg_piano.c              Complete opcode source
 README.md                      Build and control reference
 LICENSE                        MIT license
 Custom.cmake.example           Optional local path settings
-profiles/manifest.json         Profile order and default choice
-profiles/generic_2018.json     Source data for the default modeled piano
-profiles/concert_grand_a.json  Small concert-grand recording fit
-profiles/schema/               Versioned profile format
-tools/generate_profiles.py     Profile checker and C-table generator
+profiles/concert_grand_a.json  The concert grand's tuning data
+profiles/schema/               Tuning-data format
+tools/generate_profiles.py     Data checker and C-table generator
+tools/piano_timbre.py          Offline hammer, decay, and radiation fit
+fit/                          Fit inputs and accepted sound data
+recordings/iowa-timbre.json    Fit and check recording manifest
 recordings/README.md           Piano recording and data rules
 recordings/example-capture.json  Small capture input example
 examples/basic.csd             Short chord example
+examples/timbre-check.csd      Isolated notes without added room reverb
+examples/lpcs-playback.csd     LPCS piano-performance-v1 adapter
 examples/chopin_aeolian_harp.csd  Longer musical example
 tests/smoke.csd                Native load and render test
-tests/measure_note.csd         Handled-note and profile measurement render
+tests/measure_note.csd         Handled-note measurement render
 tests/shared_resonance.csd     Shared-state and tail render
 tests/handle_resonance.csd     Two-piano isolation render
 tests/handle_handoff.csd       Wet-output handoff and error render
@@ -74,17 +76,16 @@ tests/run_shared_resonance_test.py  Shared-tail test driver
 tests/run_handle_state_test.py Piano-handle state test driver
 ```
 
-## Piano profile data
+## Concert-grand data
 
-The JSON files under `profiles` are the source for fixed piano data. The
-manifest lists each profile and selects the default. The versioned schema sets
-the field names, units, sizes, and limits. The generator applies matching
-built-in checks without an added JSON Schema package. Version 3 stores direct
-per-key string loss, stiffness, choir, unison, hammer, felt, damper, and
-sympathetic terms. It also stores a key-to-body-mode coupling matrix and
-profile-wide mechanical-sound gains. The shipped profiles use 88 keys and 12
-body modes. A profile can set a default key and then override its values by
-MIDI number.
+`profiles/concert_grand_a.json` is the sole piano model. All notes and handles
+use this concert grand; tune its timbre through the controls or this data file.
+There is no runtime profile selector, registry, or alternate piano table.
+
+The version 4 schema stores per-key string loss, stiffness, unison, hammer,
+felt, damper, and sympathetic terms for 88 keys. It also holds 12 shared body
+modes, their coupling, mechanical-sound gains, velocity-dependent hammer
+hardness, common-motion bridge loss, and six broad radiation EQ bands per key.
 
 The generator checks the JSON and replaces only the marked profile-data block
 inside `hlolli_wg_piano.c`:
@@ -98,8 +99,8 @@ In a stand-alone build, when CMake finds Python, the same actions are available
 as targets:
 
 ```sh
-cmake --build build --target hlolli_wg_piano_check_profiles
-cmake --build build --target hlolli_wg_piano_generate_profiles
+cmake --build build --target hlolli_wg_piano_check_model
+cmake --build build --target hlolli_wg_piano_generate_model
 ```
 
 Edit the JSON, not the generated C block. The generator needs Python 3.8 or
@@ -128,6 +129,14 @@ names, and exact place in local notes when needed. Raw audio stays out of Git.
 Only fitted numbers enter the profile JSON and the fixed arrays in
 `hlolli_wg_piano.c`; the runtime still uses no samples or data files.
 
+Keep local sound experiments, audit reports, and scratch tests in `dev/`,
+which Git ignores. Build tools stay in `tools/`; maintained tests stay in
+`tests/` and run through CTest. The build does not need `dev/`.
+
+[Accepted sound data](fit/README.md) stays in `fit/`, including refined C4.
+These fixed-note prototypes have passed listening but still await integration
+into the main piano opcode.
+
 ## Stand-alone build
 
 The Csound include directory must contain `csdl.h`, `version.h`, and
@@ -141,6 +150,10 @@ cmake -S . -B build -G Ninja \
 cmake --build build --target hlolli_wg_piano
 ctest --test-dir build --output-on-failure
 ```
+
+The timbre and partial-curve tests need NumPy. Set `HLOLLI_PIANO_ANALYSIS_PYTHON` to a Python
+executable that has it; CTest reports those tests as skipped when it is absent.
+The render test uses stored numeric targets and needs no reference downloads.
 
 You can give the header directory instead:
 
@@ -169,6 +182,35 @@ csound --opcode-lib=build/libhlolli_wg_piano.dylib examples/basic.csd
 
 Change the module suffix for Linux or Windows. The CSD files do not contain a
 fixed plugin path, so the same files work on all three systems.
+
+## LPCS and browser playback
+
+`examples/lpcs-playback.csd` reads the `piano-performance-v1` LPCS target with
+the reader from `lilypond-csound-score-plugin`. It needs Csound 7 with typed
+JSON opcodes and `lpcs-playback.inc` on the include path. Supply the JSON path
+as the `LPCS_FILE` orchestra macro; it defaults to `performance.json`.
+
+Each note releases its key at `extensionOne`, not at the longer sounding
+duration. CC64 drives the dampers and shared resonance. The adapter adds no
+room reverb and leaves three seconds after the score for decay. It supports
+only sustain; it rejects nonzero soft and sostenuto commands. Tied notes must
+be resolved before playback.
+
+The `performance-learning` browser demo can load the same adapter and a WASM
+build of the piano. To build it, install Bun and the dependencies in a local
+`csound-wasm-plugin-compiler` checkout, then run:
+
+```sh
+export CSOUND_PLUGIN_COMPILER_REPO=/path/to/csound-wasm-plugin-compiler
+export CSOUND_PLUGIN_SDK=/path/to/runtime/lib/csound-plugin-sdk.tar.gz
+bun tools/build_wasm.mjs
+```
+
+Use the SDK from the exact Csound browser runtime that will load the plugin.
+The helper compiles this repository's C source, including its math functions,
+and writes `build/wasm/hlolli_wg_piano.wasm`. It uses the shared compiler's
+browser plugin format, not a standalone WASI executable. Rebuild after any
+source or runtime change. Build output stays out of Git.
 
 ## Add it to a Csound source build
 
@@ -245,18 +287,12 @@ Create a second handle for a second piano. Their modes, phases, held keys, and
 delay memory remain separate.
 
 ```csound
-giDefault hlolli_wg_piano_create
-giNamed   hlolli_wg_piano_create "concert_grand_a"
+giPiano hlolli_wg_piano_create
 ```
 
-The no-input form selects the compiled default profile, currently
-`generic_2018`, which is also the current manifest default. The named form
-binds its profile when it creates the handle; the profile cannot change while
-that piano runs. An unknown name stops orchestra initialization with an error.
-Profiles hold fixed acoustic data,
-while each handle keeps its own changing state. The registry contains
-`generic_2018` and `concert_grand_a`, in the order listed in
-`profiles/manifest.json`.
+The creator always uses the concert-grand data. Each handle keeps its own
+strings, pedal state, and body tail. The former string-name creator overload
+has been removed; replace named calls with the no-input form above.
 
 The handle form of `hlolli_wg_piano_resonance` has one i-rate input and two
 k-rate controls:
@@ -403,8 +439,8 @@ and ordinary k-rate assignments give the same initial sound. Handled and
 detached notes keep that key's string, hammer, and felt profile for the full
 voice.
 
-Each profile sets the second- and third-string level for every key. In
-`generic_2018`, the second string fades in from about 39 to 49 Hz and the third
+The concert-grand data sets the second- and third-string level for every key.
+The second string fades in from about 39 to 49 Hz and the third
 from about 116 to 147 Hz. Small inactive-string floors keep the internal state
 safe but remain inaudible.
 
@@ -429,15 +465,15 @@ strike.
 ### Decay, stiffness, and detune
 
 `kDecay` scales each key's direct string-loss terms. At `kDecay=0.70` and
-`kStiffness=0.42`, the complete string loop uses the profile's base fit. This
-remains an approximation because the same loop also contains the unison bridge
-and delay filters. Bass strings keep more energy than short treble strings, and
+`kStiffness=0.42`, the string loop uses the stored base loss. The passive
+bridge junction adds loss to shared unison motion, while opposing motion
+retains the string's own loss. Fractional delay uses an allpass filter to avoid
+unwanted treble damping, with a phase correction at the fundamental.
+Bass strings keep more energy than short treble strings, and
 upper partials lose energy faster. After key release, the local or shared
 pedal rail sets a separate damper loss.
 
-`kStiffness` scales each key's direct inharmonicity value. The generic profile
-stores the curve through the Bensa et al. C2, C4, and C7 values; recording
-profiles can replace it key by key. Four to eight dispersion stages fit the
+`kStiffness` scales each key's fitted inharmonicity value. Four to eight dispersion stages fit the
 fundamental and one upper reference partial. The partials between them remain
 approximate; normal-range test renders stay within about 12 cents of the target
 curve. At `0.42`, the control uses the profile value without extra scale. Keep
@@ -539,17 +575,17 @@ Each note instance contains:
 - a reduced nonlinear hammer contact with pitch-scaled duration, compression,
   release loss, string-motion feedback, and filtered felt noise;
 - fixed and slowly moving unison errors;
-- a filtered common bridge junction that lets the unison rails exchange
-  energy;
+- a passive common bridge junction that damps shared unison motion;
 - three short hammer and felt modes, low-level nonlinear color, direct bridge
-  radiation, and a short four-line bridge response.
+  radiation, and a short four-line bridge response;
+- six broad per-key EQ bands fitted to recorded note spectra.
 
 The paper loss values describe an equivalent string measured at the bridge.
 They do not split internal string loss from bridge and soundboard loss.
 
 Each piano handle owns:
 
-- one immutable piano profile choice;
+- the fixed concert-grand data;
 - 12 shared body modes from 58 Hz to 3220 Hz;
 - three sympathetic partial resonators for each key from A0 to C8;
 - an eight-line feedback-delay tail with stereo input and output;
@@ -574,6 +610,10 @@ soundboard, or radiation model.
 `examples/basic.csd` plays two sustained chords and shows one piano handle,
 tagged notes, and a dry/wet mix.
 
+`examples/timbre-check.csd` plays C3, C4, and C5 with the model's own body
+response and stereo output. It adds no room reverb. Use it for timbre checks;
+the basic and Chopin examples add room reverb after the piano.
+
 `examples/chopin_aeolian_harp.csd` plays the opening of Chopin's Etude in
 A-flat major, Op. 25 No. 1. Its top melody overlaps each next beat. It routes
 all notes through one piano handle, then adds a small room.
@@ -581,8 +621,8 @@ all notes through one piano handle, then adds a small room.
 `tests/smoke.csd` gives a short render that calls both opcodes.
 
 `tests/run_initial_controls_test.py` compares direct and wet renders from
-equivalent initial and k-rate controls across both profiles and three block
-sizes. `tools/test_audio_analysis.py` checks known pitch, silence, truncated
+equivalent initial and k-rate controls across three block
+sizes. `tests/test_audio_analysis.py` checks known pitch, silence, truncated
 files, and measurement limits. Both run through CTest.
 
 `tools/piano_fit_adapter.py` uses the analyzer's same checked renderer and
@@ -590,10 +630,37 @@ fit/check selector as the violin project. It sweeps the public body, hammer
 hardness, and hammer-position controls over low, middle, and high notes. This
 proves that the fit interface does not depend on violin strings or profiles.
 
-The current piano adapter is render-only. Its fit manifest has no saved-profile
-paths, so the shared profile writer rejects it. This is deliberate: the three
-public controls do not each map to one fixed field in a piano profile. Add an
-exact profile rule before enabling piano profile output.
+The adapter's `--profile` option supplies an offline tuning candidate through
+the shared analyzer protocol. It does not select a runtime piano.
+
+`tools/piano_timbre.py` fits the concert-grand data from gain-normalized,
+onset-aligned recordings. It compares five time windows, 12 partial envelopes,
+and pp/mf/ff dynamics. Targets must sit at least 12 dB above the noise measured
+before the strike. This keeps room noise out of harmonic and sustain targets.
+C2 through C7 provide fit anchors; G3, G4, and G5 provide
+separate check notes. The search fits hammer contact, filtering, and shared
+bridge loss before broad radiation EQ. It writes a candidate only when both
+sets improve. It needs NumPy, a C compiler, Csound, and the WAV files listed in
+`recordings/iowa-timbre.json`.
+
+Listening rejected the current fit as plucked and electric in tone. Its score
+omits direct partial-level errors and reduces decay curves to a few windows.
+Passing the saved regression limits does not establish piano realism. The
+[accepted resonance data](fit/README.md) records the direction for further work.
+
+```sh
+python3 -B tools/piano_timbre.py fit \
+  --references recordings/iowa-timbre.json \
+  --include-dir /path/to/csound/build/include \
+  --work-dir build/timbre-fit --report build/timbre-report.json \
+  --output build/concert-grand-candidate.json
+```
+
+Review a candidate before replacing the sole model, then regenerate the C
+tables and run the checks. `fit/concert-grand-timbre.json` records the first-pass
+fit and its reference features. The broad EQ captures note spectra, including
+the recording room and microphones; it is not a measured soundboard impedance.
+The three velocity values are conventions, not measured hammer speeds.
 
 Reference conversion uses a windowed-sinc filter to preserve the measured
 bands and remove frequencies above the new sample rate's Nyquist limit.

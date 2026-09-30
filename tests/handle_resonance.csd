@@ -17,7 +17,7 @@ nchnls = 2
 0dbfs = 1
 
 giPianoA hlolli_wg_piano_create
-giPianoB hlolli_wg_piano_create "generic_2018"
+giPianoB hlolli_wg_piano_create
 
 instr PianoNote
   iPiano = p4

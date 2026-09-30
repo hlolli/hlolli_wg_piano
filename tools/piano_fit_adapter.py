@@ -307,7 +307,7 @@ def profile_generator(path: Path):
 
 def profile_target(profile: dict, path: list):
     allowed = {"default_key", "keys", "strings", "felt_modes", "note_body_lines",
-               "body_modes", "body_coupling", "mechanics", "fdn_lines"}
+               "body_modes", "body_coupling", "radiation", "mechanics", "fdn_lines"}
     if (type(path) is not list or len(path) < 2 or
             type(path[0]) is not str or path[0] not in allowed):
         raise AdapterError("profile path must name a saved acoustic field")
@@ -476,7 +476,7 @@ def compile_candidate(values: dict, directory: Path) -> Path:
     candidate = directory / "candidate.json"
     candidate.write_text(json.dumps(profile, allow_nan=False), encoding="utf-8")
     normalized = generator.validate_profile(generator.load_json(candidate), candidate)
-    block = generator.generate_block([normalized], normalized["id"])
+    block = generator.generate_block(normalized)
     source = directory / "piano.c"
     source.write_text(generator.replace_generated_block(
         paths["profile-inputs/hlolli_wg_piano.c"].read_text(encoding="utf-8"), block),
@@ -540,18 +540,15 @@ def render_job(request_path: Path, output_dir: Path) -> None:
                   checked_file(FROZEN_CONFIG["files"]["module"], "module"))
         controls = ({"hammer_hardness": 0.43, "hammer_position": 0.12,
                      "body_control": 0.72} if profile_mode else values)
-        profile_id = None
-        if profile_mode:
-            profile_id = load_json(Path(text) / "candidate.json")["id"]
         try:
-            render_audio(csound, module, csd, output, note, controls, profile_id)
+            render_audio(csound, module, csd, output, note, controls)
         except BaseException:
             if output.is_file() and not output.is_symlink():
                 output.unlink()
             raise
 
 
-def render_audio(csound, module, csd, output, note, values, profile_id=None):
+def render_audio(csound, module, csd, output, note, values):
     command = [
         str(csound), f"--opcode-lib={module}", "--sample-accurate",
         "--num-threads=1", "-W", "-s", "--nopeaks", "-o", str(output),
@@ -562,8 +559,6 @@ def render_audio(csound, module, csd, output, note, values, profile_id=None):
         "--omacro:TEST_KEY_SECONDS=0.35", "--omacro:TEST_TAIL_SECONDS=3.0",
         str(csd),
     ]
-    if profile_id is not None:
-        command.insert(-1, f'--omacro:TEST_PROFILE="{profile_id}"')
     environment = {"LC_ALL": "C", "LANG": "C", "TZ": "UTC"}
     library_path = FROZEN_CONFIG.get("library_path")
     if library_path is not None:

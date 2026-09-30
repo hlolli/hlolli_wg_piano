@@ -1,0 +1,223 @@
+{
+  "schema": "piano-timbre-references-v1",
+  "source": "https://theremin.music.uiowa.edu/MISpiano.html",
+  "notes": "Original stereo PCM recordings. Non-anechoic. Dynamics map to test velocities by convention; no calibrated hammer-speed or absolute-level claim. Raw audio stays ignored.",
+  "takes": [
+    {
+      "file": "raw/iowa/Piano.pp.C2.wav",
+      "note": 36,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "fit",
+      "inharmonicity": 0.000137559159
+    },
+    {
+      "file": "raw/iowa/Piano.pp.C3.wav",
+      "note": 48,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "fit",
+      "inharmonicity": 0.000116583864
+    },
+    {
+      "file": "raw/iowa/Piano.pp.C4.wav",
+      "note": 60,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "fit",
+      "inharmonicity": 0.000317936856
+    },
+    {
+      "file": "raw/iowa/Piano.pp.C5.wav",
+      "note": 72,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "fit",
+      "inharmonicity": 0.001060190921
+    },
+    {
+      "file": "raw/iowa/Piano.pp.C6.wav",
+      "note": 84,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "fit",
+      "inharmonicity": 0.002360673923
+    },
+    {
+      "file": "raw/iowa/Piano.pp.C7.wav",
+      "note": 96,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "fit",
+      "inharmonicity": 0.005229128922
+    },
+    {
+      "file": "raw/iowa/Piano.pp.G3.wav",
+      "note": 55,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "check",
+      "inharmonicity": 0.000209531249
+    },
+    {
+      "file": "raw/iowa/Piano.pp.G4.wav",
+      "note": 67,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "check",
+      "inharmonicity": 0.000643599364
+    },
+    {
+      "file": "raw/iowa/Piano.pp.G5.wav",
+      "note": 79,
+      "dynamic": "pp",
+      "velocity": 0.2,
+      "split": "check",
+      "inharmonicity": 0.001587511464
+    },
+    {
+      "file": "raw/iowa/Piano.mf.C2.wav",
+      "note": 36,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "fit",
+      "inharmonicity": 0.000137559159
+    },
+    {
+      "file": "raw/iowa/Piano.mf.C3.wav",
+      "note": 48,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "fit",
+      "inharmonicity": 0.000116583864
+    },
+    {
+      "file": "raw/iowa/Piano.mf.C4.wav",
+      "note": 60,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "fit",
+      "inharmonicity": 0.000317936856
+    },
+    {
+      "file": "raw/iowa/Piano.mf.C5.wav",
+      "note": 72,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "fit",
+      "inharmonicity": 0.001060190921
+    },
+    {
+      "file": "raw/iowa/Piano.mf.C6.wav",
+      "note": 84,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "fit",
+      "inharmonicity": 0.002360673923
+    },
+    {
+      "file": "raw/iowa/Piano.mf.C7.wav",
+      "note": 96,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "fit",
+      "inharmonicity": 0.005229128922
+    },
+    {
+      "file": "raw/iowa/Piano.mf.G3.wav",
+      "note": 55,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "check",
+      "inharmonicity": 0.000209531249
+    },
+    {
+      "file": "raw/iowa/Piano.mf.G4.wav",
+      "note": 67,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "check",
+      "inharmonicity": 0.000643599364
+    },
+    {
+      "file": "raw/iowa/Piano.mf.G5.wav",
+      "note": 79,
+      "dynamic": "mf",
+      "velocity": 0.65,
+      "split": "check",
+      "inharmonicity": 0.001587511464
+    },
+    {
+      "file": "raw/iowa/Piano.ff.C2.wav",
+      "note": 36,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "fit",
+      "inharmonicity": 0.000137559159
+    },
+    {
+      "file": "raw/iowa/Piano.ff.C3.wav",
+      "note": 48,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "fit",
+      "inharmonicity": 0.000116583864
+    },
+    {
+      "file": "raw/iowa/Piano.ff.C4.wav",
+      "note": 60,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "fit",
+      "inharmonicity": 0.000317936856
+    },
+    {
+      "file": "raw/iowa/Piano.ff.C5.wav",
+      "note": 72,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "fit",
+      "inharmonicity": 0.001060190921
+    },
+    {
+      "file": "raw/iowa/Piano.ff.C6.wav",
+      "note": 84,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "fit",
+      "inharmonicity": 0.002360673923
+    },
+    {
+      "file": "raw/iowa/Piano.ff.C7.wav",
+      "note": 96,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "fit",
+      "inharmonicity": 0.005229128922
+    },
+    {
+      "file": "raw/iowa/Piano.ff.G3.wav",
+      "note": 55,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "check",
+      "inharmonicity": 0.000209531249
+    },
+    {
+      "file": "raw/iowa/Piano.ff.G4.wav",
+      "note": 67,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "check",
+      "inharmonicity": 0.000643599364
+    },
+    {
+      "file": "raw/iowa/Piano.ff.G5.wav",
+      "note": 79,
+      "dynamic": "ff",
+      "velocity": 1.0,
+      "split": "check",
+      "inharmonicity": 0.001587511464
+    }
+  ]
+}

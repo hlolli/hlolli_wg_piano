@@ -13,10 +13,9 @@ from audio_analysis import read_pcm_wav, rms
 
 
 def render(csound: Path, module: Path, csd: Path, output: Path,
-           profile: str, ksmps: int, assignment: bool) -> None:
+           ksmps: int, assignment: bool) -> None:
     command = [
         str(csound), "--opcode-lib={}".format(module), "--sample-accurate",
-        "--omacro:TEST_PROFILE=\"{}\"".format(profile),
         "--omacro:TEST_KSMPS={}".format(ksmps),
         *(["--omacro:TEST_K_ASSIGNMENT=1"] if assignment else []),
         "-W", "-l", "-o", str(output), str(csd),
@@ -38,25 +37,24 @@ def main() -> int:
     try:
         with tempfile.TemporaryDirectory(prefix="hlolli-wg-piano-controls-") as folder:
             temporary = Path(folder)
-            for profile in ("generic_2018", "concert_grand_a"):
-                for ksmps in (1, 32, 128):
-                    initial_path = temporary / "initial.wav"
-                    assigned_path = temporary / "assigned.wav"
-                    render(arguments.csound, arguments.module, arguments.csd,
-                           initial_path, profile, ksmps, False)
-                    render(arguments.csound, arguments.module, arguments.csd,
-                           assigned_path, profile, ksmps, True)
-                    initial = read_pcm_wav(initial_path)
-                    assigned = read_pcm_wav(assigned_path)
-                    if rms(initial) <= 1.0e-5:
-                        raise AssertionError("reference render is silent")
-                    if (initial.sample_rate != assigned.sample_rate or
-                            initial.channels != assigned.channels):
-                        raise AssertionError(
-                            "{} at ksmps {}: k-rate assignment changes the "
-                            "initial note sound or shared key state".format(
-                                profile, ksmps))
-                    print("{} at ksmps {}: identical audio".format(profile, ksmps))
+            for ksmps in (1, 32, 128):
+                initial_path = temporary / "initial.wav"
+                assigned_path = temporary / "assigned.wav"
+                render(arguments.csound, arguments.module, arguments.csd,
+                       initial_path, ksmps, False)
+                render(arguments.csound, arguments.module, arguments.csd,
+                       assigned_path, ksmps, True)
+                initial = read_pcm_wav(initial_path)
+                assigned = read_pcm_wav(assigned_path)
+                if rms(initial) <= 1.0e-5:
+                    raise AssertionError("reference render is silent")
+                if (initial.sample_rate != assigned.sample_rate or
+                        initial.channels != assigned.channels):
+                    raise AssertionError(
+                        "At ksmps {}: k-rate assignment changes the "
+                        "initial note sound or shared key state".format(
+                            ksmps))
+                print("At ksmps {}: identical audio".format(ksmps))
     except (AssertionError, OSError, RuntimeError, ValueError,
             subprocess.TimeoutExpired) as error:
         print(str(error), file=sys.stderr)

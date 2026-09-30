@@ -1,14 +1,12 @@
-# Piano profile sources
+# Concert-grand tuning data
 
-The JSON files in this directory are the source for the piano tables compiled
+The concert-grand JSON file is the source for the piano tables compiled
 into `hlolli_wg_piano.c`. Csound does not read them at run time. This keeps the
 native and browser plugins self-contained.
 
-`manifest.json` lists the profile source files. `generic_2018.json` holds the
-default profile. `concert_grand_a.json` holds the first small recording-based
-fit under a neutral public name. `schema/piano-profile-v3.schema.json` defines
-the current format. Versions 1 and 2 stay in `schema` for old source data; the
-generator accepts version 3 only.
+`concert_grand_a.json` holds the sole concert grand. Tune this model as needed;
+there is no runtime profile selection. `schema/piano-profile-v4.schema.json`
+defines the format. The generator accepts version 4 only.
 
 ## Generate the C tables
 
@@ -21,11 +19,11 @@ python3 tools/generate_profiles.py
 It needs Python 3.8 or newer and no third-party packages. It also rejects a
 generated C source above the browser compiler's 256 KiB limit.
 
-It validates every listed source and replaces only the marked profile-data
+It validates the sole source and replaces only the marked profile-data
 block in `hlolli_wg_piano.c`. It does not create an include file because the
 browser compiler accepts one plugin C source file.
 
-The script has built-in checks that match the version 3 schema, so it needs no
+The script has built-in checks that match the version 4 schema, so it needs no
 JSON Schema package. It parses the schema file and checks its version link, but
 it does not act as a general JSON Schema engine. Keep the schema and script
 rules in step when the format changes.
@@ -36,22 +34,19 @@ Check that the source and generated C agree without changing files:
 python3 tools/generate_profiles.py --check
 ```
 
-The generator uses the manifest order for the public profile list and emits
-stable text. Do not edit the generated C block by hand.
+The generator emits stable text. Do not edit the generated C block by hand.
 
-## Add a profile
+## Tune the concert grand
 
-1. Copy `generic_2018.json` to a file named after the new `id`.
-2. Set `$schema` to `schema/piano-profile-v3.schema.json`.
-3. Add the file to `manifest.json`.
-4. Fill in the model data and its source notes.
-5. Run the generator and its `--check` form.
-6. Render fixed notes, chords, pedal changes, and a stress score before using
-   the profile in a demo.
+1. Edit `concert_grand_a.json` and its source notes.
+2. Run the generator and its `--check` form.
+3. Run the tests and render notes, chords, pedal changes, and a stress score.
 
 An `id` uses lower-case ASCII letters, digits, and underscores. It starts with
 a letter, has at most 63 characters, and matches the source filename. The
-`display_name` can hold a normal name for docs and user interfaces.
+`display_name` holds the model's plain name. These fields track the data; they
+do not add a runtime selector. The shared fitting protocol still calls saved
+tuning data a profile.
 
 `midi_min` and `key_count` set one continuous keyboard range. The last key must
 not exceed MIDI 127. `sympathetic_mode_count` must be at least two and no more
@@ -94,10 +89,10 @@ note numbers. Each entry can set one or more values from `default_key`:
 
 The generator merges each entry over `default_key` and writes a dense C table.
 An empty `keys` object uses only `default_key` and emits a null key-table
-pointer. Both shipped profiles list all 88 MIDI keys. Sparse entries do not
+pointer. The concert grand lists all 88 MIDI keys. Sparse entries do not
 cause interpolation; a fitting tool must write any fitted values it needs.
 
-Version 3 stores the string, hammer, damper, and sympathetic bases for each
+Version 4 stores the string, hammer, damper, and sympathetic bases for each
 key:
 
 - `inharmonicity_b` sets the string's base inharmonicity.
@@ -107,6 +102,10 @@ key:
   the choir layout and its base tuning width.
 - `hammer_gain`, the two contact-time fields, the two cutoff fields,
   `hammer_filter_mix`, and `hammer_string_gain` set the strike base.
+- `hammer_velocity_hardness` adds hardness relative to velocity 0.65 at each
+  strike. It changes both contact time and cutoff.
+- `bridge_loss_per_second` sets the loss of shared unison motion through the
+  bridge. The strings' own loss controls their longer tail.
 - `felt_frequency_scale` and `felt_gain` tune the shared three-mode felt
   shape for that key.
 - `damper_presence` states whether the key has a damper.
@@ -133,9 +132,9 @@ value sets how strongly that key's bridge signal drives that mode. The rows
 follow MIDI order; the columns follow `body_modes`. The generator requires the
 matrix dimensions to match `key_count` and the number of body modes.
 
-The shipped matrices use a smooth one-dimensional bridge model. They are not
+The coupling matrix uses a smooth one-dimensional bridge model. Its values are not
 measurements. A later body-tap fit can replace the matrix without changing the
-opcodes or the run-time profile layout. Key-aware coupling applies to notes
+opcodes. Key-aware coupling applies to notes
 that use a piano handle. The explicit stereo-bus resonance form has no key
 identity, so it keeps using the input-side value on each body mode.
 
@@ -158,6 +157,13 @@ The opcode controls still act on these bases. For example, `kStiffness`
 changes `inharmonicity_b`, `kDecay` scales the two loss terms, `kDetune`
 changes `unison_width_cents`, and `kHardness` moves through the contact and
 cutoff ranges. Profile data does not change the opcode signatures.
+
+`radiation` holds six increasing `centres_hz`, one `q` from 0.3 to 2, and
+`key_gain_db`: one row per key with six gains from -12 to +12 dB. The runtime
+designs stable peak EQ filters at the current sample rate. The fit uses broad
+bands to shape the direct note signal before its final level limiter. It fits
+recorded note spectra, not isolated soundboard modes or bridge impedance.
+Room and microphone color can therefore enter these values.
 
 ## Source notes
 
