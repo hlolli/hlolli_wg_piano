@@ -27,16 +27,14 @@ instr 17
   LpcsRequire p25 > 0 && p25 <= p3 + 0.000000001, "Invalid piano key duration"
   LpcsRequire p26 == 0, "Soft pedal is not supported by this piano adapter"
   LpcsRequire p16 % 4 == 0, "Resolve tied notes before piano playback"
-  xtratim 2.4
   kElapsed timeinsts
   kTrigger = (kElapsed < p25 ? p11 : 0)
   kPedal chnget "lpcs-pedal-64"
-  kTail linsegr 1, .01, 1, 2.4, 0
-  aLeft, aRight hlolli_wg_piano kTrigger, cpsmidinn(p8), .43, .12, .76, \
-      .40, .60, .72, 0, kPedal, giPiano
+  aLeft, aRight hlolli_wg_piano kTrigger, cpsmidinn(p8), .43, .12, .70, \
+      .42, .60, .72, 0, kPedal, giPiano
   iPan = (p14 + 1) / 2
-  outs .7 * aLeft * kTail * sqrt(2 * (1 - iPan)), \
-       .7 * aRight * kTail * sqrt(2 * iPan)
+  outs .7 * aLeft * sqrt(2 * (1 - iPan)), \
+       .7 * aRight * sqrt(2 * iPan)
 PIANO_DONE:
 endin
 

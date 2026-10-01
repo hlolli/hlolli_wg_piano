@@ -19,20 +19,16 @@ instr Piano
   iVelocity = p5
   iPan = p6
 
-  xtratim 2.40
   kRelease release
   kTrigger = (kRelease == 0 ? iVelocity : 0)
   kFrequency init cpsmidinn(iNote)
   kPedal = gkPedal
-  kTail linsegr 1, 0.01, 1, 2.40, 0
 
   aModelLeft, aModelRight hlolli_wg_piano \
-      kTrigger, kFrequency, 0.43, 0.12, 0.76, \
-      0.40, 0.60, 0.72, 0, kPedal, giPiano
+      kTrigger, kFrequency, 0.43, 0.12, 0.70, \
+      0.42, 0.60, 0.72, 0, kPedal, giPiano
   aMono = 0.5 * (aModelLeft + aModelRight)
   aLeft, aRight pan2 aMono, iPan
-  aLeft *= kTail
-  aRight *= kTail
   outs 0.70 * aLeft, 0.70 * aRight
   gaRoomLeft += aLeft
   gaRoomRight += aRight

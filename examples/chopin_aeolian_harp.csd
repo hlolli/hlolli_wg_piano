@@ -27,14 +27,12 @@ instr Piano
   iStrange = p12
   iPan = p14
 
-  xtratim 2.60
   kRelease release
   kTrigger = (kRelease == 0 ? iVelocity : 0)
   kFrequency init cpsmidinn(iNote)
   ; The shared resonator owns this piano's damper rail. The note input stays
   ; in the call for compatibility; the handle gives ringing notes that rail.
   kPedal = gkSharedPedal
-  kTail linsegr 1, 0.01, 1, 2.60, 0
 
   aModelLeft, aModelRight hlolli_wg_piano \
       kTrigger, kFrequency, iHardness, iHammerPosition, iDecay, \
@@ -43,8 +41,8 @@ instr Piano
   ; Keep some of the model's own width, then place each hand on the keyboard.
   aMono = 0.5 * (aModelLeft + aModelRight)
   aPanLeft, aPanRight pan2 aMono, iPan
-  aLeft = (0.56 * aModelLeft + 0.62 * aPanLeft) * kTail
-  aRight = (0.56 * aModelRight + 0.62 * aPanRight) * kTail
+  aLeft = (0.56 * aModelLeft + 0.62 * aPanLeft)
+  aRight = (0.56 * aModelRight + 0.62 * aPanRight)
 
   gaPianoLeft += aLeft
   gaPianoRight += aRight
@@ -71,31 +69,31 @@ instr HarpBeat
 
   ; Right hand: the sung top note followed by five quiet triplet notes.
   event_i "i", "Piano", 0 * iStep, iLeadDuration, p4, iLead, \
-      0.41, 0.12, 0.78, 0.38, 0.60, 0.70, 0, 0.82, 0.64
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.70, 0, 0.82, 0.64
   event_i "i", "Piano", 1 * iStep, iInnerDuration, p5, iInner, \
-      0.31, 0.12, 0.74, 0.36, 0.56, 0.66, 0, 0.78, 0.63
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.66, 0, 0.78, 0.63
   event_i "i", "Piano", 2 * iStep, iInnerDuration, p6, 0.94 * iInner, \
-      0.31, 0.12, 0.74, 0.36, 0.56, 0.66, 0, 0.78, 0.62
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.66, 0, 0.78, 0.62
   event_i "i", "Piano", 3 * iStep, iInnerDuration, p7, 0.88 * iInner, \
       0.30, 0.12, 0.74, 0.36, 0.56, 0.66, 0, 0.78, 0.61
   event_i "i", "Piano", 4 * iStep, iInnerDuration, p8, 0.92 * iInner, \
-      0.31, 0.12, 0.74, 0.36, 0.56, 0.66, 0, 0.78, 0.62
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.66, 0, 0.78, 0.62
   event_i "i", "Piano", 5 * iStep, iInnerDuration, p9, iInner, \
-      0.31, 0.12, 0.74, 0.36, 0.56, 0.66, 0, 0.78, 0.63
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.66, 0, 0.78, 0.63
 
   ; Left hand: a low bass and the mirrored six-note harp figure.
   event_i "i", "Piano", 0 * iStep, iBassDuration, p10, iBass, \
-      0.36, 0.14, 0.82, 0.34, 0.54, 0.72, 0, 0.88, 0.36
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.72, 0, 0.88, 0.36
   event_i "i", "Piano", 1 * iStep, iInnerDuration, p11, iLeftInner, \
-      0.32, 0.14, 0.77, 0.35, 0.54, 0.68, 0, 0.82, 0.37
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.68, 0, 0.82, 0.37
   event_i "i", "Piano", 2 * iStep, iInnerDuration, p12, 0.94 * iLeftInner, \
-      0.32, 0.14, 0.77, 0.35, 0.54, 0.68, 0, 0.82, 0.38
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.68, 0, 0.82, 0.38
   event_i "i", "Piano", 3 * iStep, iInnerDuration, p13, 0.88 * iLeftInner, \
-      0.32, 0.14, 0.77, 0.35, 0.54, 0.68, 0, 0.82, 0.39
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.68, 0, 0.82, 0.39
   event_i "i", "Piano", 4 * iStep, iInnerDuration, p14, 0.94 * iLeftInner, \
-      0.32, 0.14, 0.77, 0.35, 0.54, 0.68, 0, 0.82, 0.38
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.68, 0, 0.82, 0.38
   event_i "i", "Piano", 5 * iStep, iInnerDuration, p15, iLeftInner, \
-      0.32, 0.14, 0.77, 0.35, 0.54, 0.68, 0, 0.82, 0.37
+      0.43, 0.12, 0.70, 0.42, 0.60, 0.68, 0, 0.82, 0.37
 endin
 
 ; The handle owns the shared board, sympathetic strings, phases and pedal state.

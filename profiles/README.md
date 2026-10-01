@@ -8,6 +8,13 @@ native and browser plugins self-contained.
 there is no runtime profile selection. `schema/piano-profile-v4.schema.json`
 defines the format. The generator accepts version 4 only.
 
+The direct voice now uses resonance and velocity data in `fit/`, embedded by
+`tools/generate_modal_bank.py`. This version 4 file still supplies damper,
+stiffness-control, output-gain, sympathetic, and shared-body tuning. Older
+hammer, felt, rail-loss, and radiation-EQ fields remain for saved-data
+compatibility; they no longer shape the direct voice. The descriptions below
+record the format's original roles.
+
 ## Generate the C tables
 
 Run the generator from the repository root:
@@ -17,7 +24,7 @@ python3 tools/generate_profiles.py
 ```
 
 It needs Python 3.8 or newer and no third-party packages. It also rejects a
-generated C source above the browser compiler's 256 KiB limit.
+generated C source above the browser compiler's 2 MiB limit.
 
 It validates the sole source and replaces only the marked profile-data
 block in `hlolli_wg_piano.c`. It does not create an include file because the

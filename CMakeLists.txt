@@ -164,6 +164,8 @@ if(Python3_Interpreter_FOUND)
   add_custom_target(hlolli_wg_piano_generate_model
     COMMAND "${Python3_EXECUTABLE}" -B
             "${CMAKE_CURRENT_LIST_DIR}/tools/generate_profiles.py"
+    COMMAND "${Python3_EXECUTABLE}" -B
+            "${CMAKE_CURRENT_LIST_DIR}/tools/generate_modal_bank.py"
     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
     COMMENT "Generating embedded concert-grand tables"
     VERBATIM)
@@ -171,6 +173,8 @@ if(Python3_Interpreter_FOUND)
     COMMAND "${Python3_EXECUTABLE}" -B
             "${CMAKE_CURRENT_LIST_DIR}/tools/generate_profiles.py"
             --check
+    COMMAND "${Python3_EXECUTABLE}" -B
+            "${CMAKE_CURRENT_LIST_DIR}/tools/generate_modal_bank.py" --check
     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
     COMMENT "Checking concert-grand data and generated tables"
     VERBATIM)
@@ -228,12 +232,11 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
     set_tests_properties(hlolli_wg_piano.model_data PROPERTIES
       LABELS "tooling"
       TIMEOUT 30)
-    add_test(NAME hlolli_wg_piano.string_delay
+    add_test(NAME hlolli_wg_piano.resonance_data
       COMMAND "${Python3_EXECUTABLE}" -B
-              "${CMAKE_CURRENT_LIST_DIR}/tests/run_string_delay_test.py"
-              --cc "${CMAKE_C_COMPILER}")
-    set_tests_properties(hlolli_wg_piano.string_delay PROPERTIES
-      LABELS "audio;dsp" TIMEOUT 30)
+              "${CMAKE_CURRENT_LIST_DIR}/tools/generate_modal_bank.py" --check)
+    set_tests_properties(hlolli_wg_piano.resonance_data PROPERTIES
+      LABELS "tooling;dsp" TIMEOUT 30)
     set(HLOLLI_PIANO_ANALYSIS_PYTHON "${Python3_EXECUTABLE}" CACHE FILEPATH
         "Python with NumPy for offline timbre tests and fitting")
     add_test(NAME hlolli_wg_piano.timbre_analysis
@@ -289,12 +292,12 @@ if(HLOLLI_WG_PIANO_BUILD_TESTS)
       TIMEOUT 120)
 
     if(Python3_Interpreter_FOUND)
-      add_test(NAME hlolli_wg_piano.timbre_render
+      add_test(NAME hlolli_wg_piano.modal_voice
         COMMAND "${HLOLLI_PIANO_ANALYSIS_PYTHON}" -B
-                "${CMAKE_CURRENT_LIST_DIR}/tests/run_timbre_test.py"
+                "${CMAKE_CURRENT_LIST_DIR}/tests/run_modal_voice_test.py"
                 --csound "${CSOUND_EXECUTABLE}"
                 --module "$<TARGET_FILE:hlolli_wg_piano>")
-      set_tests_properties(hlolli_wg_piano.timbre_render PROPERTIES
+      set_tests_properties(hlolli_wg_piano.modal_voice PROPERTIES
         LABELS "audio;fit" TIMEOUT 120 SKIP_RETURN_CODE 77)
       add_test(NAME hlolli_wg_piano.initial_controls
         COMMAND "${Python3_EXECUTABLE}"

@@ -12,7 +12,6 @@ nchnls = 2
 giPiano hlolli_wg_piano_create
 
 instr Piano
-  xtratim 1.0
   kRelease release
   kTrigger = (kRelease == 0 ? p5 : 0)
   aLeft, aRight hlolli_wg_piano \

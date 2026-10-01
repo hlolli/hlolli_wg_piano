@@ -4,6 +4,11 @@
 opcode, a piano-handle creator, and a wet-output opcode. The model uses no
 samples or external data files.
 
+The note voice uses measured damped resonances across all 88 keys. Strike
+velocity changes both level and tone. Releasing a key damps the strings and
+leaves a quiet residual ring. The opcode requests its own release time;
+callers need no note fade or `xtratim` to preserve that tail.
+
 Create one handle for each piano:
 
 ```csound
@@ -53,6 +58,7 @@ Custom.cmake.example           Optional local path settings
 profiles/concert_grand_a.json  The concert grand's tuning data
 profiles/schema/               Tuning-data format
 tools/generate_profiles.py     Data checker and C-table generator
+tools/generate_modal_bank.py   Resonance and velocity table generator
 tools/piano_timbre.py          Offline hammer, decay, and radiation fit
 fit/                          Fit inputs and accepted sound data
 recordings/iowa-timbre.json    Fit and check recording manifest
@@ -74,25 +80,38 @@ tests/initial_controls.csd     First-block note control render
 tests/run_initial_controls_test.py  Initial and k-rate control comparison
 tests/run_shared_resonance_test.py  Shared-tail test driver
 tests/run_handle_state_test.py Piano-handle state test driver
+tests/modal_voice.csd          Native strike and release fixture
+tests/run_modal_voice_test.py  Approved-sound, velocity, and release checks
 ```
 
 ## Concert-grand data
 
-`profiles/concert_grand_a.json` is the sole piano model. All notes and handles
-use this concert grand; tune its timbre through the controls or this data file.
-There is no runtime profile selector, registry, or alternate piano table.
+All notes and handles use one concert grand. There is no runtime profile
+selector, registry, or alternate instrument.
 
-The version 4 schema stores per-key string loss, stiffness, unison, hammer,
-felt, damper, and sympathetic terms for 88 keys. It also holds 12 shared body
-modes, their coupling, mechanical-sound gains, velocity-dependent hammer
-hardness, common-motion bridge loss, and six broad radiation EQ bands per key.
+`fit/keyboard-modal-bank.json` preserves the praised medium-strike baseline.
+`fit/keyboard-treble-refinement.json` supplies seven later treble refinements.
+`fit/keyboard-velocity.json` supplies measured soft/hard excitation curves
+for each key. `fit/keyboard-dynamic-decay.json` adds bounded soft/hard damping
+changes for partials supported by the recordings and native render checks.
+C5 retains its separately fitted soft and hard strikes from
+`fit/modal-extension.json`. The velocity points are playing conventions;
+the source recordings do not give measured hammer speeds.
+
+`profiles/concert_grand_a.json` holds damper, stiffness-control, output-gain,
+sympathetic, and shared-body tuning. Its version 4 format also retains the
+earlier waveguide fields for saved-data and fit-tool compatibility. Hammer,
+felt, rail-loss, and broad radiation-EQ fields no longer shape the direct
+note voice. The resonance coefficients set its base timbre.
 
 The generator checks the JSON and replaces only the marked profile-data block
 inside `hlolli_wg_piano.c`:
 
 ```sh
 python3 -B tools/generate_profiles.py --check
+python3 -B tools/generate_modal_bank.py --check
 python3 -B tools/generate_profiles.py
+python3 -B tools/generate_modal_bank.py
 ```
 
 In a stand-alone build, when CMake finds Python, the same actions are available
@@ -106,7 +125,7 @@ cmake --build build --target hlolli_wg_piano_generate_model
 Edit the JSON, not the generated C block. The generator needs Python 3.8 or
 newer, has no third-party packages, and writes no date or machine path. The
 same input therefore gives the same C text. It also rejects output above the
-browser compiler's 256 KiB source limit. Builds never run it on their own. The
+browser compiler's 2 MiB source limit. Builds never run it on their own. The
 checked-in C file still holds all runtime data and remains a single source file
 for native and WASI builds.
 
@@ -134,8 +153,13 @@ which Git ignores. Build tools stay in `tools/`; maintained tests stay in
 `tests/` and run through CTest. The build does not need `dev/`.
 
 [Accepted sound data](fit/README.md) stays in `fit/`, including refined C4.
-These fixed-note prototypes have passed listening but still await integration
-into the main piano opcode.
+The main opcode now uses this sound. Its five individually approved medium
+strikes match the saved waveforms within PCM rounding at the default tuning.
+Velocity changes both excitation and damping across the keyboard. Each
+retained damping change improves two separate time regions in the reference
+comparison. Partials without enough evidence keep their medium damping.
+A0, B♭0, and C8 still use nearby medium-strike banks; A0 also borrows its soft
+reference from B♭0. New treble and velocity settings still need listening.
 
 ## Stand-alone build
 
@@ -145,6 +169,7 @@ directory in the build tree. The raw source `include` directory is not enough.
 
 ```sh
 cmake -S . -B build -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
   -DHLOLLI_CSOUND_BUILD_DIR=/path/to/csound/build \
   -DCSOUND_EXECUTABLE=/path/to/csound/build/csound
 cmake --build build --target hlolli_wg_piano
@@ -262,22 +287,30 @@ export is installed because this is a loaded module, not a link library.
 ## Note opcode inputs
 
 The ten sound controls run at k-rate. Values outside the accepted range are
-clamped. The suggested range is not a hard limit; it marks the area that stays
-close to an acoustic grand. The optional last input is the i-rate handle from
+clamped. Hardness and hammer position apply at each strike; the other tone
+controls smooth changes during the ring. The optional last input is the i-rate handle from
 `hlolli_wg_piano_create`. Omit it for a detached note with no hidden wet send.
 
 | Input | Accepted range | Suggested range | Grand value | Effect |
 |---|---:|---:|---:|---|
 | `kTrigger` | 0 to 1.25 | 0.05 to 1.0 | about 0.65 | Strike velocity and key state. Values above 1 give a harder accent. Zero releases and rearms the hammer. |
-| `kFrequency` | 20 Hz to `0.45*sr` | 27.5 to 4186 Hz | note pitch | Fundamental frequency. Stay below `0.43*sr` for the fundamental rail. The paper-based partial fit is meant for the 88-key range at normal audio sample rates. |
-| `kHardness` | 0 to 1 | 0.15 to 0.75 | 0.43 | Soft, long felt contact to short, bright contact. It also changes the attack sent to the bridge. |
-| `kHammerPosition` | 0.025 to 0.45 | 0.07 to 0.20 | 0.12 | Strike point as a fraction of string length. It moves comb notches in the attack spectrum. |
-| `kDecay` | 0 to 1 | 0.40 to 0.90 | 0.70 | Short to long scaling of the paper-calibrated two-term string loss. Key state and pedal add damper loss. |
-| `kStiffness` | 0 to 1 | 0.15 to 0.70 | 0.42 | Low to high scaling of the paper-based inharmonicity curve. Large values can sound metallic. |
-| `kDetune` | 0 to 1 | 0.20 to 0.80 | 0.60 | Spread of the active unison strings. Zero keeps a small built-in spread and drift. |
-| `kBody` | 0 to 1 | 0.30 to 0.90 | 0.72 | Common bridge reflection and coupling, plus the short per-note bridge response. |
-| `kStrange` | -1 to 1 | -0.30 to 0.30 | 0 | Prepared and unstable colors. Both signs add detune, nonlinear partials, coupling, and bridge motion. |
+| `kFrequency` | 20 Hz to `0.45*sr` | 27.5 to 4186 Hz | note pitch | Selects the nearest key at onset, then transposes that bank. Recorded tuning and beating remain at the nominal key frequency. |
+| `kHardness` | 0 to 1 | 0.15 to 0.75 | 0.43 | Adds a gentle high-partial tilt to the velocity-dependent strike. |
+| `kHammerPosition` | 0.025 to 0.45 | 0.07 to 0.20 | 0.12 | Changes the strike's partial balance around the measured setting. |
+| `kDecay` | 0 to 1 | 0.40 to 0.90 | 0.70 | Scales measured resonance losses. Key state and pedal add damper loss. |
+| `kStiffness` | 0 to 1 | 0.15 to 0.70 | 0.42 | Changes upper-partial stretch around the measured tuning. |
+| `kDetune` | 0 to 1 | 0.20 to 0.80 | 0.60 | Changes spacing within nearby resonances; the default preserves measured beating. |
+| `kBody` | 0 to 1 | 0.30 to 0.90 | 0.72 | Sets the quiet residual ring after damping and the shared body-mode send. |
+| `kStrange` | -1 to 1 | -0.30 to 0.30 | 0 | Adds small opposing frequency shifts to the resonances. |
 | `kPedal` | 0 to 1 | 0 to 1 | 0 or 0.82 held | Sets the local damper for a detached note. For a handled note, the wet opcode's shared pedal rail sets the damper. The dampers fully clear by about 0.82. |
+
+The opcode also reads Csound's score/MIDI release flag. A constant positive
+trigger therefore cannot hold a note after its instrument releases. It keeps
+up to eight seconds of extra time, with a smooth close during the final
+second. Explicit trigger release within a live instrument has no such limit.
+Keep the shared wet-output instrument alive through the musical ending.
+The local residual ring models stored energy with a separate decay; its
+level and decay are tuning choices, not fitted damper-release measurements.
 
 ## Piano handle and wet output
 
@@ -355,18 +388,14 @@ gkPedal init 0.82
 instr PianoNote
   iNote = p4
   iVelocity = p5
-  xtratim 2.60
   kRelease release
   kTrigger = (kRelease == 0 ? iVelocity : 0)
   kFrequency init cpsmidinn(iNote)
-  kTail linsegr 1, 0.01, 1, 2.60, 0
 
   aLeft, aRight hlolli_wg_piano \
       kTrigger, kFrequency, 0.43, 0.12, 0.70, \
       0.42, 0.60, 0.72, 0, gkPedal, giPiano
 
-  aLeft *= kTail
-  aRight *= kTail
   outs aLeft, aRight
 endin
 
@@ -386,139 +415,39 @@ newest note blocks.
 
 ## Note control details
 
-### Trigger and note life
+A trigger above `0.0001` holds the key. The first positive value strikes;
+zero releases and rearms it. A rise above `0.035` can restrike a live voice.
+Repeated strikes add excitation to the current ring and preserve its phase.
 
-A value above `0.0001` means key down. The first positive value strikes the
-hammer. Return it to zero before the next ordinary strike. A rise of more than
-about `0.035` can restrike a voice while it remains positive.
+The medium strike at `0.65` preserves the saved resonance bank. Soft and hard
+strikes use measured attack colour and damping at `0.20` and `1.00`, with smooth
+changes between them. Soft/hard damping uses bounded loss multipliers for
+each fitted partial. C5 blends its three separately fitted banks. Loudness follows
+velocity in addition to those tone changes. Hardness and hammer position add
+small changes around the measured strike. A new strike preserves the decay
+of energy left by earlier strikes.
 
-Velocity also makes the felt a little harder. A trigger of `1.25` is safe but
-is meant for an accent, not a normal MIDI velocity map.
+`kFrequency` selects the nearest MIDI key at the first performance block.
+Later changes transpose its frequencies with about 25 ms of smoothing.
+Use `cpsmidinn()` for keys 21 through 108. Initial and ordinary k-rate
+assignments produce the same first strike. The chosen key still determines
+handled damping and body coupling throughout the voice.
 
-The note opcode still needs release time. After key-up, a detached note uses
-its own `kPedal`; a handled note uses its piano's shared pedal rail. The highest
-keys stay undamped. Give the host instrument enough release time and fade its
-output at the end. A useful note-only pattern is:
+At the default decay, stiffness, and detune settings, the medium strike preserves
+the measured decay poles, partial spacing, and beating. Those controls scale loss,
+upper-partial stretch, and nearby pole spacing. `kStrange` adds small opposing
+frequency shifts; leave it at zero for the concert grand.
 
-```csound
-xtratim 2.60
-kRelease release
-kTrigger = (kRelease == 0 ? iVelocity : 0)
-kPedal = 0.82
-kTail linsegr 1, 0.01, 1, 2.60, 0
+Key release adds damper loss smoothly. The highest undamped keys retain their
+natural decay. A small part of the ring continues in a separate state that
+loses energy more slowly than the damped strings. `kBody` sets this part's
+level. The shared wet opcode separately supplies body and sympathetic resonance.
 
-aLeft, aRight hlolli_wg_piano \
-    kTrigger, kFrequency, 0.43, 0.12, 0.70, \
-    0.42, 0.60, 0.72, 0, kPedal
-outs aLeft * kTail, aRight * kTail
-```
-
-Each note instance owns its string rails, hammer, and short bridge response.
-When it has a handle, it sends its raw stereo output for the sympathetic modes
-and tail. It also sends the bridge signal through that key's 12 body-mode
-coupling values. Both sends happen before any gain or pan that follows the
-opcode. The handle owns the long body and sympathetic state. Use the
-explicit-bus wet form when the wet send must follow an outside gain, pan, or
-effect. That form has no key identity, so its body modes use the supplied
-stereo position instead of the key-coupling matrix.
-
-The handle also gives each key a stable felt scale and slow unison-drift phase.
-New voices for that key start from the same piano profile at the current Csound
-time. Strike errors still vary. A note voice still owns its waveguide rails;
-this version does not keep all 88 struck-string rails in the global state.
-
-### Frequency
-
-`kFrequency` can change while a note rings. Control values are smoothed over
-about 25 ms and the string delay follows over about 18 ms, so pitch changes
-glide instead of stepping. Normal piano use should pass `cpsmidinn()` values
-from MIDI note 21 through 108. With a piano handle, held-key damping and the
-shared drift state keep using the key chosen at the first performance block.
-The opcode reads the first k-rate control values before it strikes, so `init`
-and ordinary k-rate assignments give the same initial sound. Handled and
-detached notes keep that key's string, hammer, and felt profile for the full
-voice.
-
-The concert-grand data sets the second- and third-string level for every key.
-The second string fades in from about 39 to 49 Hz and the third
-from about 116 to 147 Hz. Small inactive-string floors keep the internal state
-safe but remain inaudible.
-
-### Hammer hardness and position
-
-`kHardness` sets felt contact time, attack brightness, and some bridge
-brightness. A low value gives a soft attack. A high value shortens contact and
-passes more high-frequency energy. Velocity adds a small amount of hardness at
-each strike.
-
-The hammer uses a reduced nonlinear contact. A compression state drives a
-power-law felt force, reads back the common string motion, and loses a small
-amount of force on release. Contact ends when the felt separates from the
-string. This is more than a fixed force pulse, but it is not a full action or
-felt material model.
-
-`kHammerPosition` sets the delay of the hammer-position comb. Values near the
-suggested range give common piano spectra. Large values move the notches lower
-and can make the attack hollow. Hardness and position matter most at the next
-strike.
-
-### Decay, stiffness, and detune
-
-`kDecay` scales each key's direct string-loss terms. At `kDecay=0.70` and
-`kStiffness=0.42`, the string loop uses the stored base loss. The passive
-bridge junction adds loss to shared unison motion, while opposing motion
-retains the string's own loss. Fractional delay uses an allpass filter to avoid
-unwanted treble damping, with a phase correction at the fundamental.
-Bass strings keep more energy than short treble strings, and
-upper partials lose energy faster. After key release, the local or shared
-pedal rail sets a separate damper loss.
-
-`kStiffness` scales each key's fitted inharmonicity value. Four to eight dispersion stages fit the
-fundamental and one upper reference partial. The partials between them remain
-approximate; normal-range test renders stay within about 12 cents of the target
-curve. At `0.42`, the control uses the profile value without extra scale. Keep
-it below about `0.70` for a piano; higher values are useful for bell-like tones.
-
-`kDetune` scales each key's `unison_width_cents`; `0.35` uses the stored width.
-Every strike also gets very small errors in pitch, level, contact time, and
-comb position. Each string has its own slow pitch drift. These changes stop
-repeated notes from being exact copies without making a normal preset sound
-out of tune.
-
-### Body and pedal
-
-The two opcodes give these controls different jobs:
-
-- On `hlolli_wg_piano`, `kBody` changes the common unison bridge reflection,
-  coupling, and short four-line bridge response. It does not add a long body
-  tail.
-- On `hlolli_wg_piano_resonance`, `kBody` sets the wet level and shapes the 12
-  body modes and eight-line tail.
-- On a detached note, `kPedal` opens that note's damper after key release.
-- On the wet opcode, `kPedal` moves the shared damper rail for handled notes,
-  opens the sympathetic bank, and lengthens the shared tail.
-
-For handled notes, the profile's key-to-body-mode matrix sets which shared
-body modes the bridge excites. The shipped matrix uses a smooth modeled bridge
-shape. Body-tap data can replace it with a piano-specific fit later.
-
-Half-pedal and repedalling work on handled notes through the shared rail. On a
-detached note, half-pedal works through its local control. Values up to about
-`0.82` cover the useful damper travel; larger values remain fully open. The wet
-opcode is a wet return, so mix it with the direct note output.
-
-### Strange
-
-Leave `kStrange` at zero for the acoustic preset.
-
-- Negative values add loss and lower the third string. At `-1`, that string is
-  one octave below its usual pitch.
-- Positive values add more dispersion.
-- Both signs add unison spread, nonlinear partials, stronger string coupling,
-  and a signed cyclic path in the short bridge response.
-
-Values between about `-0.30` and `0.30` keep the note identity clear. The full
-range is for prepared and unstable sounds.
+Handled notes send their output and a key-weighted body drive before any
+outside gain or pan. The handle owns the shared state after a note ends.
+Use the explicit-bus wet form when the send must follow an outside effect.
+Half-pedal and repedalling act through the shared damper state for handled
+notes, or through `kPedal` for detached notes.
 
 ## Starting settings
 
@@ -548,8 +477,8 @@ Some useful variants:
 ## Nonfinite input handling
 
 NaN and infinity are replaced before control clamping. The fallbacks are
-trigger `0`, frequency `440`, hardness `0.45`, position `0.12`, decay `0.65`,
-stiffness `0.45`, detune `0.35`, body `0.65`, strange `0`, and pedal `0`.
+trigger `0`, frequency `440`, hardness `0.43`, position `0.12`, decay `0.70`,
+stiffness `0.42`, detune `0.60`, body `0.72`, strange `0`, and pedal `0`.
 These are safety values, not optional arguments or the recommended preset.
 The wet opcode uses `0.72` for a nonfinite body control and `0` for a
 nonfinite pedal control. A nonfinite wet result clears its shared state.
@@ -560,50 +489,22 @@ init time.
 
 ## Model notes
 
-The reduced signal path follows ideas in Balazs Bank and Juliette Chabassier,
-"Model-based digital pianos: from physics to sound synthesis" (2019). Its
-string calibration also uses Julien Bensa, Stefan Bilbao, Richard
-Kronland-Martinet, and Julius O. Smith III, "The simulation of piano string
-vibration: From physical models to finite difference schemes and digital
-waveguides" (2003).
+Each note keeps fitted damped resonances, the current strike, earlier strike
+energy, and a quiet release state. These coefficients describe recorded
+output, including the microphone and room. They do not identify physical string
+counts or isolate the soundboard. The runtime evaluates recurrences; it never
+plays recorded waveforms or envelopes.
 
-Each note instance contains:
+Each piano handle owns 12 body modes, three sympathetic partials per key, an
+eight-line feedback-delay tail, pedal and damper state, held-key counts, and
+stereo sends. Csound allocates this shared state outside note instruments and
+frees it at reset. Native builds use a plugin reset callback; the WASI host
+frees its named globals and tracked blocks. A wet-output opcode advances and
+reads that state.
 
-- one to three detuned string rails;
-- four to eight dispersion stages fitted to a note-based inharmonicity curve;
-- two-term, frequency-dependent string loss fitted across the keyboard;
-- a reduced nonlinear hammer contact with pitch-scaled duration, compression,
-  release loss, string-motion feedback, and filtered felt noise;
-- fixed and slowly moving unison errors;
-- a passive common bridge junction that damps shared unison motion;
-- three short hammer and felt modes, low-level nonlinear color, direct bridge
-  radiation, and a short four-line bridge response;
-- six broad per-key EQ bands fitted to recorded note spectra.
-
-The paper loss values describe an equivalent string measured at the bridge.
-They do not split internal string loss from bridge and soundboard loss.
-
-Each piano handle owns:
-
-- the fixed concert-grand data;
-- 12 shared body modes from 58 Hz to 3220 Hz;
-- three sympathetic partial resonators for each key from A0 to C8;
-- an eight-line feedback-delay tail with stereo input and output;
-- one shared pedal and damper rail, per-key held counts, and fixed drift and
-  felt profiles;
-- short synthesized key, damper, and pedal sounds scaled by the profile;
-- stereo note sends, per-body-mode bridge sends, and all wet filter phases.
-
-Csound stores these objects in one named global registry per Csound instance.
-It allocates their delay memory outside any note or wet-output instrument and
-frees it at Csound reset. Native builds use a plugin reset callback. The WASI
-loader cannot retain that callback, so Csound's own reset frees the named global
-and its tracked blocks. A wet-output opcode advances one object and returns its
-audio. The sympathetic bank models three inharmonic partials per key, not every
-partial of every unstruck string.
-
-This remains a reduced real-time model, not a full piano action, string set,
-soundboard, or radiation model.
+The sympathetic bank models three inharmonic partials per key. The release
+ring is a tuned approximation; measured key-release recordings would support
+a closer fit.
 
 ## Examples
 
@@ -633,37 +534,17 @@ proves that the fit interface does not depend on violin strings or profiles.
 The adapter's `--profile` option supplies an offline tuning candidate through
 the shared analyzer protocol. It does not select a runtime piano.
 
-`tools/piano_timbre.py` fits the concert-grand data from gain-normalized,
-onset-aligned recordings. It compares five time windows, 12 partial envelopes,
-and pp/mf/ff dynamics. Targets must sit at least 12 dB above the noise measured
-before the strike. This keeps room noise out of harmonic and sustain targets.
-C2 through C7 provide fit anchors; G3, G4, and G5 provide
-separate check notes. The search fits hammer contact, filtering, and shared
-bridge loss before broad radiation EQ. It writes a candidate only when both
-sets improve. It needs NumPy, a C compiler, Csound, and the WAV files listed in
-`recordings/iowa-timbre.json`.
+`tools/piano_timbre.py` retains audio-analysis helpers and the earlier
+waveguide fit workflow. Its hammer and radiation-EQ search does not tune the
+new direct resonance voice. The rejected fit remains in
+`fit/concert-grand-timbre.json` as evidence. Edit the current resonance and
+velocity data in `fit/`, regenerate with `tools/generate_modal_bank.py`, then
+run the native checks and compare recordings before keeping a new fit.
 
-Listening rejected the current fit as plucked and electric in tone. Its score
-omits direct partial-level errors and reduces decay curves to a few windows.
-Passing the saved regression limits does not establish piano realism. The
-[accepted resonance data](fit/README.md) records the direction for further work.
-
-```sh
-python3 -B tools/piano_timbre.py fit \
-  --references recordings/iowa-timbre.json \
-  --include-dir /path/to/csound/build/include \
-  --work-dir build/timbre-fit --report build/timbre-report.json \
-  --output build/concert-grand-candidate.json
-```
-
-Review a candidate before replacing the sole model, then regenerate the C
-tables and run the checks. `fit/concert-grand-timbre.json` records the first-pass
-fit and its reference features. The broad EQ captures note spectra, including
-the recording room and microphones; it is not a measured soundboard impedance.
-The three velocity values are conventions, not measured hammer speeds.
-
-Reference conversion uses a windowed-sinc filter to preserve the measured
-bands and remove frequencies above the new sample rate's Nyquist limit.
+`tests/run_modal_voice_test.py` checks the approved held-note waveforms at
+44.1 and 48 kHz, velocity tone and level, automatic score release, a quiet
+residual ring, and pedal sustain. It replaces the old delay-line and rejected
+timbre regression tests. Local experiments remain in ignored `dev/`.
 
 The same C source and either CSD can also be pasted into the
 [Csound opcode workbench](https://hlolli.github.io/plugin-compiler/).

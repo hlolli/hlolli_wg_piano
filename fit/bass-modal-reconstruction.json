@@ -1,0 +1,3154 @@
+{
+  "status": "A-flat1 mf native resonance prototype accepted by listening; preserve this sound while extending the single concert grand.",
+  "reference_bindings": {
+    "build/bass-reference/reference-mf/reference-mf-full.wav": "5f6a2397c2c341d0842dd407fcc03ff60919d0c54333b45649df45af2b350b38",
+    "build/bass-reference/reference-mf/spectrum.npz": "b54b309277eaea9491f7a63b89ada33095f2aba7f55ade40981c7dc6334f35c3",
+    "dev/experiments/string-resonance/resynthesize.py": "1acfb3fbb3b8d1e32765b248980f76d9a1367f201cb4c83abe577a8972f77d76",
+    "dev/tools/piano_ring_probe.py": "d84dbc69e76f50a7d121d8976d02bebcd72b9f4ccf744796d7dc3ba7c8f86126"
+  },
+  "script_sha256": "3dea9ffd0fe3269c08866d252c7731bf8b37b5812e4f4f3e2b897a48461e5fb2",
+  "native_source_sha256": "eeff925b8e8c0e4fe7224c90ac0b6408ba278c3a16b2521a81d174a797b54e31",
+  "runtime_sha256": "288686bc9908469ff28615e9f53e38826dbdec0ad6a33e5e03d818ef5d16e871",
+  "accepted_fit_sha256": "0ff3cc3ea6c6b699e93a62f0e5a314d538987141a1d4006618abed1c37fdfb9a",
+  "note": 32,
+  "dynamic": "mf",
+  "clusters": [
+    {
+      "converged": true,
+      "evaluations": 36,
+      "weighted_fit_error": 0.018399460871767227,
+      "count": 4,
+      "initial_amplitude_bound": 0.04535572580687519,
+      "fit_relative_complex_error": 0.023078491862392782,
+      "later_relative_complex_error": 0.11562164630697055,
+      "later_level_db_from_fit": -7.671350118726739,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 50,
+          "weighted_fit_error": 0.01706624714005096,
+          "count": 5,
+          "initial_amplitude_bound": 0.05529380210225983
+        },
+        {
+          "converged": true,
+          "evaluations": 36,
+          "weighted_fit_error": 0.018399460871767227,
+          "count": 4,
+          "initial_amplitude_bound": 0.04535572580687519
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 103.16123247872666,
+          "loss_per_second": 0.3586186306148732,
+          "real": 0.013909985096788554,
+          "imag": 0.004829883551270203,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 102.48144801231025,
+          "loss_per_second": 14.787459988668296,
+          "real": 0.018869870808742018,
+          "imag": 0.01844258119943757,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 102.73390417059554,
+          "loss_per_second": 1.7427461259004513,
+          "real": -0.0004917406298407416,
+          "imag": 0.0013019056787794987,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 103.38002841742536,
+          "loss_per_second": 0.22104207241262178,
+          "real": 0.0031560005681671817,
+          "imag": 0.003592953757769338,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 102.28271484375,
+      "early_peak_dbfs": -39.15940748740126,
+      "early_snr_db": 43.68872860696151
+    },
+    {
+      "converged": true,
+      "evaluations": 25,
+      "weighted_fit_error": 0.04496609529230426,
+      "count": 5,
+      "initial_amplitude_bound": 0.015759802915540175,
+      "fit_relative_complex_error": 0.04545690521300553,
+      "later_relative_complex_error": 0.11427136267985308,
+      "later_level_db_from_fit": -4.504390080107882,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 28,
+          "weighted_fit_error": 0.053682474245954896,
+          "count": 3,
+          "initial_amplitude_bound": 0.010788435497638419
+        },
+        {
+          "converged": true,
+          "evaluations": 25,
+          "weighted_fit_error": 0.04496609529230426,
+          "count": 5,
+          "initial_amplitude_bound": 0.015759802915540175
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 160.66877463844708,
+          "loss_per_second": 2.228353206680282,
+          "real": 0.00022617667000618128,
+          "imag": -0.00025229605942127714,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 156.3246066081333,
+          "loss_per_second": 7.3933752579417495,
+          "real": 0.0007857132762575501,
+          "imag": 0.00466253928978094,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 155.04260702600615,
+          "loss_per_second": 0.9015573373339878,
+          "real": 0.006690682501256521,
+          "imag": -0.0011974258957693465,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 153.69978969333505,
+          "loss_per_second": 3.5456591431955093,
+          "real": 0.0006241110746300019,
+          "imag": 0.0005115972111287503,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 154.97860587183507,
+          "loss_per_second": 0.21106775994178367,
+          "real": -0.002628434115055816,
+          "imag": 0.0020164257879135552,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 156.11572265625,
+      "early_peak_dbfs": -56.31745903383113,
+      "early_snr_db": 30.78696715752106
+    },
+    {
+      "converged": true,
+      "evaluations": 70,
+      "weighted_fit_error": 0.037889747622814204,
+      "count": 6,
+      "initial_amplitude_bound": 0.03298107225750308,
+      "fit_relative_complex_error": 0.03137366704491482,
+      "later_relative_complex_error": 0.1101872913830438,
+      "later_level_db_from_fit": -12.268448393315222,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 70,
+          "weighted_fit_error": 0.037889747622814204,
+          "count": 6,
+          "initial_amplitude_bound": 0.03298107225750308
+        },
+        {
+          "converged": true,
+          "evaluations": 87,
+          "weighted_fit_error": 0.035092916532988454,
+          "count": 8,
+          "initial_amplitude_bound": 0.0339725852021915
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 207.17546113829067,
+          "loss_per_second": 0.9230083120495761,
+          "real": -0.013906654628613475,
+          "imag": -0.001497802693125399,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 207.2921388130585,
+          "loss_per_second": 1.3047127600604267,
+          "real": 0.005182473481691176,
+          "imag": 0.0016250178079925866,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 198.20885468762938,
+          "loss_per_second": 15.773215219050543,
+          "real": 0.011351989331644115,
+          "imag": -0.0044187824532905,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 208.03566575669063,
+          "loss_per_second": 1.603113980365399,
+          "real": -0.000111300264085035,
+          "imag": 0.00034937866770718323,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 206.94189772261137,
+          "loss_per_second": 0.16449580882827022,
+          "real": -0.0013917186520746607,
+          "imag": 0.0014263576924297972,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 204.97566327348662,
+          "loss_per_second": 0.3017375896503457,
+          "real": 3.528499324655789e-05,
+          "imag": -3.813487798625277e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 204.5654296875,
+      "early_peak_dbfs": -46.403494302129516,
+      "early_snr_db": 45.63951074123244
+    },
+    {
+      "converged": true,
+      "evaluations": 81,
+      "weighted_fit_error": 0.01319700109622382,
+      "count": 5,
+      "initial_amplitude_bound": 0.07280132362485242,
+      "fit_relative_complex_error": 0.009796605235051797,
+      "later_relative_complex_error": 0.05589508727544321,
+      "later_level_db_from_fit": -7.706232379289566,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 81,
+          "weighted_fit_error": 0.01319700109622382,
+          "count": 5,
+          "initial_amplitude_bound": 0.07280132362485242
+        },
+        {
+          "converged": true,
+          "evaluations": 78,
+          "weighted_fit_error": 0.011232669026073689,
+          "count": 7,
+          "initial_amplitude_bound": 0.07136002166258405
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 259.50782905394243,
+          "loss_per_second": 1.0857148933139964,
+          "real": 0.0003158772588627946,
+          "imag": -0.001976795661520383,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 259.0537080632777,
+          "loss_per_second": 0.4591926285887551,
+          "real": 0.020295602074920968,
+          "imag": 0.013976062883643933,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 256.49611073916367,
+          "loss_per_second": 15.291755769448116,
+          "real": -0.011244323187697627,
+          "imag": -0.017149589884080163,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 261.1145430503237,
+          "loss_per_second": 2.0874362315995247,
+          "real": -0.0005512843640556092,
+          "imag": 0.00042334607274405666,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 259.2223633525102,
+          "loss_per_second": 0.4336917921276187,
+          "real": -0.00736589487373642,
+          "imag": 0.025560043882603092,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 258.3984375,
+      "early_peak_dbfs": -34.04053926162681,
+      "early_snr_db": 60.291234254614636
+    },
+    {
+      "converged": true,
+      "evaluations": 107,
+      "weighted_fit_error": 0.02507897891061517,
+      "count": 5,
+      "initial_amplitude_bound": 0.01944645370607927,
+      "fit_relative_complex_error": 0.01535248609102462,
+      "later_relative_complex_error": 0.09076664021849276,
+      "later_level_db_from_fit": -6.8329881622361786,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 107,
+          "weighted_fit_error": 0.02507897891061517,
+          "count": 5,
+          "initial_amplitude_bound": 0.01944645370607927
+        },
+        {
+          "converged": true,
+          "evaluations": 92,
+          "weighted_fit_error": 0.02379930641499277,
+          "count": 7,
+          "initial_amplitude_bound": 0.019789415082052175
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 311.133364329338,
+          "loss_per_second": 0.8626479221608544,
+          "real": -0.008815194052126822,
+          "imag": 0.001221682693498505,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 311.9923420847121,
+          "loss_per_second": 0.03000000000000001,
+          "real": 1.023592368131717e-05,
+          "imag": 3.9353502973188055e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 312.8616674266169,
+          "loss_per_second": 1.4885252644412406,
+          "real": 0.00011210896469972611,
+          "imag": -0.00038792543093867977,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 310.9166179057168,
+          "loss_per_second": 0.2838688659618568,
+          "real": -0.007208539086556932,
+          "imag": -0.001448974960718723,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 311.14860583118366,
+          "loss_per_second": 0.14323736126032638,
+          "real": -0.0023733124101194226,
+          "imag": 0.0015477412278409228,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 312.2314453125,
+      "early_peak_dbfs": -40.583308458493136,
+      "early_snr_db": 52.89540874380695
+    },
+    {
+      "converged": true,
+      "evaluations": 125,
+      "weighted_fit_error": 0.08880661004426328,
+      "count": 8,
+      "initial_amplitude_bound": 0.014725446815820692,
+      "fit_relative_complex_error": 0.03395696850297776,
+      "later_relative_complex_error": 0.2516015050392834,
+      "later_level_db_from_fit": -9.583080571086356,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 52,
+          "weighted_fit_error": 0.09603065312806665,
+          "count": 5,
+          "initial_amplitude_bound": 0.013529725731180104
+        },
+        {
+          "converged": true,
+          "evaluations": 125,
+          "weighted_fit_error": 0.08880661004426328,
+          "count": 8,
+          "initial_amplitude_bound": 0.014725446815820692
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 358.84593382790854,
+          "loss_per_second": 19.99999999999999,
+          "real": 0.0031422891637830786,
+          "imag": -0.009571893460848444,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 368.68115234375,
+          "loss_per_second": 11.667532002487205,
+          "real": -0.001969905926536023,
+          "imag": 0.00017170322718354722,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 362.3193054130509,
+          "loss_per_second": 0.03000000000000001,
+          "real": -1.0794969003790563e-05,
+          "imag": 9.423449762705125e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 363.2657386817102,
+          "loss_per_second": 0.45219874640264446,
+          "real": 4.764323760724826e-05,
+          "imag": -0.0017446568173425639,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 364.8906653974179,
+          "loss_per_second": 0.8744352439920319,
+          "real": -3.822056371375098e-05,
+          "imag": 2.1855749457752853e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 363.0473837917855,
+          "loss_per_second": 0.3803856751206466,
+          "real": 0.001279426042553522,
+          "imag": -0.0011456777262128517,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 363.66487883788034,
+          "loss_per_second": 0.6719368807251005,
+          "real": 0.00015060532662184632,
+          "imag": -9.28961881619547e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 367.34700099315125,
+          "loss_per_second": 0.6931323532100905,
+          "real": 4.848612748519906e-05,
+          "imag": 3.594848866464271e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 360.68115234375,
+      "early_peak_dbfs": -55.90517578292843,
+      "early_snr_db": 37.17296895878187
+    },
+    {
+      "converged": true,
+      "evaluations": 57,
+      "weighted_fit_error": 0.257053115915804,
+      "count": 8,
+      "initial_amplitude_bound": 0.0018496627215758025,
+      "fit_relative_complex_error": 0.09725228527402936,
+      "later_relative_complex_error": 0.36498772665657775,
+      "later_level_db_from_fit": -11.650804366953086,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 85,
+          "weighted_fit_error": 0.26846498803902413,
+          "count": 6,
+          "initial_amplitude_bound": 0.0023697378491074946
+        },
+        {
+          "converged": true,
+          "evaluations": 57,
+          "weighted_fit_error": 0.257053115915804,
+          "count": 8,
+          "initial_amplitude_bound": 0.0018496627215758025
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 417.55404932874546,
+          "loss_per_second": 0.03000000000000001,
+          "real": -1.6991767819551054e-06,
+          "imag": 6.965052522694722e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 413.88989396899285,
+          "loss_per_second": 10.133124157274498,
+          "real": -0.0006217609922279946,
+          "imag": 0.0007801167977706658,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 413.1136415921228,
+          "loss_per_second": 1.1655435023314424,
+          "real": 6.861857956243782e-05,
+          "imag": 3.6701889530652215e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 414.7787216085969,
+          "loss_per_second": 0.30378121659670987,
+          "real": 4.457534131056771e-06,
+          "imag": 9.406369420846226e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 415.68036194503765,
+          "loss_per_second": 0.26704570870382216,
+          "real": -0.0001783625707611423,
+          "imag": 0.0001591357871158199,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 415.52502202370954,
+          "loss_per_second": 0.6752263207098959,
+          "real": -0.0004149409963814309,
+          "imag": 0.00036589149220013034,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 415.9919598819099,
+          "loss_per_second": 0.03000000000000001,
+          "real": 5.345771542479297e-06,
+          "imag": 7.4574675008973895e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 417.07433252526806,
+          "loss_per_second": 0.0580099748990771,
+          "real": -4.489331014687435e-06,
+          "imag": -5.769552920053498e-06,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 414.51416015625,
+      "early_peak_dbfs": -68.74533367947234,
+      "early_snr_db": 26.973653885987456
+    },
+    {
+      "converged": true,
+      "evaluations": 94,
+      "weighted_fit_error": 0.04400827586664349,
+      "count": 7,
+      "initial_amplitude_bound": 0.010171982865444806,
+      "fit_relative_complex_error": 0.038799225887956285,
+      "later_relative_complex_error": 0.048196312932805935,
+      "later_level_db_from_fit": -3.3917381629764787,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 72,
+          "weighted_fit_error": 0.048703780443734246,
+          "count": 5,
+          "initial_amplitude_bound": 0.0023676095661457966
+        },
+        {
+          "converged": true,
+          "evaluations": 94,
+          "weighted_fit_error": 0.04400827586664349,
+          "count": 7,
+          "initial_amplitude_bound": 0.010171982865444806
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 468.2158930885152,
+          "loss_per_second": 19.99999999999999,
+          "real": -0.007053646287591821,
+          "imag": 0.004074191559952891,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 468.5066021275738,
+          "loss_per_second": 2.4436653314937478,
+          "real": 0.00029159431999333115,
+          "imag": 7.384409784483513e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 465.61742045702397,
+          "loss_per_second": 1.1421686112032006,
+          "real": -6.0183111420630856e-05,
+          "imag": 9.642174058007309e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 466.1590314819275,
+          "loss_per_second": 0.23035253981143225,
+          "real": -2.2587282839939643e-05,
+          "imag": -3.437760617978474e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 467.87996018426946,
+          "loss_per_second": 0.33062370121950974,
+          "real": 0.0016573054204599392,
+          "imag": -8.397524252210279e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 468.0401275828563,
+          "loss_per_second": 0.14973671636711702,
+          "real": 0.0004233490301268724,
+          "imag": 0.00046346128857945946,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 465.19325859935583,
+          "loss_per_second": 0.2812583262460989,
+          "real": -1.885018427706981e-05,
+          "imag": -6.535930803644755e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 468.34716796875,
+      "early_peak_dbfs": -59.18875797844953,
+      "early_snr_db": 40.63283992996361
+    },
+    {
+      "converged": true,
+      "evaluations": 43,
+      "weighted_fit_error": 0.017872061591643795,
+      "count": 6,
+      "initial_amplitude_bound": 0.030305909633175802,
+      "fit_relative_complex_error": 0.014664765450908309,
+      "later_relative_complex_error": 0.16200989271866814,
+      "later_level_db_from_fit": -21.114320045592414,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 43,
+          "weighted_fit_error": 0.017872061591643795,
+          "count": 6,
+          "initial_amplitude_bound": 0.030305909633175802
+        },
+        {
+          "converged": true,
+          "evaluations": 99,
+          "weighted_fit_error": 0.01587169125704882,
+          "count": 8,
+          "initial_amplitude_bound": 0.030423077522632173
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 520.3345756427757,
+          "loss_per_second": 0.7366050466591066,
+          "real": -0.006318630374955959,
+          "imag": -0.022624743628853958,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 522.1502556022623,
+          "loss_per_second": 0.7830021180405528,
+          "real": 0.00029097914721427654,
+          "imag": -8.41915940454765e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 518.397661111035,
+          "loss_per_second": 0.4679960130939408,
+          "real": 0.00012447590687108368,
+          "imag": 9.115737117753485e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 520.9972500705462,
+          "loss_per_second": 6.132822590719411,
+          "real": -4.827233392052447e-05,
+          "imag": 0.001714074249931988,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 520.3040143200767,
+          "loss_per_second": 0.28022637269268125,
+          "real": -0.0047280137898460875,
+          "imag": 0.0008364806747698152,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 521.2030304036841,
+          "loss_per_second": 0.03000000000000001,
+          "real": 7.217130908227921e-06,
+          "imag": 1.665681880937963e-05,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 522.18017578125,
+      "early_peak_dbfs": -39.071578464008596,
+      "early_snr_db": 58.737638104876254
+    },
+    {
+      "converged": true,
+      "evaluations": 112,
+      "weighted_fit_error": 0.024828238898804353,
+      "count": 6,
+      "initial_amplitude_bound": 0.01756901886496017,
+      "fit_relative_complex_error": 0.03092228433581413,
+      "later_relative_complex_error": 0.40611450277689926,
+      "later_level_db_from_fit": -13.706205033999957,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 112,
+          "weighted_fit_error": 0.024828238898804353,
+          "count": 6,
+          "initial_amplitude_bound": 0.01756901886496017
+        },
+        {
+          "converged": true,
+          "evaluations": 148,
+          "weighted_fit_error": 0.023642627196527165,
+          "count": 7,
+          "initial_amplitude_bound": 0.015044984631590926
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 572.7987213403926,
+          "loss_per_second": 0.9970569173116566,
+          "real": 0.005577500607241946,
+          "imag": 0.007808958680188114,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 573.1995554064894,
+          "loss_per_second": 0.31395823971637576,
+          "real": -0.0002793134841520894,
+          "imag": 0.003958178245194975,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 574.503885068398,
+          "loss_per_second": 2.7259529946318213,
+          "real": -0.0004043508309935064,
+          "imag": -0.0003095056855147254,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 572.5684922581213,
+          "loss_per_second": 0.03000000000000001,
+          "real": 2.1203893255669143e-05,
+          "imag": -5.5235796739235814e-05,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 573.1322790777767,
+          "loss_per_second": 3.3374801943930574,
+          "real": 0.0007080429412979658,
+          "imag": -0.0033302874457268707,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 570.1797311754474,
+          "loss_per_second": 0.46058468746400544,
+          "real": -0.00012287326626566274,
+          "imag": 8.504440637840236e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 570.6298828125,
+      "early_peak_dbfs": -46.91377882646932,
+      "early_snr_db": 52.96058020108707
+    },
+    {
+      "converged": true,
+      "evaluations": 67,
+      "weighted_fit_error": 0.02384888739250408,
+      "count": 6,
+      "initial_amplitude_bound": 0.023089043831890182,
+      "fit_relative_complex_error": 0.018439887774428926,
+      "later_relative_complex_error": 0.08464481437759444,
+      "later_level_db_from_fit": -9.902381586690959,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 67,
+          "weighted_fit_error": 0.02384888739250408,
+          "count": 6,
+          "initial_amplitude_bound": 0.023089043831890182
+        },
+        {
+          "converged": true,
+          "evaluations": 83,
+          "weighted_fit_error": 0.021054877352029978,
+          "count": 8,
+          "initial_amplitude_bound": 0.023674464206883593
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 628.6959397087021,
+          "loss_per_second": 2.1794854493766675,
+          "real": 0.00033422229969638133,
+          "imag": -0.00010911207773937198,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 626.4974493457665,
+          "loss_per_second": 0.46486150209288496,
+          "real": -0.0048013918475632985,
+          "imag": -0.005371336755801008,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 624.313815530107,
+          "loss_per_second": 3.429409574465257,
+          "real": 0.0001536533237651254,
+          "imag": 0.0004733633461874727,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 626.6823507406025,
+          "loss_per_second": 0.5084282879589019,
+          "real": -0.0008188061325252997,
+          "imag": -0.008012817531982767,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 626.7769239992344,
+          "loss_per_second": 0.4757477801226594,
+          "real": 0.006498839760148456,
+          "imag": -0.002697866633263264,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 627.9108281375866,
+          "loss_per_second": 0.03000000000000001,
+          "real": -1.000261325186576e-05,
+          "imag": 3.176308602060345e-06,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 624.462890625,
+      "early_peak_dbfs": -43.46687370366409,
+      "early_snr_db": 60.71334182677721
+    },
+    {
+      "converged": true,
+      "evaluations": 26,
+      "weighted_fit_error": 0.046864822664193555,
+      "count": 4,
+      "initial_amplitude_bound": 0.01206258853803363,
+      "fit_relative_complex_error": 0.05059006507190181,
+      "later_relative_complex_error": 0.04229602539067614,
+      "later_level_db_from_fit": -10.513521587080225,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 26,
+          "weighted_fit_error": 0.046864822664193555,
+          "count": 4,
+          "initial_amplitude_bound": 0.01206258853803363
+        },
+        {
+          "converged": true,
+          "evaluations": 64,
+          "weighted_fit_error": 0.04326201291886766,
+          "count": 7,
+          "initial_amplitude_bound": 0.01734755248922162
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 679.9482533979794,
+          "loss_per_second": 1.3928212296186437,
+          "real": -0.00022050446812396746,
+          "imag": -0.00028460565533416546,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 679.4572666380458,
+          "loss_per_second": 0.5313482277847921,
+          "real": -0.00016550576480403367,
+          "imag": 0.0056229944095870414,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 674.2487109352753,
+          "loss_per_second": 0.03000000000000001,
+          "real": 6.948987724714047e-06,
+          "imag": -3.100189066137022e-05,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 679.5963073819045,
+          "loss_per_second": 0.520098380839209,
+          "real": -0.00594034680663977,
+          "imag": 0.0012892764065842012,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 678.2958984375,
+      "early_peak_dbfs": -47.56622551513378,
+      "early_snr_db": 56.322969085759695
+    },
+    {
+      "converged": true,
+      "evaluations": 57,
+      "weighted_fit_error": 0.02503236981571851,
+      "count": 5,
+      "initial_amplitude_bound": 0.0265632808413252,
+      "fit_relative_complex_error": 0.023616599875289412,
+      "later_relative_complex_error": 0.044964297238364634,
+      "later_level_db_from_fit": -14.799702203807023,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 57,
+          "weighted_fit_error": 0.02503236981571851,
+          "count": 5,
+          "initial_amplitude_bound": 0.0265632808413252
+        },
+        {
+          "converged": false,
+          "evaluations": 600,
+          "weighted_fit_error": 0.01907912187815757,
+          "count": 8,
+          "initial_amplitude_bound": 2.368269945827767
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 733.1599413881106,
+          "loss_per_second": 0.7009717402950542,
+          "real": 0.014855209310408195,
+          "imag": -0.0002087901272580228,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 733.1916673049941,
+          "loss_per_second": 1.8597349755149124,
+          "real": -0.010746438684089407,
+          "imag": -2.8455417037694188e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 732.8472881038718,
+          "loss_per_second": 0.03000000000000001,
+          "real": -4.4714254591482945e-05,
+          "imag": -5.6168189731175346e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 733.5224584433794,
+          "loss_per_second": 0.17285437382500404,
+          "real": 0.0007887921867141049,
+          "imag": 0.00014536883225088333,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 731.3224802648323,
+          "loss_per_second": 0.8188106387974995,
+          "real": 7.636648673424313e-05,
+          "imag": 0.0002553929833125952,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 732.12890625,
+      "early_peak_dbfs": -49.274783886050024,
+      "early_snr_db": 58.06383121815168
+    },
+    {
+      "converged": true,
+      "evaluations": 130,
+      "weighted_fit_error": 0.030739150568928567,
+      "count": 6,
+      "initial_amplitude_bound": 0.009701109773444176,
+      "fit_relative_complex_error": 0.03570296296625834,
+      "later_relative_complex_error": 0.08246874159490149,
+      "later_level_db_from_fit": -11.115012467656644,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 130,
+          "weighted_fit_error": 0.030739150568928567,
+          "count": 6,
+          "initial_amplitude_bound": 0.009701109773444176
+        },
+        {
+          "converged": false,
+          "evaluations": 600,
+          "weighted_fit_error": 0.030129969686074475,
+          "count": 8,
+          "initial_amplitude_bound": 0.01047997428717978
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 787.0050199751162,
+          "loss_per_second": 0.2886200885703382,
+          "real": -0.002396405892169314,
+          "imag": 0.0010184655824127566,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 786.6845670272709,
+          "loss_per_second": 0.5760745168697755,
+          "real": -0.0008199883213395668,
+          "imag": 0.00041602152169742173,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 785.0005481394401,
+          "loss_per_second": 1.161508888938627,
+          "real": -0.00025776319887174036,
+          "imag": 4.756851130209636e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 786.8468287055244,
+          "loss_per_second": 0.9757313621132797,
+          "real": -0.0003198735274700392,
+          "imag": 0.005833044853446213,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 788.9191216256567,
+          "loss_per_second": 0.03000000000000001,
+          "real": -1.1496544631247432e-05,
+          "imag": -8.039090259623917e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 785.122969993062,
+          "loss_per_second": 0.3936255160763225,
+          "real": -1.3534103761370918e-05,
+          "imag": -9.802192303423551e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 785.9619140625,
+      "early_peak_dbfs": -48.262197399891534,
+      "early_snr_db": 58.72606881236244
+    },
+    {
+      "converged": true,
+      "evaluations": 37,
+      "weighted_fit_error": 0.07650664652681671,
+      "count": 5,
+      "initial_amplitude_bound": 0.003754724204615051,
+      "fit_relative_complex_error": 0.06346876841196797,
+      "later_relative_complex_error": 1.3644410116339913,
+      "later_level_db_from_fit": -9.607632245004384,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 15,
+          "weighted_fit_error": 0.08164702955549935,
+          "count": 3,
+          "initial_amplitude_bound": 0.0037174191808642624
+        },
+        {
+          "converged": true,
+          "evaluations": 37,
+          "weighted_fit_error": 0.07650664652681671,
+          "count": 5,
+          "initial_amplitude_bound": 0.003754724204615051
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 832.3444966311185,
+          "loss_per_second": 0.07582415134128322,
+          "real": -4.169850469147449e-06,
+          "imag": -2.836001055183405e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 837.4319516265899,
+          "loss_per_second": 0.977165922522014,
+          "real": 3.8287699142009803e-05,
+          "imag": -2.6002383373417897e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 841.0152852445847,
+          "loss_per_second": 0.03000000000000001,
+          "real": 0.00031847929153333614,
+          "imag": -0.0005023731667635308,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 841.4784395511409,
+          "loss_per_second": 0.3075875138489822,
+          "real": -0.00021193119955022566,
+          "imag": 0.0002360887122755952,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 841.1585493110634,
+          "loss_per_second": 1.022606173321059,
+          "real": 0.0025463130773708776,
+          "imag": 0.0011800802695657547,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 839.794921875,
+      "early_peak_dbfs": -58.76068295650259,
+      "early_snr_db": 47.03654679821487
+    },
+    {
+      "converged": true,
+      "evaluations": 24,
+      "weighted_fit_error": 0.07582025486299064,
+      "count": 4,
+      "initial_amplitude_bound": 0.0006754087043024357,
+      "fit_relative_complex_error": 0.07614211034200388,
+      "later_relative_complex_error": 0.23479711622012267,
+      "later_level_db_from_fit": -12.38440829055547,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 24,
+          "weighted_fit_error": 0.07582025486299064,
+          "count": 4,
+          "initial_amplitude_bound": 0.0006754087043024357
+        },
+        {
+          "converged": true,
+          "evaluations": 50,
+          "weighted_fit_error": 0.07208628965905699,
+          "count": 6,
+          "initial_amplitude_bound": 0.0007421610299285342
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 894.9967828854188,
+          "loss_per_second": 0.38908615405909136,
+          "real": 0.00044942633486350894,
+          "imag": 0.00012175650652617391,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 895.573585319885,
+          "loss_per_second": 0.22495332013841873,
+          "real": -1.1664195967426323e-05,
+          "imag": -3.8369516634487466e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 895.2593767512577,
+          "loss_per_second": 0.2911087633846332,
+          "real": 0.00015788692241192845,
+          "imag": 0.0001118613745502926,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 893.1430858862835,
+          "loss_per_second": 0.030000000000000037,
+          "real": -1.9237025424992294e-07,
+          "imag": 5.20518954742155e-06,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 893.6279296875,
+      "early_peak_dbfs": -69.90331690442369,
+      "early_snr_db": 39.94932983391995
+    },
+    {
+      "converged": true,
+      "evaluations": 55,
+      "weighted_fit_error": 0.04470012082268877,
+      "count": 6,
+      "initial_amplitude_bound": 0.002657353793740334,
+      "fit_relative_complex_error": 0.04135599968169409,
+      "later_relative_complex_error": 0.2690967915626619,
+      "later_level_db_from_fit": -16.208713006812797,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 32,
+          "weighted_fit_error": 0.0504057448177267,
+          "count": 4,
+          "initial_amplitude_bound": 0.0028307944567936725
+        },
+        {
+          "converged": true,
+          "evaluations": 55,
+          "weighted_fit_error": 0.04470012082268877,
+          "count": 6,
+          "initial_amplitude_bound": 0.002657353793740334
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 947.6217893947008,
+          "loss_per_second": 0.03000000000000001,
+          "real": 3.3451596093791583e-06,
+          "imag": 4.521506219713423e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 951.281257062094,
+          "loss_per_second": 0.030000000000000384,
+          "real": -4.116918489865922e-06,
+          "imag": 4.16479555695091e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 949.1820828703522,
+          "loss_per_second": 0.4186699230985979,
+          "real": 0.00011732052877792789,
+          "imag": 3.859045455890681e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 949.6773464742485,
+          "loss_per_second": 0.5249721841280887,
+          "real": 0.0005581677082644381,
+          "imag": 0.000689400940666792,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 949.4670308190553,
+          "loss_per_second": 0.5461440407366556,
+          "real": 0.0015057083992565553,
+          "imag": -0.00011064689476062212,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 950.2194890728241,
+          "loss_per_second": 0.3900329364591895,
+          "real": 0.00010160231532791121,
+          "imag": 8.511904808213395e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 947.4609375,
+      "early_peak_dbfs": -59.96589558444124,
+      "early_snr_db": 50.26963148525282
+    },
+    {
+      "converged": true,
+      "evaluations": 54,
+      "weighted_fit_error": 0.029156005155066105,
+      "count": 7,
+      "initial_amplitude_bound": 0.005217905769021479,
+      "fit_relative_complex_error": 0.026605145024928525,
+      "later_relative_complex_error": 0.22371459467476587,
+      "later_level_db_from_fit": -13.855828492638345,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 66,
+          "weighted_fit_error": 0.04104391647755962,
+          "count": 5,
+          "initial_amplitude_bound": 0.004801449832333969
+        },
+        {
+          "converged": true,
+          "evaluations": 54,
+          "weighted_fit_error": 0.029156005155066105,
+          "count": 7,
+          "initial_amplitude_bound": 0.005217905769021479
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1006.4249105748643,
+          "loss_per_second": 0.212371413187957,
+          "real": 1.8109027701131264e-05,
+          "imag": -7.468963203850588e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1002.4172001901184,
+          "loss_per_second": 0.7176337386098388,
+          "real": -1.8426025721053152e-05,
+          "imag": -2.9960773177577814e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1003.9078861439514,
+          "loss_per_second": 2.3738244625263634,
+          "real": 0.00039173283042940086,
+          "imag": -6.776936827540276e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1004.2955874429679,
+          "loss_per_second": 0.9397911165711714,
+          "real": -0.0018686990982294863,
+          "imag": 0.0012608865579849806,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1004.9219191233406,
+          "loss_per_second": 0.3483791778181376,
+          "real": -0.0001789987052870811,
+          "imag": -0.00014975380474512902,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1004.5993426159439,
+          "loss_per_second": 0.4919372686747521,
+          "real": -0.0019080504537174472,
+          "imag": -0.0012178722255207857,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1002.7551718458236,
+          "loss_per_second": 0.3603603057694932,
+          "real": 1.3245839639889742e-05,
+          "imag": -3.3258483754638085e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1006.67724609375,
+      "early_peak_dbfs": -56.707975191964586,
+      "early_snr_db": 53.13903938492875
+    },
+    {
+      "converged": true,
+      "evaluations": 210,
+      "weighted_fit_error": 0.043334807490902454,
+      "count": 8,
+      "initial_amplitude_bound": 0.00466649559900973,
+      "fit_relative_complex_error": 0.03173945212945024,
+      "later_relative_complex_error": 0.6697469761429932,
+      "later_level_db_from_fit": -19.768052491582505,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 147,
+          "weighted_fit_error": 0.04756735950356019,
+          "count": 6,
+          "initial_amplitude_bound": 0.002872944559909125
+        },
+        {
+          "converged": true,
+          "evaluations": 210,
+          "weighted_fit_error": 0.043334807490902454,
+          "count": 8,
+          "initial_amplitude_bound": 0.00466649559900973
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1057.7757545258635,
+          "loss_per_second": 1.2007015890984756,
+          "real": -2.195464310568393e-05,
+          "imag": 7.642860795377511e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1059.6178067339433,
+          "loss_per_second": 0.6486538537969262,
+          "real": 0.001724271608710957,
+          "imag": 0.0017873853886775535,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1059.7798703721533,
+          "loss_per_second": 2.0587649031442345,
+          "real": -0.0008892411947009226,
+          "imag": -0.0005741635278974916,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1060.3565185314383,
+          "loss_per_second": 0.2968662977184827,
+          "real": 0.0003247117277015267,
+          "imag": -9.857119455777648e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1061.6100670072503,
+          "loss_per_second": 1.0788149502314264,
+          "real": 5.3078192677966215e-05,
+          "imag": 4.995619188040646e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1061.429518628123,
+          "loss_per_second": 3.5912426896216125,
+          "real": -0.00030984655151276597,
+          "imag": -0.00015050069528186157,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1059.5509517650387,
+          "loss_per_second": 0.03000000000000001,
+          "real": 0.0001626159115980756,
+          "imag": -0.00016909528350263247,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1059.4121340664585,
+          "loss_per_second": 0.03000000000000001,
+          "real": 7.357987804102583e-05,
+          "imag": 3.179545241081146e-05,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 1060.51025390625,
+      "early_peak_dbfs": -59.155124266511486,
+      "early_snr_db": 50.66610496608503
+    },
+    {
+      "converged": true,
+      "evaluations": 134,
+      "weighted_fit_error": 0.03279493815045086,
+      "count": 7,
+      "initial_amplitude_bound": 0.002948150787176261,
+      "fit_relative_complex_error": 0.033968875522833605,
+      "later_relative_complex_error": 0.17044356326375618,
+      "later_level_db_from_fit": -10.408243868659424,
+      "trials": [
+        {
+          "converged": false,
+          "evaluations": 600,
+          "weighted_fit_error": 0.041070953252843975,
+          "count": 6,
+          "initial_amplitude_bound": 0.06377708146024462
+        },
+        {
+          "converged": true,
+          "evaluations": 134,
+          "weighted_fit_error": 0.03279493815045086,
+          "count": 7,
+          "initial_amplitude_bound": 0.002948150787176261
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1113.61608208788,
+          "loss_per_second": 0.3728829566017169,
+          "real": -1.6925905983697248e-05,
+          "imag": -3.557811430101351e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1117.3158353605822,
+          "loss_per_second": 0.24424596645747815,
+          "real": -2.7883933797822604e-06,
+          "imag": -1.8772971438141092e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1115.9588992877514,
+          "loss_per_second": 0.5178700924726775,
+          "real": -0.0004382677746136965,
+          "imag": 0.00010132027011751864,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1115.4690606166937,
+          "loss_per_second": 0.41326908882983926,
+          "real": -0.00155022982207281,
+          "imag": 0.00042022920560842866,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1115.0917174936073,
+          "loss_per_second": 0.4554937863490569,
+          "real": -0.0006763114755559556,
+          "imag": 0.0004051749354809879,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1113.212672240135,
+          "loss_per_second": 0.6559745138372162,
+          "real": -1.0160904720341791e-05,
+          "imag": -3.3080339872435725e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1116.094632224952,
+          "loss_per_second": 0.03000000000000001,
+          "real": 1.0146037984290024e-05,
+          "imag": -1.3974039746695707e-05,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 1114.34326171875,
+      "early_peak_dbfs": -57.50897834064392,
+      "early_snr_db": 51.75251146456472
+    },
+    {
+      "converged": true,
+      "evaluations": 245,
+      "weighted_fit_error": 0.045022695427460714,
+      "count": 6,
+      "initial_amplitude_bound": 0.01102954420695626,
+      "fit_relative_complex_error": 0.04255789111428809,
+      "later_relative_complex_error": 0.7749644620209727,
+      "later_level_db_from_fit": -18.439979390498184,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 245,
+          "weighted_fit_error": 0.045022695427460714,
+          "count": 6,
+          "initial_amplitude_bound": 0.01102954420695626
+        },
+        {
+          "converged": false,
+          "evaluations": 600,
+          "weighted_fit_error": 0.03286074759484175,
+          "count": 8,
+          "initial_amplitude_bound": 0.02331532406858716
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1171.623919942098,
+          "loss_per_second": 1.343980859934826,
+          "real": -0.0019739012485035933,
+          "imag": -6.184366689468566e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1170.733987644259,
+          "loss_per_second": 0.5225003753899011,
+          "real": 0.002807034695992453,
+          "imag": 0.0009016887441883507,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1170.7865706203645,
+          "loss_per_second": 0.28577641484629396,
+          "real": -0.00024382260842853833,
+          "imag": 0.0005783865139740592,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1170.2055903950547,
+          "loss_per_second": 0.03000000000000001,
+          "real": 1.2163176282416442e-06,
+          "imag": 6.232848530551799e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1171.5360028674806,
+          "loss_per_second": 0.965379486821418,
+          "real": 0.004476664900832488,
+          "imag": 0.0025122675445940165,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1171.4231137629781,
+          "loss_per_second": 0.03000000000000001,
+          "real": 6.112333178734353e-05,
+          "imag": 0.0003807445401194268,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 1173.5595703125,
+      "early_peak_dbfs": -52.34185257352457,
+      "early_snr_db": 59.44599442409167
+    },
+    {
+      "converged": true,
+      "evaluations": 76,
+      "weighted_fit_error": 0.04578509964475776,
+      "count": 8,
+      "initial_amplitude_bound": 0.0015100076052169406,
+      "fit_relative_complex_error": 0.03768504289069514,
+      "later_relative_complex_error": 0.08963262632321682,
+      "later_level_db_from_fit": -8.920447938439699,
+      "trials": [
+        {
+          "converged": false,
+          "evaluations": 600,
+          "weighted_fit_error": 0.0568010907103581,
+          "count": 5,
+          "initial_amplitude_bound": 0.0022523530866993815
+        },
+        {
+          "converged": true,
+          "evaluations": 76,
+          "weighted_fit_error": 0.04578509964475776,
+          "count": 8,
+          "initial_amplitude_bound": 0.0015100076052169406
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1225.6614564511992,
+          "loss_per_second": 0.6976776527267593,
+          "real": 2.2587963524441852e-05,
+          "imag": -9.38694131178143e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1229.3806280769147,
+          "loss_per_second": 0.4931759828079309,
+          "real": 2.596142747573883e-05,
+          "imag": -1.6023003776239224e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1226.83476110217,
+          "loss_per_second": 1.4096924949929257,
+          "real": -1.5852179499097504e-05,
+          "imag": 2.6255301973236586e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1227.5313574229153,
+          "loss_per_second": 0.4144714084263047,
+          "real": -0.00010770420549349521,
+          "imag": -0.0008012533101826007,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1228.1996740147251,
+          "loss_per_second": 0.5345480536252578,
+          "real": -4.270604734486942e-05,
+          "imag": -0.00016909643515192985,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1227.1627012411627,
+          "loss_per_second": 0.3463108922680473,
+          "real": -9.705480557238047e-05,
+          "imag": -0.0004161358597324462,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1227.7753196264807,
+          "loss_per_second": 0.03000000000000001,
+          "real": -5.087845134760214e-07,
+          "imag": -4.046230908866299e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1229.037052746136,
+          "loss_per_second": 0.5831582685046977,
+          "real": 1.5894696188233043e-05,
+          "imag": -8.27986281465463e-06,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1227.392578125,
+      "early_peak_dbfs": -63.47863524757946,
+      "early_snr_db": 45.83176744158658
+    },
+    {
+      "converged": true,
+      "evaluations": 110,
+      "weighted_fit_error": 0.17925091038508395,
+      "count": 8,
+      "initial_amplitude_bound": 0.0007432370912336483,
+      "fit_relative_complex_error": 0.11091044039162387,
+      "later_relative_complex_error": 0.6276988911233538,
+      "later_level_db_from_fit": -16.90258644934657,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 66,
+          "weighted_fit_error": 0.19528789315735584,
+          "count": 6,
+          "initial_amplitude_bound": 0.0006591186915235636
+        },
+        {
+          "converged": true,
+          "evaluations": 110,
+          "weighted_fit_error": 0.17925091038508395,
+          "count": 8,
+          "initial_amplitude_bound": 0.0007432370912336483
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1253.2959787997318,
+          "loss_per_second": 0.5794490715583377,
+          "real": 1.057929293040404e-05,
+          "imag": 4.0169290167079e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1251.5254243905872,
+          "loss_per_second": 0.4060754604643216,
+          "real": -6.384999908669489e-06,
+          "imag": 2.311833305019251e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1252.2793570989083,
+          "loss_per_second": 1.3851164934490467,
+          "real": -0.00042745636023543533,
+          "imag": -0.00015995037655904812,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1248.848826428809,
+          "loss_per_second": 0.840510614263523,
+          "real": -1.248021166468741e-05,
+          "imag": -1.9084418411298326e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1249.7985221417841,
+          "loss_per_second": 0.8484501199644713,
+          "real": 1.4252790701581611e-05,
+          "imag": -5.661378491809885e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1252.797882246105,
+          "loss_per_second": 0.440854817696005,
+          "real": -6.789048243286978e-05,
+          "imag": -0.00014202946295042526,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1252.4644349084954,
+          "loss_per_second": 0.03000000000000001,
+          "real": 3.959380731067102e-06,
+          "imag": -4.247478833996855e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1253.52810974328,
+          "loss_per_second": 0.7136109084948542,
+          "real": -2.4061463037165968e-05,
+          "imag": 4.525777084023962e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1254.30908203125,
+      "early_peak_dbfs": -72.00652759274081,
+      "early_snr_db": 36.551569494766824
+    },
+    {
+      "converged": true,
+      "evaluations": 111,
+      "weighted_fit_error": 0.07717434528696669,
+      "count": 8,
+      "initial_amplitude_bound": 0.0011382146868583092,
+      "fit_relative_complex_error": 0.0753143409555933,
+      "later_relative_complex_error": 0.2440734082947483,
+      "later_level_db_from_fit": -9.701360343912862,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 120,
+          "weighted_fit_error": 0.08357340141774984,
+          "count": 6,
+          "initial_amplitude_bound": 0.0004981311818021193
+        },
+        {
+          "converged": true,
+          "evaluations": 111,
+          "weighted_fit_error": 0.07717434528696669,
+          "count": 8,
+          "initial_amplitude_bound": 0.0011382146868583092
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1284.7669122579653,
+          "loss_per_second": 0.41200782110221595,
+          "real": 3.526082526713355e-05,
+          "imag": 2.2711509127045105e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1284.357260734039,
+          "loss_per_second": 0.25762297145350765,
+          "real": 0.00019835619501857598,
+          "imag": 4.5366202773332046e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1283.6584882224436,
+          "loss_per_second": 0.3792823648850404,
+          "real": 0.00012498871030087544,
+          "imag": -3.206480087023112e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1282.130577343158,
+          "loss_per_second": 0.22407246494191346,
+          "real": 2.0783950932362953e-06,
+          "imag": -1.1654609316668226e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1282.5475002871879,
+          "loss_per_second": 0.5619813680368204,
+          "real": 7.6033917911218655e-06,
+          "imag": 1.0589623097592428e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1279.341742464022,
+          "loss_per_second": 19.99999999999999,
+          "real": -0.0006743679346296279,
+          "imag": 0.0003315603659572166,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1284.1491204399074,
+          "loss_per_second": 0.7675954938922623,
+          "real": 1.382521253716198e-05,
+          "imag": 6.579456840146766e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1285.5135709976344,
+          "loss_per_second": 0.24337376526452267,
+          "real": 7.845816256933718e-07,
+          "imag": -2.0548673283483233e-06,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1286.60888671875,
+      "early_peak_dbfs": -76.67567523389413,
+      "early_snr_db": 31.226677652086234
+    },
+    {
+      "converged": true,
+      "evaluations": 78,
+      "weighted_fit_error": 0.09619205972494244,
+      "count": 6,
+      "initial_amplitude_bound": 0.001995860640751208,
+      "fit_relative_complex_error": 0.07783418523324895,
+      "later_relative_complex_error": 1.0011520913473777,
+      "later_level_db_from_fit": -16.037778213871395,
+      "trials": [
+        {
+          "converged": false,
+          "evaluations": 600,
+          "weighted_fit_error": 0.10118790785330516,
+          "count": 5,
+          "initial_amplitude_bound": 0.0027618379936513106
+        },
+        {
+          "converged": true,
+          "evaluations": 78,
+          "weighted_fit_error": 0.09619205972494244,
+          "count": 6,
+          "initial_amplitude_bound": 0.001995860640751208
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1359.4229885462112,
+          "loss_per_second": 1.688253840885545,
+          "real": -0.0004796636540022412,
+          "imag": -0.00021227641412893645,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1360.4232820128389,
+          "loss_per_second": 0.03214726118602715,
+          "real": -3.875076959967498e-06,
+          "imag": -8.018912290095344e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1360.153469298912,
+          "loss_per_second": 1.7313721718025687,
+          "real": -0.0011110544494276882,
+          "imag": 0.00020554288445830436,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1358.8038977706406,
+          "loss_per_second": 1.1024794260199597,
+          "real": 2.6364795543193957e-05,
+          "imag": 3.71162266514526e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1359.9750144923382,
+          "loss_per_second": 0.5240266198276129,
+          "real": 0.00029589170717306436,
+          "imag": 1.680117385151141e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1359.1432676368154,
+          "loss_per_second": 0.07311358799303842,
+          "real": -4.195612425410525e-06,
+          "imag": 9.927357448214812e-06,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1361.97509765625,
+      "early_peak_dbfs": -66.55602991819607,
+      "early_snr_db": 47.70364498655511
+    },
+    {
+      "converged": true,
+      "evaluations": 72,
+      "weighted_fit_error": 0.278953924866742,
+      "count": 8,
+      "initial_amplitude_bound": 0.00278621501137405,
+      "fit_relative_complex_error": 0.18499259963588513,
+      "later_relative_complex_error": 0.9148620654011934,
+      "later_level_db_from_fit": -20.325468257247774,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 46,
+          "weighted_fit_error": 0.2927566756139738,
+          "count": 6,
+          "initial_amplitude_bound": 0.0005445184473653888
+        },
+        {
+          "converged": true,
+          "evaluations": 72,
+          "weighted_fit_error": 0.278953924866742,
+          "count": 8,
+          "initial_amplitude_bound": 0.00278621501137405
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1404.0190577258375,
+          "loss_per_second": 3.747058307681204,
+          "real": -4.0439507562778384e-05,
+          "imag": -9.947273594299041e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1398.334099808129,
+          "loss_per_second": 19.99999999999999,
+          "real": 0.001726272064301572,
+          "imag": -0.0019650815690951937,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1399.045679147908,
+          "loss_per_second": 2.299522586548868,
+          "real": -0.00016660362407693507,
+          "imag": -7.448126280902601e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1397.3392267084546,
+          "loss_per_second": 0.12250176721239209,
+          "real": 1.2928803136177894e-06,
+          "imag": -1.5487502748464099e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1398.3081011449578,
+          "loss_per_second": 0.5811982502302527,
+          "real": 6.799431169747942e-05,
+          "imag": -1.1838796809909147e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1397.5540303211942,
+          "loss_per_second": 0.5098881631771361,
+          "real": -5.3574004825639e-05,
+          "imag": -4.888417565117018e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1398.1967852638325,
+          "loss_per_second": 0.03000000000000001,
+          "real": 6.645125734372773e-07,
+          "imag": -6.819598405320042e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1406.8410980757471,
+          "loss_per_second": 0.4899887408740993,
+          "real": 2.013381634115115e-06,
+          "imag": 2.0930811800278414e-06,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1399.658203125,
+      "early_peak_dbfs": -79.84968281809317,
+      "early_snr_db": 36.9635459479965
+    },
+    {
+      "converged": true,
+      "evaluations": 54,
+      "weighted_fit_error": 0.4898520942207303,
+      "count": 7,
+      "initial_amplitude_bound": 0.0018534686719753866,
+      "fit_relative_complex_error": 0.12660100785429132,
+      "later_relative_complex_error": 1.0307423005228158,
+      "later_level_db_from_fit": -24.461230708816725,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 23,
+          "weighted_fit_error": 0.49711863373345516,
+          "count": 6,
+          "initial_amplitude_bound": 0.000746095526297348
+        },
+        {
+          "converged": true,
+          "evaluations": 54,
+          "weighted_fit_error": 0.4898520942207303,
+          "count": 7,
+          "initial_amplitude_bound": 0.0018534686719753866
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1434.57470703125,
+          "loss_per_second": 13.702251387405726,
+          "real": -0.00070458616833605,
+          "imag": 0.00028114070488927546,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1427.1807767034811,
+          "loss_per_second": 3.199885434289753,
+          "real": 8.155525064294287e-06,
+          "imag": 0.00033352985032369866,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1432.857279670884,
+          "loss_per_second": 14.246110693481482,
+          "real": -0.00010531899838661578,
+          "imag": 0.000851463331119815,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1422.5868354221104,
+          "loss_per_second": 0.9930122171890674,
+          "real": 1.0432467062641903e-06,
+          "imag": 4.6942929020258506e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1427.1808271767825,
+          "loss_per_second": 0.6229463072954553,
+          "real": 6.339220420143848e-06,
+          "imag": 7.98655768046098e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1427.8785018627748,
+          "loss_per_second": 0.35128042206306487,
+          "real": -1.4005850770097861e-06,
+          "imag": 1.782372597784608e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1418.9879232570845,
+          "loss_per_second": 0.03000000000000001,
+          "real": 8.165466452075341e-07,
+          "imag": -1.74477997513335e-07,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 1426.57470703125,
+      "early_peak_dbfs": -79.13740950897883,
+      "early_snr_db": 36.44951423775153
+    },
+    {
+      "converged": true,
+      "evaluations": 56,
+      "weighted_fit_error": 0.23917894335528211,
+      "count": 6,
+      "initial_amplitude_bound": 0.003242334038687282,
+      "fit_relative_complex_error": 0.1541737447262,
+      "later_relative_complex_error": 0.6802130706936779,
+      "later_level_db_from_fit": -20.98571231551679,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 15,
+          "weighted_fit_error": 0.2689247052334003,
+          "count": 4,
+          "initial_amplitude_bound": 0.001364352935705536
+        },
+        {
+          "converged": true,
+          "evaluations": 56,
+          "weighted_fit_error": 0.23917894335528211,
+          "count": 6,
+          "initial_amplitude_bound": 0.003242334038687282
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1466.5757087172963,
+          "loss_per_second": 0.6176568948056665,
+          "real": -0.0002849352609447235,
+          "imag": -7.15890252575031e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1466.4358036123513,
+          "loss_per_second": 1.1842621521212304,
+          "real": 2.0817267354700357e-05,
+          "imag": 0.00043010686499047473,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1456.2578125,
+          "loss_per_second": 5.132437380110046,
+          "real": -0.0004352936657334616,
+          "imag": -0.0014267920769865598,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1456.4243636137505,
+          "loss_per_second": 1.8493520073435417,
+          "real": 0.00028067231604068883,
+          "imag": 0.0007125297717138702,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1466.1440634005605,
+          "loss_per_second": 1.030847067220677,
+          "real": -6.799259739391219e-05,
+          "imag": 6.372971263222797e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1457.030552533483,
+          "loss_per_second": 0.7144598438678316,
+          "real": -0.00021662934875211668,
+          "imag": 1.0075757880352142e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1464.2578125,
+      "early_peak_dbfs": -73.40973419406227,
+      "early_snr_db": 45.724587065041405
+    },
+    {
+      "converged": true,
+      "evaluations": 120,
+      "weighted_fit_error": 0.19634753125467003,
+      "count": 7,
+      "initial_amplitude_bound": 0.00022498350106689153,
+      "fit_relative_complex_error": 0.13376287968408931,
+      "later_relative_complex_error": 0.36223411267272676,
+      "later_level_db_from_fit": -13.107930975953515,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 73,
+          "weighted_fit_error": 0.20633950007715515,
+          "count": 5,
+          "initial_amplitude_bound": 0.00021959826483773453
+        },
+        {
+          "converged": true,
+          "evaluations": 120,
+          "weighted_fit_error": 0.19634753125467003,
+          "count": 7,
+          "initial_amplitude_bound": 0.00022498350106689153
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1519.9629911790275,
+          "loss_per_second": 0.42386226672805827,
+          "real": 4.0821312437845865e-06,
+          "imag": 3.178914488947472e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1514.8704231335603,
+          "loss_per_second": 0.03000000000051682,
+          "real": 1.8751752145365436e-06,
+          "imag": 1.2717869130046643e-05,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1514.8855100328676,
+          "loss_per_second": 0.5862048490105136,
+          "real": 6.036520521288633e-05,
+          "imag": -8.163476984388273e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1513.5057116208538,
+          "loss_per_second": 1.3835209248101714,
+          "real": -1.58429261375077e-05,
+          "imag": -7.327355803103883e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1509.5300376059813,
+          "loss_per_second": 0.3128071212041056,
+          "real": 2.5717956519333997e-08,
+          "imag": 2.1969513013305277e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1513.1881892255883,
+          "loss_per_second": 0.40114659958367105,
+          "real": 1.9502803226759536e-05,
+          "imag": 3.3161400559926357e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1514.4021670753027,
+          "loss_per_second": 0.3847547776382532,
+          "real": 2.4688221105230128e-05,
+          "imag": 4.230840377484959e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1512.70751953125,
+      "early_peak_dbfs": -84.21807369919702,
+      "early_snr_db": 29.348958183177004
+    },
+    {
+      "method": "compact fallback, same fit and late-check windows",
+      "count": 4,
+      "converged": true,
+      "weighted_fit_error": 0.09395628424868872,
+      "fit_relative_complex_error": 0.08818604947954023,
+      "later_relative_complex_error": 0.1412515623348983,
+      "modes": [
+        {
+          "frequency_hz": 1572.0392669240987,
+          "loss_per_second": 0.4948955422470965,
+          "real": 0.00022577549989010387,
+          "imag": -0.0001390020172256027
+        },
+        {
+          "frequency_hz": 1573.0833268395704,
+          "loss_per_second": 0.6220376639770927,
+          "real": 1.8330509649067034e-05,
+          "imag": -0.00014613003140533828
+        },
+        {
+          "frequency_hz": 1573.5086851232059,
+          "loss_per_second": 0.4045511136500489,
+          "real": 0.0001269523807594535,
+          "imag": 2.9488698825833843e-05
+        },
+        {
+          "frequency_hz": 1574.0838156462498,
+          "loss_per_second": 0.5616222203397667,
+          "real": -1.6675601478253797e-07,
+          "imag": -1.1380310891940416e-05
+        }
+      ],
+      "centre_hz": 1571.923828125,
+      "early_peak_dbfs": -75.22160243604469,
+      "early_snr_db": 37.15357022091044
+    },
+    {
+      "converged": true,
+      "evaluations": 258,
+      "weighted_fit_error": 0.07690984985328093,
+      "count": 8,
+      "initial_amplitude_bound": 0.0012960118010890398,
+      "fit_relative_complex_error": 0.07005329319705936,
+      "later_relative_complex_error": 0.487179607202235,
+      "later_level_db_from_fit": -12.100017042504286,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 442,
+          "weighted_fit_error": 0.08894320052508124,
+          "count": 6,
+          "initial_amplitude_bound": 0.03623185943940213
+        },
+        {
+          "converged": true,
+          "evaluations": 258,
+          "weighted_fit_error": 0.07690984985328093,
+          "count": 8,
+          "initial_amplitude_bound": 0.0012960118010890398
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1628.9402610310187,
+          "loss_per_second": 0.46283972708685023,
+          "real": 4.756376089162336e-06,
+          "imag": -7.471439668207373e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1624.47154473031,
+          "loss_per_second": 19.99999999999999,
+          "real": -0.00045096343068458183,
+          "imag": 0.0006161554215287382,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1632.7704369056694,
+          "loss_per_second": 0.48199470071200057,
+          "real": -3.2434363997876925e-06,
+          "imag": -0.00017705581782481036,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1630.8844760293514,
+          "loss_per_second": 5.952676188749375,
+          "real": 0.000128472774202472,
+          "imag": 7.546425549302608e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1634.5346666130922,
+          "loss_per_second": 0.44869613470856395,
+          "real": 4.165838129457031e-06,
+          "imag": 4.8165243481977375e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1630.783264905753,
+          "loss_per_second": 0.41482930069801727,
+          "real": -0.00014155250624477652,
+          "imag": -0.00013525970469247615,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1632.5593722070355,
+          "loss_per_second": 0.03000000000000001,
+          "real": -8.77540269272767e-06,
+          "imag": 1.0262944240905316e-05,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1632.179033199795,
+          "loss_per_second": 0.5307748725616532,
+          "real": 6.6230871582803225e-06,
+          "imag": -5.972181753496646e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1631.14013671875,
+      "early_peak_dbfs": -84.20083268636985,
+      "early_snr_db": 26.07497645760539
+    },
+    {
+      "converged": true,
+      "evaluations": 88,
+      "weighted_fit_error": 0.1957164601939706,
+      "count": 7,
+      "initial_amplitude_bound": 0.0001869181813868076,
+      "fit_relative_complex_error": 0.11461916362820987,
+      "later_relative_complex_error": 0.5395911756972419,
+      "later_level_db_from_fit": -14.480136735498316,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 71,
+          "weighted_fit_error": 0.21666285272316774,
+          "count": 6,
+          "initial_amplitude_bound": 0.0002476510922248151
+        },
+        {
+          "converged": true,
+          "evaluations": 88,
+          "weighted_fit_error": 0.1957164601939706,
+          "count": 7,
+          "initial_amplitude_bound": 0.0001869181813868076
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1691.9889351072413,
+          "loss_per_second": 0.6858421345880751,
+          "real": -1.9668686946401732e-05,
+          "imag": 3.6105492068621764e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1690.348991357019,
+          "loss_per_second": 0.5212661165101279,
+          "real": -1.4823373553894542e-05,
+          "imag": 5.0966572405648535e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1691.286624035459,
+          "loss_per_second": 0.703990191746875,
+          "real": -3.354447866509923e-05,
+          "imag": 3.47559885246395e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1682.3564453125,
+          "loss_per_second": 0.9967247669543127,
+          "real": -8.522544578570036e-06,
+          "imag": -3.229206361209237e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1688.6103426823963,
+          "loss_per_second": 0.27797210170905895,
+          "real": -1.3621128425680883e-06,
+          "imag": 2.5538616002988454e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1690.7228110647952,
+          "loss_per_second": 0.23684362871560016,
+          "real": 7.289852776248908e-07,
+          "imag": -7.541640518532699e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1691.798638976841,
+          "loss_per_second": 0.3245627054019639,
+          "real": -3.142552391292279e-05,
+          "imag": 5.575188499781849e-06,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1690.3564453125,
+      "early_peak_dbfs": -87.26580360993671,
+      "early_snr_db": 30.611142556067755
+    },
+    {
+      "converged": true,
+      "evaluations": 46,
+      "weighted_fit_error": 0.34809384779052127,
+      "count": 7,
+      "initial_amplitude_bound": 0.00014666677309950943,
+      "fit_relative_complex_error": 0.1471923823640186,
+      "later_relative_complex_error": 0.8993271193702037,
+      "later_level_db_from_fit": -17.24098885960872,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 49,
+          "weighted_fit_error": 0.3573738892036487,
+          "count": 6,
+          "initial_amplitude_bound": 0.00014260170430368732
+        },
+        {
+          "converged": true,
+          "evaluations": 46,
+          "weighted_fit_error": 0.34809384779052127,
+          "count": 7,
+          "initial_amplitude_bound": 0.00014666677309950943
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1751.9612346215665,
+          "loss_per_second": 0.9713374297605026,
+          "real": 6.637959139454816e-05,
+          "imag": -3.2644049936790374e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1752.483522411457,
+          "loss_per_second": 0.6012845019229954,
+          "real": -2.593089046974656e-05,
+          "imag": -9.627206461923574e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1750.645934180609,
+          "loss_per_second": 0.04135349189313681,
+          "real": -1.5212545328707704e-07,
+          "imag": -3.183622603147733e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1741.6435771989868,
+          "loss_per_second": 0.03000000000000001,
+          "real": 7.216515022695896e-07,
+          "imag": 4.252174181295752e-08,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1750.0896989132284,
+          "loss_per_second": 0.6508453513071498,
+          "real": 1.7259907807445426e-05,
+          "imag": 3.7140122445419825e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1751.4572494840547,
+          "loss_per_second": 0.03000000000000001,
+          "real": -4.578341716888527e-07,
+          "imag": 5.483374199507824e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1752.2760958213887,
+          "loss_per_second": 0.40625760974858194,
+          "real": -4.644623561449321e-07,
+          "imag": 4.557609896412169e-06,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1749.57275390625,
+      "early_peak_dbfs": -86.72841040358207,
+      "early_snr_db": 30.419993900975793
+    },
+    {
+      "converged": true,
+      "evaluations": 43,
+      "weighted_fit_error": 0.308121466789563,
+      "count": 7,
+      "initial_amplitude_bound": 8.891978492692544e-05,
+      "fit_relative_complex_error": 0.1573264607981013,
+      "later_relative_complex_error": 0.7879420522475485,
+      "later_level_db_from_fit": -15.712514215046864,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 56,
+          "weighted_fit_error": 0.32405774578977287,
+          "count": 5,
+          "initial_amplitude_bound": 8.622826441426325e-05
+        },
+        {
+          "converged": true,
+          "evaluations": 43,
+          "weighted_fit_error": 0.308121466789563,
+          "count": 7,
+          "initial_amplitude_bound": 8.891978492692544e-05
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1814.0831960771864,
+          "loss_per_second": 0.42281806778907255,
+          "real": -1.6962686964821018e-06,
+          "imag": 2.0422196731907105e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1812.7042293354489,
+          "loss_per_second": 0.4161163289716122,
+          "real": -1.2421331157681156e-06,
+          "imag": -1.0159073499932621e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1810.6474688989538,
+          "loss_per_second": 0.03000000000000001,
+          "real": -1.5785291089933048e-07,
+          "imag": -4.7502696724295943e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1806.8841188194613,
+          "loss_per_second": 0.03000000000000001,
+          "real": -7.568483550497921e-07,
+          "imag": -2.5965661574476435e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1808.848847365065,
+          "loss_per_second": 0.36375555437389573,
+          "real": -2.3551542889293103e-07,
+          "imag": -1.3139655891397963e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1810.3465215123003,
+          "loss_per_second": 0.5572525806857013,
+          "real": 3.002050005321148e-05,
+          "imag": -2.6101885464114208e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1812.2666914225179,
+          "loss_per_second": 0.6133448520255232,
+          "real": 3.882168471638875e-05,
+          "imag": 1.7286670325210836e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1808.7890625,
+      "early_peak_dbfs": -97.18837749561271,
+      "early_snr_db": 19.539895899990867
+    },
+    {
+      "converged": true,
+      "evaluations": 32,
+      "weighted_fit_error": 0.43045322664512303,
+      "count": 7,
+      "initial_amplitude_bound": 7.931362720206359e-05,
+      "fit_relative_complex_error": 0.30662186327969615,
+      "later_relative_complex_error": 0.7276567129031114,
+      "later_level_db_from_fit": -11.29229606933589,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 37,
+          "weighted_fit_error": 0.4847791939666184,
+          "count": 5,
+          "initial_amplitude_bound": 7.769115698591449e-05
+        },
+        {
+          "converged": true,
+          "evaluations": 32,
+          "weighted_fit_error": 0.43045322664512303,
+          "count": 7,
+          "initial_amplitude_bound": 7.931362720206359e-05
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 1870.8469439626183,
+          "loss_per_second": 0.5727868734240655,
+          "real": -1.2094087707983102e-05,
+          "imag": 2.0532065655088275e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1873.0990153909338,
+          "loss_per_second": 0.9221309175612834,
+          "real": -8.069554087875737e-06,
+          "imag": 3.621957329188156e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1872.4658844718203,
+          "loss_per_second": 0.6585176179038823,
+          "real": -7.581266675105751e-06,
+          "imag": -4.35262853276892e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1881.0343953414358,
+          "loss_per_second": 0.5184987345150518,
+          "real": -2.2884184940724767e-06,
+          "imag": -3.360615761572151e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 1870.5541603835225,
+          "loss_per_second": 0.03000000000000001,
+          "real": 6.425204583932551e-07,
+          "imag": -2.2491777109514212e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1873.019846230918,
+          "loss_per_second": 0.03000000000000001,
+          "real": 1.7878915696728543e-06,
+          "imag": -2.1674816689081307e-06,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 1879.9215429719688,
+          "loss_per_second": 0.3643551621561028,
+          "real": -3.9971305765866705e-06,
+          "imag": 9.721216622867933e-07,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 1873.388671875,
+      "early_peak_dbfs": -96.5528803983807,
+      "early_snr_db": 19.856282921101062
+    },
+    {
+      "converged": true,
+      "evaluations": 51,
+      "weighted_fit_error": 0.6040077358749809,
+      "count": 5,
+      "initial_amplitude_bound": 0.00010539194441147476,
+      "fit_relative_complex_error": 0.4696679210513534,
+      "later_relative_complex_error": 0.9358501578932439,
+      "later_level_db_from_fit": -14.437459185929267,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 43,
+          "weighted_fit_error": 0.8448081325034026,
+          "count": 2,
+          "initial_amplitude_bound": 2.1823395722448832e-05
+        },
+        {
+          "converged": true,
+          "evaluations": 51,
+          "weighted_fit_error": 0.6040077358749809,
+          "count": 5,
+          "initial_amplitude_bound": 0.00010539194441147476
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 2055.8422192933203,
+          "loss_per_second": 0.7469688675584997,
+          "real": -1.2273461401444135e-05,
+          "imag": -2.0492773455546968e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2059.026573319593,
+          "loss_per_second": 0.7142860434338519,
+          "real": -1.659310249102413e-05,
+          "imag": -8.65441968203287e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2058.3445374933995,
+          "loss_per_second": 0.6607395492863379,
+          "real": -1.3674840985529118e-05,
+          "imag": 7.766312453618388e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2064.4208984375,
+          "loss_per_second": 4.533474667368397,
+          "real": 3.4906588019066335e-05,
+          "imag": 3.231200545007846e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2055.269398318696,
+          "loss_per_second": 0.03000000000000001,
+          "real": 2.620367701228474e-07,
+          "imag": 7.290423264894883e-07,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 2056.4208984375,
+      "early_peak_dbfs": -97.85334082324508,
+      "early_snr_db": 24.547942216693603
+    },
+    {
+      "converged": true,
+      "evaluations": 24,
+      "weighted_fit_error": 0.6693208488736524,
+      "count": 7,
+      "initial_amplitude_bound": 0.00015724423894903695,
+      "fit_relative_complex_error": 0.2915942579499299,
+      "later_relative_complex_error": 1.0311323356407327,
+      "later_level_db_from_fit": -13.963230433434688,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 27,
+          "weighted_fit_error": 0.7120596464150509,
+          "count": 5,
+          "initial_amplitude_bound": 0.00014176464297308914
+        },
+        {
+          "converged": true,
+          "evaluations": 24,
+          "weighted_fit_error": 0.6693208488736524,
+          "count": 7,
+          "initial_amplitude_bound": 0.00015724423894903695
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 2117.6860644125795,
+          "loss_per_second": 3.314051547229835,
+          "real": 4.655201037027689e-05,
+          "imag": 8.519770895646559e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2123.198866791551,
+          "loss_per_second": 0.6679935071662629,
+          "real": 2.664247806819062e-06,
+          "imag": 2.9043388400937684e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2121.875997777886,
+          "loss_per_second": 0.9907683280710666,
+          "real": 4.540910384248201e-06,
+          "imag": 1.7433904926355177e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2120.5890139898215,
+          "loss_per_second": 1.0885283343094327,
+          "real": 5.892925785619694e-06,
+          "imag": -6.896382071383468e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2119.4532800605366,
+          "loss_per_second": 1.0985312485916394,
+          "real": 3.526228291955656e-07,
+          "imag": 6.797308526638285e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2121.3209285350295,
+          "loss_per_second": 0.42550188252199533,
+          "real": -1.0603159664284544e-06,
+          "imag": -2.5209668823672057e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2120.17745723845,
+          "loss_per_second": 1.237713751195784,
+          "real": 1.7018496802624845e-05,
+          "imag": 1.316421072239118e-05,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 2121.0205078125,
+      "early_peak_dbfs": -89.6149242775396,
+      "early_snr_db": 27.81261278059253
+    },
+    {
+      "converged": true,
+      "evaluations": 42,
+      "weighted_fit_error": 0.4134269219745545,
+      "count": 6,
+      "initial_amplitude_bound": 0.0001256407823891471,
+      "fit_relative_complex_error": 0.3303298126880699,
+      "later_relative_complex_error": 1.305084814128677,
+      "later_level_db_from_fit": -20.246619882270306,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 36,
+          "weighted_fit_error": 0.4251780884797673,
+          "count": 5,
+          "initial_amplitude_bound": 0.00012248109711321628
+        },
+        {
+          "converged": true,
+          "evaluations": 42,
+          "weighted_fit_error": 0.4134269219745545,
+          "count": 6,
+          "initial_amplitude_bound": 0.0001256407823891471
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 2176.0626828648583,
+          "loss_per_second": 0.8914816285740637,
+          "real": -4.520487143058376e-05,
+          "imag": -6.700848298303606e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2175.0325596937155,
+          "loss_per_second": 1.0887969310965968,
+          "real": -3.5797941153212265e-05,
+          "imag": -8.605309666898005e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2181.371873707836,
+          "loss_per_second": 0.10847784177891577,
+          "real": -9.614268206176417e-07,
+          "imag": -1.2387742968362204e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2176.3943137246374,
+          "loss_per_second": 0.03000000000000001,
+          "real": 6.957253833454518e-07,
+          "imag": 6.627957709323169e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 2174.8332726716544,
+          "loss_per_second": 0.03000000000000001,
+          "real": -7.810571223062747e-07,
+          "imag": -8.008587370253625e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 2181.914218074533,
+          "loss_per_second": 0.5649838303926731,
+          "real": -5.94448489890701e-07,
+          "imag": 5.488327495436702e-06,
+          "loss_at_bound": false
+        }
+      ],
+      "centre_hz": 2174.853515625,
+      "early_peak_dbfs": -87.93538293011329,
+      "early_snr_db": 32.99313281246833
+    },
+    {
+      "converged": true,
+      "evaluations": 29,
+      "weighted_fit_error": 0.33179068656369903,
+      "count": 8,
+      "initial_amplitude_bound": 9.092075660666122e-05,
+      "fit_relative_complex_error": 0.1930512004343778,
+      "later_relative_complex_error": 0.8949132306190213,
+      "later_level_db_from_fit": -13.970378492139254,
+      "trials": [
+        {
+          "converged": true,
+          "evaluations": 36,
+          "weighted_fit_error": 0.34773526950516737,
+          "count": 6,
+          "initial_amplitude_bound": 8.771657326992744e-05
+        },
+        {
+          "converged": true,
+          "evaluations": 29,
+          "weighted_fit_error": 0.33179068656369903,
+          "count": 8,
+          "initial_amplitude_bound": 9.092075660666122e-05
+        }
+      ],
+      "modes": [
+        {
+          "frequency_hz": 2249.569232663373,
+          "loss_per_second": 0.5447942203120764,
+          "real": 2.3964172859831564e-05,
+          "imag": 6.07222333999236e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2249.0190711909713,
+          "loss_per_second": 0.41312400312005193,
+          "real": -1.131117450710177e-06,
+          "imag": 5.996551572159122e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2243.301397504004,
+          "loss_per_second": 0.03000000000000001,
+          "real": -2.549014523414057e-07,
+          "imag": 5.975024729407242e-07,
+          "loss_at_bound": true
+        },
+        {
+          "frequency_hz": 2245.552814269902,
+          "loss_per_second": 0.7598578639060346,
+          "real": 1.7769691069264726e-05,
+          "imag": 1.0673691835089379e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2247.2468035109187,
+          "loss_per_second": 1.1593369673865002,
+          "real": -2.8443187964140056e-06,
+          "imag": -2.9840868513500624e-06,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2249.843824105453,
+          "loss_per_second": 0.17251624780782912,
+          "real": -1.9876388483500035e-08,
+          "imag": -9.231907752303299e-07,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2248.778051533161,
+          "loss_per_second": 1.1017308588813466,
+          "real": 2.9114220979736042e-05,
+          "imag": -2.41570631222074e-05,
+          "loss_at_bound": false
+        },
+        {
+          "frequency_hz": 2245.870566402299,
+          "loss_per_second": 0.03000000000000001,
+          "real": 8.684204334256774e-07,
+          "imag": -5.819561200646118e-07,
+          "loss_at_bound": true
+        }
+      ],
+      "centre_hz": 2250.2197265625,
+      "early_peak_dbfs": -95.76009214938443,
+      "early_snr_db": 23.706587161979304
+    }
+  ],
+  "skipped": [],
+  "mode_count": 248,
+  "initial_amplitude_bound": 0.38773431384302637,
+  "fit_window": [
+    0.12,
+    4.4
+  ],
+  "later_check_window": [
+    4.6,
+    5.5
+  ],
+  "limits": [
+    "Direct fit to one recording; no unseen-note or velocity test.",
+    "Measured peaks include microphone and room response.",
+    "First 120 ms are not fitted; 4 ms onset rise is a trial.",
+    "No waveform playback or recorded envelopes at runtime.",
+    "Late check shares the same filtered source; not independent validation."
+  ],
+  "native_check": {
+    "sample_rate": 44100,
+    "ksmps": 32,
+    "onset_sample": 15434,
+    "max_error_against_formula": 1.1897633554400211e-07,
+    "peak": 0.11280453205108643,
+    "comparison_gain": 0.9702801302064106,
+    "coefficients_sha256": "d76f0ca9076349b311e505c4b4be56cb67a4e2700f0e90727a4ef60f95115fc5",
+    "module_sha256": "637c762cc4e2843446058c33b16a17435711e58987c06fe9646b6ed1c5e443d6",
+    "listening_audio_sha256": "5e9e5fdb9ad0f50c97ad313cf3a6977a5332e71c9291e9f89ed5bf3c2ef04009"
+  },
+  "audio": "/Users/hlolli/csound/hlolli_wg_piano/build/bass-resonance/modal-full.wav",
+  "extra_native_check": {
+    "sample_rate": 48000,
+    "ksmps": 64,
+    "onset_sample": 16800,
+    "max_error_against_formula": 1.1897608689220851e-07,
+    "peak": 0.11280512809753418
+  },
+  "measurements": {
+    "bands": [
+      [
+        {
+          "dbfs": -47.64539549480613,
+          "snr_db": 241.2151709821255
+        },
+        {
+          "dbfs": -36.68894144782952,
+          "snr_db": 248.83947823874826
+        },
+        {
+          "dbfs": -29.574678843153816,
+          "snr_db": 248.99517315430523
+        },
+        {
+          "dbfs": -46.905214833577716,
+          "snr_db": 224.38489702881654
+        }
+      ],
+      [
+        {
+          "dbfs": -53.51022545687825,
+          "snr_db": 235.35034102005338
+        },
+        {
+          "dbfs": -42.74786931902927,
+          "snr_db": 242.78055036754853
+        },
+        {
+          "dbfs": -36.153423001196,
+          "snr_db": 242.41642899626302
+        },
+        {
+          "dbfs": -53.89247553041953,
+          "snr_db": 217.39763633197472
+        }
+      ],
+      [
+        {
+          "dbfs": -60.53354276545753,
+          "snr_db": 228.32702371147408
+        },
+        {
+          "dbfs": -49.862281166524156,
+          "snr_db": 235.66613852005364
+        },
+        {
+          "dbfs": -44.20785704921627,
+          "snr_db": 234.36199494824277
+        },
+        {
+          "dbfs": -59.37004927700165,
+          "snr_db": 211.92006258539263
+        }
+      ],
+      [
+        {
+          "dbfs": -59.472549849682075,
+          "snr_db": 229.38801662724956
+        },
+        {
+          "dbfs": -48.5878706154005,
+          "snr_db": 236.94054907117732
+        },
+        {
+          "dbfs": -44.10712288328302,
+          "snr_db": 234.462729114176
+        },
+        {
+          "dbfs": -58.82753170619648,
+          "snr_db": 212.46258015619776
+        }
+      ],
+      [
+        {
+          "dbfs": -60.43646960793251,
+          "snr_db": 228.42409686899913
+        },
+        {
+          "dbfs": -49.82336789065792,
+          "snr_db": 235.7050517959199
+        },
+        {
+          "dbfs": -45.14777714835041,
+          "snr_db": 233.42207484910864
+        },
+        {
+          "dbfs": -68.94337885332077,
+          "snr_db": 202.34673300907346
+        }
+      ]
+    ],
+    "rms_dbfs": [
+      -28.7048734305327,
+      -35.18279522748093,
+      -42.99162458180331,
+      -42.630099934193986,
+      -43.75017261161814
+    ]
+  },
+  "band_difference_db": [
+    [
+      -0.3122450496425486,
+      -0.16509904921683471,
+      -0.25208877405037455,
+      -0.2800083853400679
+    ],
+    [
+      -0.4451139034267939,
+      -0.3044566114970664,
+      -0.23736015801575405,
+      -0.2907008607360879
+    ],
+    [
+      -0.6497204919841906,
+      -0.2770231262684746,
+      -0.2551590390311844,
+      -0.3167430269854705
+    ],
+    [
+      -0.3755752751613741,
+      -0.27058111003952945,
+      -0.27208615809580294,
+      -0.2615609121669138
+    ],
+    [
+      -0.5882381373659911,
+      -0.3292361145960996,
+      -0.3170137636113708,
+      -0.18289279891794763
+    ]
+  ],
+  "spectral_proxy": {
+    "current_max_error_db": 9.625007033246753,
+    "prototype_max_error_db": 0.4451139034267939,
+    "current_fails_6db": true,
+    "prototype_passes_1db": true,
+    "scope": "First three windows; reference band SNR >=18 dB. Listening decides timbre."
+  },
+  "lower_peaks_control": {
+    "mode_count": 66,
+    "cutoff_hz": 650,
+    "gain": 0.9702801302064106
+  },
+  "audio_hashes": {
+    "modal": "5e9e5fdb9ad0f50c97ad313cf3a6977a5332e71c9291e9f89ed5bf3c2ef04009",
+    "comparison": "1f34e3f7d963d695448b2192238d75d3a1569e34ff6c3ec56426151f764b2ad0",
+    "pair": "77099a5735369e81caa8cebb27a54bb9c6781abaeb439cf8babc176d98e4dc46",
+    "upper-peaks-check": "864831433a273d39dbc7a062998d2a2289e8277171d88419010caea4dfedc73a"
+  },
+  "accepted_synthesis": {
+    "feedback": "new prototype, bingo, bullseye, you got it, bravo, bravissimo",
+    "date": "2026-09-30",
+    "note": 32,
+    "note_name": "A-flat1",
+    "dynamic": "mf",
+    "audio_sha256": "5e9e5fdb9ad0f50c97ad313cf3a6977a5332e71c9291e9f89ed5bf3c2ef04009",
+    "comparison_audio_sha256": "1f34e3f7d963d695448b2192238d75d3a1569e34ff6c3ec56426151f764b2ad0",
+    "coefficients_sha256": "d76f0ca9076349b311e505c4b4be56cb67a4e2700f0e90727a4ef60f95115fc5",
+    "native_source_sha256": "eeff925b8e8c0e4fe7224c90ac0b6408ba278c3a16b2521a81d174a797b54e31",
+    "native_score_sha256": "098b7e0f67a05d3fb2f78c89fd0854b2946ae2f1e4a6f324243bbdde07606347",
+    "native_comparison_gain": 0.9702801302064106,
+    "rise_seconds": 0.004,
+    "sample_rate": 44100,
+    "channels": "left duplicated to both speakers",
+    "coefficient_clock": "Complex amplitudes at the fixed onset, .35 seconds into each prepared file."
+  },
+  "reference_source": {
+    "source_url": "https://theremin.music.uiowa.edu/sound%20files/MIS/Piano_Other/piano/Piano.mf.Ab1.aiff",
+    "aiff": "/Users/hlolli/csound/hlolli_wg_piano/recordings/raw/iowa/Piano.mf.Ab1.aiff",
+    "aiff_sha256": "a3a36d8d34a550985368e283d5046ddb70afc28fb0ac6644a8d73478c4f94622",
+    "wav": "/Users/hlolli/csound/hlolli_wg_piano/recordings/raw/iowa/Piano.mf.Ab1.wav",
+    "wav_sha256": "1708dd65f41ebd094e64aaf88c2a3353767b0cfa8aa3904ab179b0dcc2f2f5c9",
+    "note": 32,
+    "dynamic": "mf"
+  }
+}

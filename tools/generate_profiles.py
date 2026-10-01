@@ -16,7 +16,7 @@ from pathlib import Path
 
 SCHEMA_VERSION = 4
 MIN_PYTHON = (3, 8)
-MAX_WASI_SOURCE_BYTES = 256 * 1024
+MAX_WASI_SOURCE_BYTES = 2 * 1024 * 1024
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = ROOT / "profiles" / "concert_grand_a.json"
 SCHEMA_PATH = ROOT / "profiles" / "schema" / "piano-profile-v4.schema.json"
