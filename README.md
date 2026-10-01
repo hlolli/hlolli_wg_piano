@@ -133,8 +133,9 @@ The browser demo keeps a byte-for-byte copy of `hlolli_wg_piano.c` at
 `demos/demo1/wg-piano.c` in the
 [`csound-wasm-plugin-compiler`](https://github.com/hlolli/csound-wasm-plugin-compiler)
 repository. Make model and profile changes here first, run the native checks,
-then replace that demo file and run its piano build-and-play check. The WASI
-build uses the same model and tables; only mutex and reset cleanup code differs.
+then replace that demo file and run its piano build-and-play check. Both builds
+use the same model and tables. The WASI build also uses double-precision SIMD
+for note resonances and has host-specific mutex and reset cleanup code.
 
 ## Piano capture data
 
@@ -236,6 +237,11 @@ The helper compiles this repository's C source, including its math functions,
 and writes `build/wasm/hlolli_wg_piano.wasm`. It uses the shared compiler's
 browser plugin format, not a standalone WASI executable. Rebuild after any
 source or runtime change. Build output stays out of Git.
+
+The note engine computes four samples per resonance step and preserves every
+fitted mode, velocity layer, and release tail. Clang's WebAssembly build uses
+128-bit SIMD for pairs of double-precision samples, so the browser must support
+WebAssembly SIMD. Native builds use the same four-sample calculation in C.
 
 ## Add it to a Csound source build
 

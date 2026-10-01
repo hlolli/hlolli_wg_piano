@@ -60,13 +60,15 @@ def main():
     failures=[]
     with tempfile.TemporaryDirectory(prefix='piano-modal-') as temp:
         folder=args.output or Path(temp);folder.mkdir(parents=True,exist_ok=True)
-        for rate,block in [(44100,32),(48000,64)]:
+        # Odd blocks and sample-accurate note boundaries exercise the scalar
+        # remainder after the four-sample resonance kernel.
+        for rate,block in [(44100,32),(48000,64),(48000,31)]:
             for note in [32,60,67,72,79]:
-                sr,x=render(args,folder,f'held-{rate}-{note}',note=note,sr=rate,ksmps=block,key_seconds=3.1)
+                sr,x=render(args,folder,f'held-{rate}-{block}-{note}',note=note,sr=rate,ksmps=block,key_seconds=3.1)
                 reference=expected(banks[keys[note]['bank_note']],keys[note],rate,3)
                 start=round(.35*rate)
                 error=min(float(np.max(np.abs(x[b:b+len(reference),0]-reference))) for b in (start-1,start,start+1))
-                print(f'held {note} at {rate}: maximum sample error {error:.3g}')
+                print(f'held {note} at {rate}, block {block}: maximum sample error {error:.3g}')
                 if error>5e-7: failures.append(f'approved note {note} changed at {rate}')
         for case in json.loads((ROOT/'fit/modal-extension.json').read_text())['cases']:
             if case['dynamic']=='mf': continue
